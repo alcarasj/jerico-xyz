@@ -11,3 +11,6 @@ clean:
 
 heroku: $(DOCKER_CMD)
 	heroku container:push web
+
+build:
+	go build -o bin/jerico-xyz -v .
