@@ -1,4 +1,4 @@
-module github.com/heroku/go-getting-started
+module github.com/alcarasj/jerico-xyz
 
 go 1.12
 
