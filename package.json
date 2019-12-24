@@ -1,0 +1,34 @@
+{
+  "name": "jerico-xyz",
+  "version": "1.0.0",
+  "description": "My personal website.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack --mode development ./react/index.tsx --output ./static/main.js --watch",
+    "build": "webpack --mode production ./react/index.tsx --output ./static/main.js --config ./webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alcarasj/jerico-xyz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alcarasj/jerico-xyz/issues"
+  },
+  "homepage": "https://github.com/alcarasj/jerico-xyz#readme",
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.17",
+    "@types/react-dom": "^16.9.4",
+    "source-map-loader": "^0.2.4",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.4",
+    "webpack-cli": "^3.3.10"
+  }
+}

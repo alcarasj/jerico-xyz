@@ -12,5 +12,14 @@ clean:
 heroku: $(DOCKER_CMD)
 	heroku container:push web
 
-build:
+go:
+	PORT=8000 go run main.go
+
+go-build:
 	go build -o bin/jerico-xyz -v .
+
+react-build:
+	npm run build
+
+react-dev:
+	npm run dev
