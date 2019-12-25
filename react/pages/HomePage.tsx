@@ -36,11 +36,11 @@ export const HomePage = (props: HomePageProps) => {
 			<Paper>
 				<Grid container justify="center" alignItems="center" direction="column">
 					<Grid item xs={12}>
-						<Grid className={classes.body} container justify="space-between" alignItems="center" spacing={5}  direction="column">
-							<Grid item xs={4}>
+						<Grid className={classes.body} container justify="center" alignItems="center" spacing={5}  direction="column">
+							<Grid item xs={6}>
 								<Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2019-460x460.jpg"}/>
 							</Grid>
-							<Grid item xs={8}>
+							<Grid item xs={6}>
 								<Typography align="center" variant="h3" component="h3">Hi! My name is Jerico.</Typography>
 								<Typography align="center" variant="subtitle1">This is my personal website - it's currently under construction. Maybe check back again soon? :)</Typography>
 							</Grid>
