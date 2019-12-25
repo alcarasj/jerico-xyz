@@ -1,11 +1,11 @@
 {
   "name": "jerico-xyz",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "My personal website.",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --mode development ./react/index.tsx --output ./static/main.js --watch",
-    "build": "webpack --mode production ./react/index.tsx --output ./static/main.js --config ./webpack.config.js"
+    "dev": "webpack --mode development ./react/index.tsx --output ./static/main-$npm_package_version.js --watch",
+    "build": "webpack --mode production ./react/index.tsx --output ./static/main-$npm_package_version.js --config ./webpack.config.js"
   },
   "repository": {
     "type": "git",
