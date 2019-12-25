@@ -25,3 +25,6 @@ react-build:
 
 react-dev:
 	npm run dev
+
+deploy:
+	git push heroku master
