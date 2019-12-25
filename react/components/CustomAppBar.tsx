@@ -6,6 +6,9 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import Slide from '@material-ui/core/Slide';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import { GithubCircle, Linkedin } from 'mdi-material-ui';
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -21,6 +24,25 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
+interface HideOnScrollProps {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  window?: () => Window;
+  children: React.ReactElement;
+}
+
+const HideOnScroll = (props: HideOnScrollProps) => {
+	const { children, window } = props;
+	const trigger = useScrollTrigger({ target: window ? window() : undefined });
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
+
 export interface CustomAppBarProps {};
 
 export const CustomAppBar = (props: CustomAppBarProps) => {
@@ -28,17 +50,24 @@ export const CustomAppBar = (props: CustomAppBarProps) => {
 
 	return (
 		<div className={classes.root}>
-			<AppBar position="static">
-				<Toolbar>
-					<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-						<MenuIcon />
-					</IconButton>
-					<Typography variant="h6" className={classes.title}>
-						jerico.xyz
-					</Typography>
-					<Button color="inherit">Login</Button>
-				</Toolbar>
-			</AppBar>
+			<HideOnScroll>
+				<AppBar>
+					<Toolbar>
+						<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+							<MenuIcon />
+						</IconButton>
+						<Typography variant="h6" className={classes.title}>
+							jerico.xyz
+						</Typography>
+						<IconButton aria-label="linkedin">
+							<Linkedin />
+	        	</IconButton>
+						<IconButton aria-label="github">
+							<GithubCircle />
+	        	</IconButton>
+					</Toolbar>
+				</AppBar>
+			</HideOnScroll>
 		</div>
 	);
 }

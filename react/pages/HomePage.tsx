@@ -17,8 +17,8 @@ const useStyles = makeStyles((theme: Theme) =>
 			width: theme.spacing(30)
 		},
 		body: {
-			marginTop: theme.spacing(5),
-			marginBottom: theme.spacing(20)
+			paddingTop: theme.spacing(15),
+			paddingBottom: theme.spacing(20),
 		}
 	}),
 );
