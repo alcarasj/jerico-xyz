@@ -1,6 +1,6 @@
 {
   "name": "jerico-xyz",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "My personal website.",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,8 @@
     "@mdi/font": "^4.7.95",
     "mdi-material-ui": "^6.10.0",
     "react": "^16.12.0",
-    "react-dom": "^16.12.0"
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
     "@types/react": "^16.9.17",

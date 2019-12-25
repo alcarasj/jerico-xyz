@@ -8,6 +8,8 @@ $(DOCKER_CMD): clean
 
 clean:
 	rm -rf $(DOCKER_BUILD)
+	rm -rf node_modules
+	rm -rf bin
 
 heroku: $(DOCKER_CMD)
 	heroku container:push web

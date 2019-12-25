@@ -9,10 +9,25 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
+type ActionType = {
+	type: 'redirect'
+};
+
+const reducer = (state, action: ActionType) => {
+	switch (action.type) {
+		default: {
+			return state
+		}
+	};
+};
+
 export interface ComponentProps {};
 
 export const Component = (props: ComponentProps) => {
 	const classes = useStyles({});
+
+	const [state, dispatch] = React.useReducer(reducer, {
+	});
 
 	return (
 		<div>

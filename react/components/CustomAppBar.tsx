@@ -25,28 +25,44 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface HideOnScrollProps {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window?: () => Window;
-  children: React.ReactElement;
+	/**
+	 * Injected by the documentation to work in an iframe.
+	 * You won't need it on your project.
+	 */
+	window?: () => Window;
+	children: React.ReactElement;
 }
 
 const HideOnScroll = (props: HideOnScrollProps) => {
 	const { children, window } = props;
 	const trigger = useScrollTrigger({ target: window ? window() : undefined });
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
+	return (
+		<Slide appear={false} direction="down" in={!trigger}>
+			{children}
+		</Slide>
+	);
 }
+
+type ActionType = {
+	type: 'redirect'
+};
+
+const reducer = (state, action: ActionType) => {
+	switch (action.type) {
+		default: {
+			return state
+		}
+	};
+};
+
 
 export interface CustomAppBarProps {};
 
 export const CustomAppBar = (props: CustomAppBarProps) => {
 	const classes = useStyles({});
+
+	const [state, dispatch] = React.useReducer(reducer, {
+	});
 
 	return (
 		<div className={classes.root}>
@@ -59,12 +75,16 @@ export const CustomAppBar = (props: CustomAppBarProps) => {
 						<Typography variant="h6" className={classes.title}>
 							jerico.xyz
 						</Typography>
-						<IconButton aria-label="linkedin">
-							<Linkedin />
-	        	</IconButton>
-						<IconButton aria-label="github">
-							<GithubCircle />
-	        	</IconButton>
+						<a href="https://www.linkedin.com/in/jcalcaras/" target="_blank">
+							<IconButton aria-label="linkedin">
+								<Linkedin />
+							</IconButton>
+						</a>
+						<a href="https://github.com/alcarasj" target="_blank">
+							<IconButton aria-label="github">
+								<GithubCircle />
+							</IconButton>
+						</a>
 					</Toolbar>
 				</AppBar>
 			</HideOnScroll>
