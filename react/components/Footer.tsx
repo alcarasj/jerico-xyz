@@ -60,8 +60,8 @@ export const Footer = (props: FooterProps) => {
 					<Typography align="right" variant="body1" gutterBottom>
 						Source code is freely available <a className={classes.link} target="_blank" href="https://github.com/alcarasj/jerico-xyz">here</a>. 
 					</Typography>
-					<Typography align="right" variant="body1" gutterBottom>
-						ALPHA 0.0.4 
+					<Typography align="right" variant="body2" gutterBottom>
+						BUILD 0.0.6
 					</Typography>
 				</Grid>
 			</Grid>

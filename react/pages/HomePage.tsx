@@ -7,6 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Grow from '@material-ui/core/Grow';
 import {
 	Link
 } from "react-router-dom";
@@ -42,11 +43,17 @@ export const HomePage = (props: HomePageProps) => {
 					<Grid item xs>
 						<Grid className={classes.body} container justify="center" alignItems="center" spacing={5}  direction="column">
 							<Grid item xs>
-								<Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2019-460x460.jpg"}/>
+								<Grow in timeout={750}>
+									<Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2019-460x460.jpg"}/>
+								</Grow>
 							</Grid>
 							<Grid item xs>
-								<Typography align="center" variant="h3" component="h3">Hi! My name is Jerico.</Typography>
-								<Typography align="center" variant="subtitle1">This is my personal website - it's currently under construction. Maybe check back again soon? :)</Typography>
+								<Grow in timeout={1000}>
+									<Typography align="center" variant="h3" component="h3">Hi! My name is Jerico.</Typography>
+								</Grow>
+								<Grow in timeout={1200}>
+									<Typography align="center" variant="subtitle1">This is my personal website - it's currently under construction. Maybe check back again soon? :)</Typography>
+								</Grow>
 							</Grid>
 						</Grid>
 					</Grid>
