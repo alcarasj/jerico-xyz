@@ -21,9 +21,11 @@ go-build:
 	go build -o bin/jerico-xyz -v .
 
 react-build:
+	rm -rf ./static/bundle
 	npm run build
 
 react-dev:
+	rm -rf ./static/bundle
 	npm run dev
 
 deploy:

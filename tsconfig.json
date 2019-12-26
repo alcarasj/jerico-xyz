@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "./static/",
+		"outDir": "./static/bundle/",
 		"sourceMap": true,
 		"noImplicitAny": false,
 		"module": "commonjs",
