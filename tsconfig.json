@@ -1,11 +1,14 @@
 {
-    "compilerOptions": {
-        "outDir": "./static/",
-        "sourceMap": true,
-        "noImplicitAny": false,
-        "module": "commonjs",
-        "target": "es6",
-        "jsx": "react",
-        "esModuleInterop": true
-    }
+	"compilerOptions": {
+		"outDir": "./static/",
+		"sourceMap": true,
+		"noImplicitAny": false,
+		"module": "commonjs",
+		"target": "es6",
+		"jsx": "react",
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"types": ["node"],
+		"typeRoots": [ "../node_modules/@types" ]
+	}
 }

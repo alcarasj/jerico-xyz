@@ -1,6 +1,6 @@
 {
   "name": "jerico-xyz",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "My personal website.",
   "main": "index.js",
   "scripts": {
@@ -23,11 +23,13 @@
     "@material-ui/icons": "^4.5.1",
     "@mdi/font": "^4.7.95",
     "mdi-material-ui": "^6.10.0",
+    "pjson": "^1.0.9",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
+    "@types/node": "^13.1.0",
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "source-map-loader": "^0.2.4",

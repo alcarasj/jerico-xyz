@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { GithubCircle, Linkedin } from 'mdi-material-ui';
 import IconButton from '@material-ui/core/IconButton';
-
+const packageJSON = require('../../package.json');
 
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -27,6 +27,7 @@ interface FooterProps {};
 
 export const Footer = (props: FooterProps) => {
 	const classes = useStyles({});
+	const packageVersion = packageJSON.version;
 
 	return (
 		<Paper className={classes.root}>
@@ -61,7 +62,7 @@ export const Footer = (props: FooterProps) => {
 						Source code is freely available <a className={classes.link} target="_blank" href="https://github.com/alcarasj/jerico-xyz">here</a>. 
 					</Typography>
 					<Typography align="right" variant="body2" gutterBottom>
-						BUILD 0.0.6
+						BUILD { packageVersion }
 					</Typography>
 				</Grid>
 			</Grid>
