@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { CustomAppBar } from "../components/CustomAppBar";
 import Avatar from '@material-ui/core/Avatar';
 import { Footer } from "../components/Footer";
@@ -12,6 +12,7 @@ import { Data } from "../utils/Data";
 import {
 	Link
 } from "react-router-dom";
+declare const VANTA: any;
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -35,12 +36,26 @@ export interface HomePageProps {}
 
 export const HomePage = (props: HomePageProps) => {
 	const classes = useStyles({});
+	const [vantaEffect, setVantaEffect] = useState(0);
+	const myRef = useRef(null);
+	useEffect(() => {
+	    if (!vantaEffect) {
+	      setVantaEffect(VANTA.BIRDS({
+	        el: myRef.current,
+	        backgroundColor: 0x424242,
+	        backgroundAlpha: 0.00,
+	        color1: 0xf44336,
+	        color2: 0xff9800,
+  			colorMode: "lerpGradient"
+	      }))
+	    }
+  	}, [vantaEffect]);
 
 	return (
 		<div className={classes.root}>
 			<CustomAppBar />
 			<Paper>
-				<Grid container justify="center" alignItems="center" direction="column">
+				<Grid ref={myRef} container justify="center" alignItems="center" direction="column">
 					<Grid item xs>
 						<Grid className={classes.body} container justify="center" alignItems="center" spacing={5}  direction="column">
 							<Grid item xs>
