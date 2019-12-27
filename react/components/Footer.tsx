@@ -54,7 +54,7 @@ export const Footer = (props: FooterProps) => {
 								<GithubCircle />
 							</IconButton>
 						</a>
-						<a href={"mail:to" + Data.email} target="_blank">
+						<a href={"mailto:" + Data.email} target="_blank">
 							<IconButton aria-label="email">
 								<MailIcon />
 							</IconButton>
