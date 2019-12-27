@@ -5,10 +5,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
 import Slide from '@material-ui/core/Slide';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import { GithubCircle, Linkedin } from 'mdi-material-ui';
+import { Data } from '../utils/Data';
+import MailIcon from '@material-ui/icons/Mail';
+
 
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -70,19 +73,24 @@ export const CustomAppBar = (props: CustomAppBarProps) => {
 				<AppBar>
 					<Toolbar>
 						<IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-							<MenuIcon />
+							<HomeIcon />
 						</IconButton>
 						<Typography variant="h6" className={classes.title}>
 							jerico.xyz
 						</Typography>
-						<a href="https://www.linkedin.com/in/jcalcaras/" target="_blank">
+						<a href={Data.linkedinURL} target="_blank">
 							<IconButton aria-label="linkedin">
 								<Linkedin />
 							</IconButton>
 						</a>
-						<a href="https://github.com/alcarasj" target="_blank">
+						<a href={Data.githubURL} target="_blank">
 							<IconButton aria-label="github">
 								<GithubCircle />
+							</IconButton>
+						</a>
+						<a href={"mail:to" + Data.email} target="_blank">
+							<IconButton aria-label="email">
+								<MailIcon />
 							</IconButton>
 						</a>
 					</Toolbar>

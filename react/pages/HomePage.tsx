@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Grow from '@material-ui/core/Grow';
+import { Data } from "../utils/Data";
 import {
 	Link
 } from "react-router-dom";
@@ -49,10 +50,10 @@ export const HomePage = (props: HomePageProps) => {
 							</Grid>
 							<Grid item xs>
 								<Grow in timeout={1000}>
-									<Typography align="center" variant="h3" component="h3">Hi! My name is Jerico.</Typography>
+									<Typography align="center" variant="h3" component="h1">Hi! My name is Jerico.</Typography>
 								</Grow>
 								<Grow in timeout={1200}>
-									<Typography align="center" variant="subtitle1">This is my personal website - it's currently under construction. Maybe check back again soon? :)</Typography>
+									<Typography align="center" variant="subtitle1" gutterBottom>SOFTWARE ENGINEER • GRAPHIC DESIGNER • MUSICIAN</Typography>
 								</Grow>
 							</Grid>
 						</Grid>
