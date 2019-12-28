@@ -69,25 +69,27 @@ export const HomePage = (props: HomePageProps) => {
 		for (var i = 0; i < Settings.HOME_CARDS.length; i++) {
 			const data = Settings.HOME_CARDS[i];
 			cards.push(
-				<Grid item xs={12} className={classes.cardContainer}>
-						<Card className={classes.card}>
-							<CardActionArea>
-								<CardContent>
-								  <Typography gutterBottom variant="h5" component="h2">
-								  { data.title }
-								  </Typography>
-								  <Typography variant="body2" color="textSecondary" component="p">
-								  { data.description }
-								  </Typography>
-								</CardContent>
-								<CardActions>
-									<Button size="small" color="primary">
-									Coming soon™
-									</Button>
-								</CardActions>
-							</CardActionArea>
-						</Card>
-				</Grid>
+				<Grow in timeout={1200 + (i * 250)}>
+					<Grid item xs={12} className={classes.cardContainer}>
+							<Card className={classes.card}>
+								<CardActionArea>
+									<CardContent>
+									  <Typography gutterBottom variant="h5" component="h2">
+									  { data.title }
+									  </Typography>
+									  <Typography variant="body2" color="textSecondary" component="p">
+									  { data.description }
+									  </Typography>
+									</CardContent>
+									<CardActions>
+										<Button size="small" color="primary">
+										Coming soon™
+										</Button>
+									</CardActions>
+								</CardActionArea>
+							</Card>
+					</Grid>
+				</Grow>
 			);
 		}
 		return (
@@ -118,7 +120,9 @@ export const HomePage = (props: HomePageProps) => {
 						{ renderHomeCards() }
 					</Grid>
 					<Grid item xs>
-						<iframe className={classes.embedPlayer} width="100%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/545610837&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+						<Grow in timeout={1500}>
+							<iframe className={classes.embedPlayer} width="100%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/545610837&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+						</Grow>
 					</Grid>
 				</Grid>
 			</Grid>
