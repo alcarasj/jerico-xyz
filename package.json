@@ -1,6 +1,6 @@
 {
   "name": "jerico-xyz",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "My personal website.",
   "main": "index.js",
   "scripts": {

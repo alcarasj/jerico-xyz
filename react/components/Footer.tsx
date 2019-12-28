@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { GithubCircle, Linkedin } from 'mdi-material-ui';
 import IconButton from '@material-ui/core/IconButton';
-import { Data } from "../utils/Data";
+import { Settings } from "../utils/Settings";
 import MailIcon from '@material-ui/icons/Mail';
 const packageJSON = require('../../package.json');
 
@@ -44,17 +44,17 @@ export const Footer = (props: FooterProps) => {
 				</Grid>
 				<Grid item xs>
 					<Grid container alignItems="center" justify="center">
-						<a href={Data.linkedinURL} target="_blank">
+						<a href={Settings.LINKEDIN_URL} target="_blank">
 							<IconButton aria-label="linkedin">
 								<Linkedin />
 							</IconButton>
 						</a>
-						<a href={Data.githubURL} target="_blank">
+						<a href={Settings.GITHUB_URL} target="_blank">
 							<IconButton aria-label="github">
 								<GithubCircle />
 							</IconButton>
 						</a>
-						<a href={"mailto:" + Data.email} target="_blank">
+						<a href={"mailto:" + Settings.EMAIL} target="_blank">
 							<IconButton aria-label="email">
 								<MailIcon />
 							</IconButton>
