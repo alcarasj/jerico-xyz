@@ -1,2 +1,2 @@
 # jerico-xyz
-My personal website.
+My personal website. https://jerico.xyz
