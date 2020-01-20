@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- name: jerico-xyz-deployment
+ name: jerico-xyz
  labels:
   app: jerico-xyz
 spec:
