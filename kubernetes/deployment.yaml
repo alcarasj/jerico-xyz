@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: jerico-xyz-deployment
+ labels:
+  app: jerico-xyz
+spec:
+ replicas: 3
+ selector:
+  matchLabels:
+   app: jerico-xyz
+ template:
+  metadata:
+   labels:
+    app: jerico-xyz
+  spec:
+   containers:
+   - name: jerico-xyz
+     image: alcarasj/jerico-xyz:latest
+     env:
+     - name: PORT
+       value: "8080"
+     ports:
+     - containerPort: 8080
