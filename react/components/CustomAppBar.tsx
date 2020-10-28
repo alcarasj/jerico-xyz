@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export const CustomAppBar: React.FC = () => {
   const classes = useStyles();
   return (
-    <AppBar>
+    <AppBar id='appbar'>
       <Toolbar>
         <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
           <HomeIcon />
