@@ -30,3 +30,6 @@ react-dev:
 
 deploy:
 	git push heroku master
+
+lint:
+	npm run lint

@@ -1,0 +1,18 @@
+version: 2.1
+jobs:
+  build:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Check lint
+          command: make lint
+      - run:
+          name: Run tests
+          command: make react-build
+workflows:
+    main:
+      jobs:
+        - build
