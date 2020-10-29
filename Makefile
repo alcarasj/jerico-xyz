@@ -33,3 +33,4 @@ deploy:
 
 lint:
 	npm run lint
+	gofmt -l -w .

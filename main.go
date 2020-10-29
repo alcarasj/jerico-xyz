@@ -1,17 +1,15 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/gin-gonic/gin"
+	_ "github.com/heroku/x/hmetrics/onload"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"fmt"
-	"io/ioutil"
-	"encoding/json"
-	"github.com/gin-gonic/gin"
-	_ "github.com/heroku/x/hmetrics/onload"
 )
-
-
 
 func getPackageVersion() string {
 	jsonFile, error := os.Open("package.json")
@@ -21,9 +19,9 @@ func getPackageVersion() string {
 	defer jsonFile.Close()
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-    var result map[string]interface{}
-    json.Unmarshal([]byte(byteValue), &result)
-    return result["version"].(string)
+	var result map[string]interface{}
+	json.Unmarshal([]byte(byteValue), &result)
+	return result["version"].(string)
 }
 
 func main() {
