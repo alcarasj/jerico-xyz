@@ -3,8 +3,6 @@ orbs:
   node: circleci/node@4.1.0
 jobs:
   build:
-    docker:
-      - image: circleci/golang:1.15.3
     executor:
       name: node/default
     steps:
@@ -12,7 +10,7 @@ jobs:
       - node/install-packages
       - run:
           name: Check lint
-          command: make lint
+          command: npm run lint
       - run:
           name: Run tests
           command: make react-build
