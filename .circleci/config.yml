@@ -42,7 +42,7 @@ workflows:
             filters:
               branches:
                 only:
-                  - main
+                  - master
       jobs:
         - test
     deploy:
@@ -51,4 +51,4 @@ workflows:
             filters:
               branches:
                 only:
-                  - main
+                  - master
