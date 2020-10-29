@@ -45,9 +45,10 @@ workflows:
                   - main
       jobs:
         - test
-    heroku-deploy:
-      branches:
-        only:
-          - master
+    deploy:
+      filters:
+        branches:
+          only:
+            - main
       jobs:
         - heroku/deploy-via-git
