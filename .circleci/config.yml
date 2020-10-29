@@ -12,7 +12,7 @@ jobs:
           name: Check lint
           command: npm run lint
       - run:
-          name: Run tests
+          name: Generate production build
           command: make react-build
   test:
     executor:
@@ -26,6 +26,10 @@ jobs:
       - run:
           name: Run tests
           command: npm test
+      - store_artifacts:
+          path: ./cypress/screenshots/
+      - store_artifacts:
+          path: ./cypress/videos/
 workflows:
     main:
       jobs:
