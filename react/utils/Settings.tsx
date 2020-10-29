@@ -1,6 +1,6 @@
 const STATIC_DIR = "../../../static/";
 
-export const Settings = {
+const Settings = {
   LINKEDIN_URL: 'https://www.linkedin.com/in/jcalcaras',
   GITHUB_URL: 'https://github.com/alcarasj',
   EMAIL: 'jcalcaras@gmail.com',
@@ -20,3 +20,5 @@ export const Settings = {
     }
   ],
 };
+
+export default Settings;

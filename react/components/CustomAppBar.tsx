@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import { Github, Linkedin } from 'mdi-material-ui';
-import { Settings } from '../utils/Settings';
+import Settings from '../utils/Settings';
 import MailIcon from '@material-ui/icons/Mail';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,10 +23,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const CustomAppBar: React.FC = () => {
+interface CustomAppBarProps {
+  id: string;
+}
+
+const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps) => {
   const classes = useStyles();
   return (
-    <AppBar id='appbar'>
+    <AppBar id={props.id}>
       <Toolbar>
         <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
           <HomeIcon />
@@ -52,4 +56,6 @@ export const CustomAppBar: React.FC = () => {
       </Toolbar>
     </AppBar>
   );
-}
+};
+
+export default CustomAppBar;

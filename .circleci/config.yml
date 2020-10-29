@@ -14,6 +14,18 @@ jobs:
       - run:
           name: Run tests
           command: make react-build
+  test:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Check lint
+          command: npm run lint
+      - run:
+          name: Run tests
+          command: npm test
 workflows:
     main:
       jobs:
@@ -27,4 +39,4 @@ workflows:
                 only:
                   - main
       jobs:
-        - build
+        - test

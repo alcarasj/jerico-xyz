@@ -5,7 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import { Github, Linkedin } from 'mdi-material-ui';
 import IconButton from '@material-ui/core/IconButton';
-import { Settings } from "../utils/Settings";
+import Settings from "../utils/Settings";
 import MailIcon from '@material-ui/icons/Mail';
 import packageJSON = require('../../package.json');
 
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const Footer: React.FC = () => {
+const Footer: React.FC = () => {
   const classes = useStyles();
   const packageVersion = packageJSON.version;
 
@@ -74,3 +74,5 @@ export const Footer: React.FC = () => {
     </Paper>
   );
 };
+
+export default Footer;

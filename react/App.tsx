@@ -1,16 +1,16 @@
 import React from "react";
-import { HomePage } from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import red from "@material-ui/core/colors/red";
-import { Footer } from "./components/Footer";
+import Footer from "./components/Footer";
 import orange from "@material-ui/core/colors/orange";
 import Grid from "@material-ui/core/Grid";
 import Grow from '@material-ui/core/Grow';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import { Settings } from './utils/Settings';
-import { CustomAppBar } from "./components/CustomAppBar";
+import Settings from './utils/Settings';
+import CustomAppBar from "./components/CustomAppBar";
 import {
   BrowserRouter as Router,
   Switch,
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export const App: React.FC = () => {
+const App: React.FC = () => {
   const classes = useStyles();
 
   return (
@@ -73,7 +73,7 @@ export const App: React.FC = () => {
       <div className={classes.root}>
         <Paper className={classes.paper}>
           <Router>
-            <CustomAppBar />
+            <CustomAppBar id='appbar'/>
             <Switch>
               <Route path="/">
                 <HomePage />
@@ -91,3 +91,5 @@ export const App: React.FC = () => {
     </MuiThemeProvider>
   );
 };
+
+export default App;
