@@ -18,3 +18,13 @@ workflows:
     main:
       jobs:
         - build
+    hourly:
+      triggers:
+        - schedule:
+            cron: "0 * * * *"
+            filters:
+              branches:
+                only:
+                  - main
+      jobs:
+        - build
