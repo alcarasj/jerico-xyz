@@ -20,6 +20,11 @@ jobs:
       name: node/default
     steps:
       - checkout
+      - run:
+          command: sudo apt-get update -y
+      - run:
+          command: sudo apt-get install -y xvfb
+      - browser-tools/install-browser-tools
       - node/install-packages
       - run:
           name: Check lint
