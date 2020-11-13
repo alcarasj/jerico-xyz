@@ -9,13 +9,14 @@ import Grow from '@material-ui/core/Grow';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import Settings from './utils/Settings';
+import { STATIC_DIR} from './utils/Settings';
 import CustomAppBar from "./components/CustomAppBar";
 import {
   BrowserRouter as Router,
   Switch,
   Route
 } from "react-router-dom";
+import { SnackbarProvider } from 'notistack';
 
 
 const theme = createMuiTheme({
@@ -55,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBottom: theme.spacing(20),
     },
     paper: {
-      backgroundImage: "url(" + Settings.STATIC_DIR + "img/bg.jpg)"
+      backgroundImage: "url(" + STATIC_DIR + "img/bg.jpg)"
     },
     embedPlayer: {
       marginTop: theme.spacing(10),
@@ -68,26 +69,28 @@ const App: React.FC = () => {
   const classes = useStyles();
 
   return (
-    <MuiThemeProvider theme={theme}>        
-      <CssBaseline />
-      <div className={classes.root}>
-        <Paper className={classes.paper}>
-          <Router>
-            <CustomAppBar id='appbar'/>
-            <Switch>
-              <Route path="/">
-                <HomePage />
-              </Route>
-            </Switch>
-            <Grid container alignItems='center' justify='center'>
-              <Grow in timeout={1500}>
-                <iframe className={classes.embedPlayer} width="100%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/545610837&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
-              </Grow>
-            </Grid>
-            <Footer />
-          </Router>
-        </Paper>
-      </div>
+    <MuiThemeProvider theme={theme}>   
+      <SnackbarProvider maxSnack={3}>     
+        <CssBaseline />
+        <div className={classes.root}>
+          <Paper className={classes.paper}>
+            <Router>
+              <CustomAppBar id='appbar'/>
+              <Switch>
+                <Route path="/">
+                  <HomePage />
+                </Route>
+              </Switch>
+              <Grid container alignItems='center' justify='center'>
+                <Grow in timeout={1500}>
+                  <iframe className={classes.embedPlayer} width="100%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/545610837&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+                </Grow>
+              </Grid>
+              <Footer />
+            </Router>
+          </Paper>
+        </div>
+      </SnackbarProvider>
     </MuiThemeProvider>
   );
 };

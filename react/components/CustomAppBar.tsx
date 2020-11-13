@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import { Github, Linkedin } from 'mdi-material-ui';
-import Settings from '../utils/Settings';
+import { LINKEDIN_URL, GITHUB_URL, EMAIL } from '../utils/Settings';
 import MailIcon from '@material-ui/icons/Mail';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -38,17 +38,17 @@ const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps) => 
         <Typography variant="h6" className={classes.title}>
 							jerico.xyz
         </Typography>
-        <a href={Settings.LINKEDIN_URL} target="_blank" rel="noreferrer">
+        <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
           <IconButton aria-label="linkedin">
             <Linkedin />
           </IconButton>
         </a>
-        <a href={Settings.GITHUB_URL} target="_blank" rel="noreferrer">
+        <a href={GITHUB_URL} target="_blank" rel="noreferrer">
           <IconButton aria-label="github">
             <Github />
           </IconButton>
         </a>
-        <a href={"mailto:" + Settings.EMAIL} target="_blank" rel="noreferrer">
+        <a href={"mailto:" + EMAIL} target="_blank" rel="noreferrer">
           <IconButton aria-label="email">
             <MailIcon />
           </IconButton>
