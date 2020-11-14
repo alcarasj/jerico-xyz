@@ -23,14 +23,15 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-let clientAddress = '';
-sendAPIRequest('/client').then(data => { clientAddress = data.address }).catch(error => { clientAddress = '' });
+let clientData = null;
+sendAPIRequest('/client').then(data => { clientData = data }).catch(() => { clientData = null });
 
 const MESSAGES: TypingTextMessage[] = [
   { getText: () => "jerico.xyz", color: 'primary' },
   { getText: () => "Welcome to my website!", color: 'inherit' },
   { getText: () => `The current detected time is ${new Date().toLocaleString()}.`, color: 'inherit' },
-  { getText: () => clientAddress ? `Your detected IP address is ${clientAddress}.` : 'Failed to detect your IP address.', color: 'inherit' }
+  { getText: () => clientData.address ? `Your detected IP address is ${clientData.address}.` : 'Failed to detect your IP address.', color: 'inherit' },
+  { getText: () => clientData.location ? `Your detected location is ${clientData.location}.` : 'Failed to detect your location.', color: 'inherit' },
 ];
 
 interface CustomAppBarProps {

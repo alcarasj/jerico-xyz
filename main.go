@@ -52,7 +52,27 @@ func main() {
 	})
 
 	router.GET("/client", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"address": c.ClientIP()})
+		address := c.ClientIP()
+
+		res, err := http.Get(fmt.Sprintf("https://ipapi.co/%s/json/", address))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var clientData map[string]string
+		var location string
+		json.NewDecoder(res.Body).Decode(&clientData)
+
+		if clientData["city"] != "" && clientData["region"] != "" && clientData["country_name"] != "" {
+			location = fmt.Sprintf("%s, %s, %s", clientData["city"], clientData["region"], clientData["country_name"])
+		} else {
+			location = ""
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"address":  address,
+			"location": location,
+		})
 	})
 
 	router.GET("/api/art", func(c *gin.Context) {
