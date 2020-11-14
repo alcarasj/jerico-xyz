@@ -3,18 +3,13 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import { Github, Linkedin } from 'mdi-material-ui';
-import IconButton from '@material-ui/core/IconButton';
-import { GITHUB_URL, LINKEDIN_URL, EMAIL } from "../utils/Settings";
-import MailIcon from '@material-ui/icons/Mail';
 import packageJSON = require('../../package.json');
-
+import SocialBar from './SocialBar';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-      backgroundColor: theme.palette.primary.main,
       width: "100vw",
       bottom: 0,
       padding: theme.spacing(10)
@@ -40,24 +35,8 @@ const Footer: React.FC = () => {
 						DISCLAIMER: Use this site at your own risk!
           </Typography>
         </Grid>
-        <Grid item xs>
-          <Grid container alignItems="center" justify="center">
-            <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-              <IconButton aria-label="linkedin">
-                <Linkedin />
-              </IconButton>
-            </a>
-            <a href={GITHUB_URL} target="_blank" rel="noreferrer">
-              <IconButton aria-label="github">
-                <Github />
-              </IconButton>
-            </a>
-            <a href={"mailto:" + EMAIL} target="_blank" rel="noreferrer">
-              <IconButton aria-label="email">
-                <MailIcon />
-              </IconButton>
-            </a>
-          </Grid>
+        <Grid container alignItems="center" justify="center">
+          <SocialBar />
         </Grid>
         <Grid item xs>
           <Typography align="right" variant="body1" gutterBottom>

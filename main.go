@@ -8,15 +8,14 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 )
 
 type Exhibit struct {
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	DateCreated time.Time `json:"dateCreated"`
-	Collection  string    `json:"collection"`
-	ImageURL    string    `json:"imageURL"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	DateCreated string `json:"dateCreated"`
+	Collection  string `json:"collection"`
+	ImageURL    string `json:"imageURL"`
 }
 
 func getPackageVersion() string {
@@ -57,14 +56,14 @@ func main() {
 			Exhibit{
 				Name:        "Velocity",
 				Description: "test",
-				DateCreated: time.Date(2020, 11, 13, 0, 0, 0, 0, time.UTC),
+				DateCreated: "November 2020",
 				Collection:  "Geometric",
 				ImageURL:    fmt.Sprintf("%s/Velocity50pc.png", bucketHost),
 			},
 			Exhibit{
 				Name:        "Unity",
 				Description: "test",
-				DateCreated: time.Date(2020, 11, 13, 0, 0, 0, 0, time.UTC),
+				DateCreated: "November 2020",
 				Collection:  "Geometric",
 				ImageURL:    fmt.Sprintf("%s/Unity50pc.png", bucketHost),
 			},

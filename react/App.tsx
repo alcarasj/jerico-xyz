@@ -58,8 +58,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     paper: {
       backgroundImage: "url(" + STATIC_DIR + "img/bg.jpg)",
-      paddingLeft: theme.spacing(5),
-      paddingRight: theme.spacing(5)
+      paddingLeft: "5vw",
+      paddingRight: "5vw"
     },
     embedPlayer: {
       marginTop: theme.spacing(10),
@@ -97,9 +97,9 @@ const App: React.FC<AppProps> = ({ enqueueSnackbar }: AppProps) => {
                 <iframe className={classes.embedPlayer} width="100%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/545610837&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
               </Grow>
             </Grid>
-            <Footer />
           </Router>
         </Paper>
+        <Footer />
       </div>
     </MuiThemeProvider>
   );

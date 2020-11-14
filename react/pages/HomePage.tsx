@@ -19,8 +19,8 @@ import { atLimit } from '../utils/Helpers';
 import {
   getExhibits,
   setCounter,
-  setImage,
-  verifyImage
+  // setImage,
+  // verifyImage
 } from '../utils/ActionCreators';
 import { AppState, AppAction } from '../utils/Types';
 
@@ -109,17 +109,17 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
 
   const renderExhibits = () => (
     <Grow in timeout={750}>
-      <React.Fragment>
-        <GridList cellHeight='auto'>
+      <Grid item xs>
+        <GridList cellHeight={300}>
           {
             state.exhibits.map(exhibit => (
               <GridListTile key={exhibit.name}>
                 <img src={exhibit.imageURL} alt={exhibit.name} />
                 <GridListTileBar
                   title={exhibit.name}
-                  subtitle={<span>{exhibit.collection + " Collection"}</span>}
+                  subtitle={<span>{`${exhibit.dateCreated}, ${exhibit.collection} Collection`}</span>}
                   actionIcon={
-                    <IconButton>
+                    <IconButton onClick={() => enqueueSnackbar('Coming soon!', { variant: 'info' })}>
                       <InfoIcon />
                     </IconButton>
                   }
@@ -128,11 +128,14 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
             ))
           }
         </GridList>
-        { renderImageVerifier() }
-      </React.Fragment>
+        { 
+          //renderImageVerifier() 
+        }
+      </Grid>
     </Grow>
   );
 
+  /**
   const renderImageVerifier = () => (
     <Grid item xs>
       <Card className={classes.card}>
@@ -165,6 +168,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
       </Card>
     </Grid>
   );
+  **/
 
   return (
     <Grid className={classes.body} container justify="center" alignItems="center" direction="column" spacing={3}>
