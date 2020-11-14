@@ -51,6 +51,10 @@ func main() {
 		})
 	})
 
+	router.GET("/client", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"address": c.ClientIP()})
+	})
+
 	router.GET("/api/art", func(c *gin.Context) {
 		exhibits := []Exhibit{
 			Exhibit{

@@ -7,6 +7,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import SocialBar from './SocialBar';
 import TypingText from './TypingText';
 import { TypingTextMessage } from '../utils/Types';
+import { sendAPIRequest } from '../utils/Helpers';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,10 +23,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+let clientAddress = '';
+sendAPIRequest('/client').then(data => { clientAddress = data.address }).catch(error => { clientAddress = '' });
+
 const MESSAGES: TypingTextMessage[] = [
   { getText: () => "jerico.xyz", color: 'primary' },
   { getText: () => "Welcome to my website!", color: 'inherit' },
-  { getText: () => `The current date and time is ${new Date().toLocaleString()}.`, color: 'inherit' }
+  { getText: () => `The current detected time is ${new Date().toLocaleString()}.`, color: 'inherit' },
+  { getText: () => clientAddress ? `Your detected IP address is ${clientAddress}.` : 'Failed to detect your IP address.', color: 'inherit' }
 ];
 
 interface CustomAppBarProps {
