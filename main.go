@@ -8,13 +8,15 @@ import (
 	"log"
 	"net/http"
 	"os"
-	// "time"
+	"time"
 )
 
 type Exhibit struct {
-	Name   string   `json:"name"`
-	Description   string   `json:"description"`
-    
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	DateCreated time.Time `json:"dateCreated"`
+	Collection  string    `json:"collection"`
+	ImageURL    string    `json:"imageURL"`
 }
 
 func getPackageVersion() string {
@@ -30,14 +32,9 @@ func getPackageVersion() string {
 	return result["version"].(string)
 }
 
-func getExhibits() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.String(http.StatusOK, "Test")
-	}
-}
-
 func main() {
 	port := os.Getenv("PORT")
+	bucketHost := os.Getenv("BUCKET_HOST")
 
 	if port == "" {
 		log.Fatal("$PORT must be set")
@@ -55,7 +52,25 @@ func main() {
 		})
 	})
 
-	router.GET("/api/art", getExhibits())
+	router.GET("/api/art", func(c *gin.Context) {
+		exhibits := []Exhibit{
+			Exhibit{
+				Name:        "Velocity",
+				Description: "test",
+				DateCreated: time.Date(2020, 11, 13, 0, 0, 0, 0, time.UTC),
+				Collection:  "Geometric",
+				ImageURL:    fmt.Sprintf("%s/Velocity50pc.png", bucketHost),
+			},
+			Exhibit{
+				Name:        "Unity",
+				Description: "test",
+				DateCreated: time.Date(2020, 11, 13, 0, 0, 0, 0, time.UTC),
+				Collection:  "Geometric",
+				ImageURL:    fmt.Sprintf("%s/Unity50pc.png", bucketHost),
+			},
+		}
+		c.JSON(http.StatusOK, gin.H{"exhibits": exhibits})
+	})
 
 	router.Run(":" + port)
 }

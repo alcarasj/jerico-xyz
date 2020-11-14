@@ -11,7 +11,8 @@ export interface Exhibit {
   name: string;
   description: string;
   dateCreated: string;
-  collection: string
+  collection: string;
+  imageURL: string;
 }
 
 export interface AppState {

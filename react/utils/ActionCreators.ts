@@ -27,7 +27,7 @@ const getExhibitsSuccess = (exhibits: Exhibit[]): GetExhibitsSuccessAction => ({
 export const getExhibits = (dispatch: (action: GetExhibitsAction) => void): void => {
   dispatch(getExhibitsStart());
   sendAPIRequest('/api/art')
-    .then((exhibits: Exhibit[]) => dispatch(getExhibitsSuccess(exhibits)))
+    .then(data => dispatch(getExhibitsSuccess(data.exhibits)))
     .catch(error => dispatch(getExhibitsFailure(error)));
 };
 
@@ -37,8 +37,8 @@ const verifyImageSuccess = (): VerifyImageSuccessAction => ({ type: VERIFY_IMAGE
 export const verifyImage = (dispatch: (action: VerifyImageAction) => void): void => {
   dispatch(verifyImageStart());
   sendAPIRequest('/api/art')
-    .then(() => verifyImageSuccess())
-    .catch(error => verifyImageFailure(error))
+    .then(() => dispatch(verifyImageSuccess()))
+    .catch(error => dispatch(verifyImageFailure(error)))
 };
 
 export const setCounter = (newValue: number): SetCounterAction => ({ type: SET_COUNTER, payload: newValue });

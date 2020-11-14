@@ -9,16 +9,20 @@ import Grow from '@material-ui/core/Grow';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardContent from '@material-ui/core/CardContent';
-import { HOME_CARDS, STATIC_DIR, INITIAL_APP_STATE } from "../utils/Settings";
+import GridList from '@material-ui/core/GridList';
+import IconButton from '@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
+import GridListTile from '@material-ui/core/GridListTile';
+import GridListTileBar from '@material-ui/core/GridListTileBar';
+import { HOME_CARDS, STATIC_DIR } from "../utils/Settings";
 import { atLimit } from '../utils/Helpers';
-import { withSnackbar } from 'notistack';
-import AppReducer from '../utils/Reducer';
 import {
   getExhibits,
   setCounter,
   setImage,
   verifyImage
 } from '../utils/ActionCreators';
+import { AppState, AppAction } from '../utils/Types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,17 +50,20 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface HomePageProps {
+  state: AppState;
+  dispatch: (action: AppAction) => void;
   enqueueSnackbar: (message: string, options?: unknown) => string | number;
 }
 
 const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
-  const { enqueueSnackbar } = props;
+  const { enqueueSnackbar, state, dispatch } = props;
   const classes = useStyles();
-  const [state, dispatch] = React.useReducer(AppReducer, INITIAL_APP_STATE);
 
   React.useEffect(() => {
-    getExhibits(dispatch);
-  }, []);
+    if (atLimit(state.counter)) {
+      getExhibits(dispatch);
+    }
+  }, [state.counter]);
 
   const renderCards = () => (
     <Grid item xs>
@@ -83,7 +90,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
                       onClick={() => {
                         const newValue = state.counter + 1;
                         if (atLimit(newValue)) {
-                          enqueueSnackbar('You have unlocked the image verifier!', { variant: 'success' });
+                          enqueueSnackbar('You have unlocked my art exhibits!', { variant: 'success' });
                         }
                         dispatch(setCounter(newValue));
                       }}
@@ -100,6 +107,32 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
     </Grid>
   );
 
+  const renderExhibits = () => (
+    <Grow in timeout={750}>
+      <React.Fragment>
+        <GridList cellHeight='auto'>
+          {
+            state.exhibits.map(exhibit => (
+              <GridListTile key={exhibit.name}>
+                <img src={exhibit.imageURL} alt={exhibit.name} />
+                <GridListTileBar
+                  title={exhibit.name}
+                  subtitle={<span>{exhibit.collection + " Collection"}</span>}
+                  actionIcon={
+                    <IconButton>
+                      <InfoIcon />
+                    </IconButton>
+                  }
+                />
+              </GridListTile>
+            ))
+          }
+        </GridList>
+        { renderImageVerifier() }
+      </React.Fragment>
+    </Grow>
+  );
+
   const renderImageVerifier = () => (
     <Grid item xs>
       <Card className={classes.card}>
@@ -109,7 +142,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
               Image Verifier
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              This feature verifies the checksum of any art file made by me.
+              This feature verifies the checksum of any full-resolution art file made by me.
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -126,7 +159,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
             onClick={() => verifyImage(dispatch)}
             disabled={!state.imageFileURL}
           >
-            {  !state.imageFileURL ? "Please provide a file" : "Check authenticity" }
+            { !state.imageFileURL ? "Please provide a file" : "Check authenticity" }
           </Button>
         </CardActions>
       </Card>
@@ -153,8 +186,8 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
           </Typography>
         </Grow>
       </Grid>
-      { atLimit(state.counter) ? renderImageVerifier() : renderCards() }
+      { atLimit(state.counter) ? renderExhibits() : renderCards() }
     </Grid>
   );
 };
-export default  withSnackbar(HomePage);
+export default  HomePage;

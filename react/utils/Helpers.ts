@@ -3,7 +3,8 @@ import axios from 'axios';
 
 export const atLimit = (x: number): boolean => x >= LIMIT;
 
-export const sendAPIRequest = async (path: string): Promise<unknown> => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const sendAPIRequest = async (path: string): Promise<any> => {
   const response = await axios.get(path);
   if (response.data) {
     return response.data;
