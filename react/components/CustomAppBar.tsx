@@ -6,7 +6,6 @@ import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import SocialBar from './SocialBar';
 import TypingText from './TypingText';
-import { TypingTextMessage } from '../utils/Types';
 import { sendAPIRequest } from '../utils/Helpers';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -23,30 +22,47 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-let clientData = null;
-sendAPIRequest('/client').then(data => { clientData = data }).catch(() => { clientData = null });
-
-const MESSAGES: TypingTextMessage[] = [
-  { getText: () => "jerico.xyz", color: 'primary' },
-  { getText: () => "Welcome to my website!", color: 'inherit' },
-  { getText: () => `The current detected time is ${new Date().toLocaleString()}.`, color: 'inherit' },
-  { getText: () => clientData.address ? `Your detected IP address is ${clientData.address}.` : 'Failed to detect your IP address.', color: 'inherit' },
-  { getText: () => clientData.location ? `Your detected location is ${clientData.location}.` : 'Failed to detect your location.', color: 'inherit' },
-];
+interface ClientData {
+  address: string;
+  location: string;
+}
 
 interface CustomAppBarProps {
   id: string;
 }
 
-const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps) => {
+const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps): JSX.Element => {
   const classes = useStyles();
+  const [clientData, setClientData] = React.useState<ClientData>({ address: '', location: '' });
+
+  React.useEffect(() => {
+    sendAPIRequest('/client').then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
+  }, []);
+
   return (
     <AppBar id={props.id} color='inherit'>
       <Toolbar>
-        <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-          <HomeIcon />
-        </IconButton>
-        <TypingText variant="h6" messages={...MESSAGES} className={classes.title}/>
+        <a href="/">
+          <IconButton 
+            edge="start" 
+            className={classes.menuButton} 
+            color="primary" 
+            aria-label="menu"
+          >
+            <HomeIcon />
+          </IconButton>
+        </a>
+        <TypingText 
+          variant="h6" 
+          messages={[
+            { getText: () => "jerico.xyz", color: 'primary' },
+            { getText: () => "Welcome to my website!" },
+            { getText: () => `The local time is ${new Date().toLocaleString()}.` },
+            ... clientData.address ? [{ getText: () => `Your detected IP address is ${clientData.address}.` }] : [],
+            ... clientData.location ? [{ getText: () => `Your detected location is ${clientData.location}.`}] : [],
+          ]} 
+          className={classes.title}
+        />
         <SocialBar />
       </Toolbar>
     </AppBar>

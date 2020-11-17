@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const Footer: React.FC = () => {
+const Footer: React.FC = (): JSX.Element => {
   const classes = useStyles();
   const packageVersion = packageJSON.version;
 

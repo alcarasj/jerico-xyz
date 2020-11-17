@@ -64,8 +64,3 @@ export type AppAction = VerifyImageStartAction | VerifyImageFailureAction | Veri
   SetImageAction;
 
 export type MuiColor = "inherit" | "initial" | "primary" | "secondary" | "textPrimary" | "textSecondary" | "error";
-
-export interface TypingTextMessage {
-  getText: () => string;
-  color: MuiColor;
-}

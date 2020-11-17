@@ -25,7 +25,7 @@ const reducer = (state, action: ActionType) => {
 
 export interface ComponentProps {}
 
-export const Component: React.FC = (props: ComponentProps) => {
+export const Component: React.FC = (props: ComponentProps): JSX.Element => {
   const classes = useStyles();
 
   const [state, dispatch] = React.useReducer(reducer, {

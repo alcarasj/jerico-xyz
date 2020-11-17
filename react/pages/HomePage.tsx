@@ -23,6 +23,7 @@ import {
   // verifyImage
 } from '../utils/ActionCreators';
 import { AppState, AppAction } from '../utils/Types';
+import TypingText from '../components/TypingText';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,7 +56,7 @@ interface HomePageProps {
   enqueueSnackbar: (message: string, options?: unknown) => string | number;
 }
 
-const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
+const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
   const { enqueueSnackbar, state, dispatch } = props;
   const classes = useStyles();
 
@@ -179,15 +180,27 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps) => {
       </Grid>
       <Grid item xs>
         <Grow in timeout={1000}>
-          <Typography align="center" variant="h3" component="h1">Hi! My name is Jerico.</Typography>
+          <TypingText 
+            align="center"
+            variant="h3"
+            component="h1"
+            messages={[{ getText: () => 'Hi! My name is Jerico.' }]}
+          />
         </Grow>
         <Grow in timeout={1200}>
-          <Typography align="center" variant="subtitle1" gutterBottom>
-            {
-              atLimit(state.counter) ? "Thanks for supporting a good cause!" :
-                "Thanks for visiting! Select an area of interest below to learn more about me."
-            }
-          </Typography>
+          <TypingText 
+            align="center"
+            variant="subtitle1"
+            component="h1"
+            gutterBottom
+            messages={[
+              { 
+                getText: () => atLimit(state.counter) ? 
+                  "Thanks for supporting my art!" :
+                  "Thanks for visiting! Select an area of interest below to learn more about me."
+              }
+            ]}
+          />
         </Grow>
       </Grid>
       { atLimit(state.counter) ? renderExhibits() : renderCards() }

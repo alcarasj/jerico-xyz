@@ -4,20 +4,20 @@ import IconButton from '@material-ui/core/IconButton';
 import { GITHUB_URL, LINKEDIN_URL, EMAIL } from "../utils/Settings";
 import MailIcon from '@material-ui/icons/Mail';
 
-const SocialBar: React.FC = () => (
+const SocialBar: React.FC = (): JSX.Element => (
   <React.Fragment>
     <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
-      <IconButton aria-label="linkedin">
+      <IconButton aria-label="linkedin" color="primary">
         <Linkedin />
       </IconButton>
     </a>
     <a href={GITHUB_URL} target="_blank" rel="noreferrer">
-      <IconButton aria-label="github">
+      <IconButton aria-label="github" color="primary">
         <Github />
       </IconButton>
     </a>
     <a href={"mailto:" + EMAIL} target="_blank" rel="noreferrer">
-      <IconButton aria-label="email">
+      <IconButton aria-label="email" color="primary">
         <MailIcon />
       </IconButton>
     </a>

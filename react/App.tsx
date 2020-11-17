@@ -72,7 +72,7 @@ interface AppProps {
   enqueueSnackbar: (message: string, options?: unknown) => string | number;
 }
 
-const App: React.FC<AppProps> = ({ enqueueSnackbar }: AppProps) => {
+const App: React.FC<AppProps> = ({ enqueueSnackbar }: AppProps): JSX.Element => {
   const classes = useStyles();
   const [state, dispatch] = React.useReducer(AppReducer, INITIAL_APP_STATE);
 

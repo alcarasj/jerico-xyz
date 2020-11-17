@@ -8,5 +8,5 @@ ReactDOM.render(
     <App />
   </SnackbarProvider>
   ,
-  document.getElementById("root")
+  document.getElementById("app")
 );
