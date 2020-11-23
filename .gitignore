@@ -17,3 +17,5 @@
 /node_modules
 bin/jerico-xyz
 .xyzrc
+cypress/videos
+cypress/screenshots
