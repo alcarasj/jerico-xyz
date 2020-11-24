@@ -54,7 +54,9 @@ workflows:
     deploy:
       jobs:
         - heroku/deploy-via-git:
-            pre-steps:
+            pre-steps: 
+              - checkout
+              - node/install-packages
               - run:
                   name: Generate production bundle
                   command: make react-build
