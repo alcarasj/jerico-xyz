@@ -63,10 +63,10 @@ workflows:
         - build
         - upload-bundle
             requires:
-              build
+              - build
         - heroku/deploy-via-git:
             requires:
-              upload-bundle
+              - upload-bundle
             filters:
               branches:
                 only:
