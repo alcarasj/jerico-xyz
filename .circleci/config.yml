@@ -37,10 +37,18 @@ jobs:
           path: ./cypress/screenshots/
       - store_artifacts:
           path: ./cypress/videos/
-  upload-bundle:
+  build-and-upload-bundle:
     executor:
       name: node/default
     steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Check lint
+          command: npm run lint
+      - run:
+          name: Generate production build
+          command: make react-build
       - run: 
           name: Upload to IBM COS bucket
           command: node upload-cos.js 
@@ -60,13 +68,10 @@ workflows:
         - test
     deploy:
       jobs:
-        - build
-        - upload-bundle:
-            requires:
-              - build
+        - build-and-upload-bundle
         - heroku/deploy-via-git:
             requires:
-              - upload-bundle
+              - build-and-upload-bundle
             filters:
               branches:
                 only:
