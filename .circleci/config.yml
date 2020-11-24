@@ -54,6 +54,13 @@ workflows:
     deploy:
       jobs:
         - heroku/deploy-via-git:
+            pre-steps:
+              - run:
+                  name: Generate production bundle
+                  command: make react-build
+              - run: 
+                  name: Upload to IBM COS bucket
+                  command: node upload-cos.js 
             filters:
               branches:
                 only:

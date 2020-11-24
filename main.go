@@ -10,6 +10,8 @@ import (
 	"os"
 )
 
+const PRODUCTION = "PRODUCTION"
+
 type Exhibit struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
@@ -32,22 +34,35 @@ func getPackageVersion() string {
 }
 
 func main() {
-	port := os.Getenv("PORT")
-	bucketHost := os.Getenv("BUCKET_HOST")
+	MODE := os.Getenv("MODE")
+	PORT := os.Getenv("PORT")
+	S3_HOST := os.Getenv("S3_HOST")
+	BUCKET_NAME := os.Getenv("BUCKET_NAME")
 
-	if port == "" {
-		log.Fatal("$PORT must be set")
+	if PORT == "" || S3_HOST == "" || BUCKET_NAME == "" {
+		log.Fatal("PORT, BUCKET_NAME and S3_HOST must be set!")
+	}
+	if MODE == PRODUCTION {
+		log.Println("Production mode is enabled.")
+		gin.SetMode(gin.ReleaseMode)
 	}
 
+	BUCKET_URL := fmt.Sprintf("%s/%s", S3_HOST, BUCKET_NAME)
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.LoadHTMLGlob("templates/*.tmpl.html")
 	router.Static("/static", "static")
 
 	router.GET("/", func(c *gin.Context) {
+		var bundleURL string
 		packageVersion := getPackageVersion()
+		if MODE == PRODUCTION {
+			bundleURL = fmt.Sprintf("%s/bundle/main-%s.js", BUCKET_URL, packageVersion)
+		} else {
+			bundleURL = fmt.Sprintf("./static/bundle/bundle-%s/main.js", packageVersion)
+		}
 		c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
-			"packageVersion": packageVersion,
+			"bundleURL": bundleURL,
 		})
 	})
 
@@ -82,18 +97,18 @@ func main() {
 				Description: "test",
 				DateCreated: "November 2020",
 				Collection:  "Geometric",
-				ImageURL:    fmt.Sprintf("%s/Velocity50pc.png", bucketHost),
+				ImageURL:    fmt.Sprintf("%s/Velocity50pc.png", BUCKET_URL),
 			},
 			Exhibit{
 				Name:        "Unity",
 				Description: "test",
 				DateCreated: "November 2020",
 				Collection:  "Geometric",
-				ImageURL:    fmt.Sprintf("%s/Unity50pc.png", bucketHost),
+				ImageURL:    fmt.Sprintf("%s/Unity50pc.png", BUCKET_URL),
 			},
 		}
 		c.JSON(http.StatusOK, gin.H{"exhibits": exhibits})
 	})
 
-	router.Run(":" + port)
+	router.Run(":" + PORT)
 }
