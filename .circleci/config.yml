@@ -68,7 +68,11 @@ workflows:
         - test
     deploy:
       jobs:
-        - build-and-upload-bundle
+        - build-and-upload-bundle:
+            filters:
+              branches:
+                only:
+                  - master
         - heroku/deploy-via-git:
             requires:
               - build-and-upload-bundle
