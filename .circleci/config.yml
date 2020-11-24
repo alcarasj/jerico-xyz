@@ -61,7 +61,7 @@ workflows:
     deploy:
       jobs:
         - build
-        - upload-bundle
+        - upload-bundle:
             requires:
               - build
         - heroku/deploy-via-git:
