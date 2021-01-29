@@ -8,7 +8,8 @@
     "build": "webpack --mode production ./client/index.tsx --output-path ./static/bundle/bundle-$npm_package_version --config ./configs/webpack.config.prod.js",
     "lint": "eslint . --fix",
     "test": "cypress run",
-    "test:dev": "cypress open"
+    "test:dev": "cypress open",
+    "deploy:client": "node ./scripts/deploy-client.js"
   },
   "repository": {
     "type": "git",

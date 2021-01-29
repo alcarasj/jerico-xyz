@@ -51,7 +51,7 @@ jobs:
           command: make react-build
       - run: 
           name: Upload to IBM COS bucket
-          command: node upload-cos.js 
+          command: npm run deploy:client
 workflows:
     main:
       jobs:
