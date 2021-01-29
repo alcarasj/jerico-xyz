@@ -6,7 +6,7 @@ go:
 	PORT=8000 go run ./api/main.go
 
 go-build:
-	go build -o bin/jerico-xyz -v ./api
+	go build -o bin -v ./api
 
 react-build:
 	rm -rf ./static/bundle

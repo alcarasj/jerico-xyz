@@ -1,1 +1,1 @@
-web: bin/jerico-xyz
+web: bin/api
