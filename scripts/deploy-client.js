@@ -3,7 +3,7 @@
 /* Script used in CircleCI for uploading production bundle. */
 const ibmCos = require('ibm-cos-sdk'),
   fs = require('fs'),
-  packageJSON = require('./package.json');
+  packageJSON = require('../package.json');
 
 const IAM_ENDPOINT = 'https://iam.cloud.ibm.com/identity/token',
   VERSION = packageJSON.version,
