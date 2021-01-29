@@ -14,8 +14,8 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-/node_modules
-bin/jerico-xyz
+node_modules
+bin
 .xyzrc
 cypress/videos
 cypress/screenshots
