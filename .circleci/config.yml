@@ -56,10 +56,10 @@ workflows:
     main:
       jobs:
         - build
-    hourly:
+    daily:
       triggers:
         - schedule:
-            cron: "0 * * * *"
+            cron: "0 0 * * *"
             filters:
               branches:
                 only:
