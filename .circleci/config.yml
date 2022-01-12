@@ -80,8 +80,7 @@ workflows:
               branches:
                 only:
                   - master
-            force: 
-              - true
+            force: true
         - test:
             requires:
               - heroku/deploy-via-git
