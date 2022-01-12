@@ -1,8 +1,8 @@
 version: 2.1
 orbs:
-  browser-tools: circleci/browser-tools@1.1.0
-  node: circleci/node@4.1.0
-  heroku: circleci/heroku@1.2.3
+  browser-tools: circleci/browser-tools@1.2.3
+  node: circleci/node@5.0.0
+  heroku: circleci/heroku@1.2.6
 jobs:
   build:
     executor:
@@ -66,7 +66,7 @@ workflows:
                   - master
       jobs:
         - test
-    deploy:
+    deploy-and-test:
       jobs:
         - build-and-upload-bundle:
             filters:
@@ -76,6 +76,15 @@ workflows:
         - heroku/deploy-via-git:
             requires:
               - build-and-upload-bundle
+            filters:
+              branches:
+                only:
+                  - master
+            parameters:
+              force: true
+        - test:
+            requires:
+              - heroku/deploy-via-git
             filters:
               branches:
                 only:
