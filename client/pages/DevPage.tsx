@@ -1,6 +1,8 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import Grid from '@mui/material/Grid';
 import { AppState, AppAction } from '../utils/Types';
 import TypingText from '../components/TypingText';
 
@@ -19,7 +21,7 @@ const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
   const classes = useStyles();
 
   return (
-    <Grid container justify="center" alignItems="center" direction="column" spacing={3}>
+    <Grid container justifyContent="center" alignItems="center" direction="column" spacing={3}>
       <Grid item xs>
         <TypingText 
           align="center"

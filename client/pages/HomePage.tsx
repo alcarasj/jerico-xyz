@@ -1,19 +1,21 @@
 import React from "react";
-import Avatar from '@material-ui/core/Avatar';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import CardActions from '@material-ui/core/CardActions';
-import Grid from '@material-ui/core/Grid';
-import Grow from '@material-ui/core/Grow';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import GridList from '@material-ui/core/GridList';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
-import GridListTile from '@material-ui/core/GridListTile';
-import GridListTileBar from '@material-ui/core/GridListTileBar';
+import Avatar from '@mui/material/Avatar';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import CardActions from '@mui/material/CardActions';
+import Grid from '@mui/material/Grid';
+import Grow from '@mui/material/Grow';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import ImageList from '@mui/material/ImageList';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
 import { HOME_CARDS, STATIC_DIR } from "../utils/Settings";
 import { atLimit } from '../utils/Helpers';
 import {
@@ -65,7 +67,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
 
   const renderCards = () => (
     <Grid item xs>
-      <Grid container spacing={1} alignItems='flex-start' justify='center'>
+      <Grid container spacing={1} alignItems='flex-start' justifyContent='center'>
         { 
           HOME_CARDS.map((card, index) => (
             <Grow key={card.title} in timeout={1200 + (index * 250)}>
@@ -112,30 +114,32 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
   const renderExhibits = () => (
     <Grow in timeout={750}>
       <Grid item xs>
-        <GridList cellHeight={300}>
+        <ImageList>
           {
             state.exhibits.map(exhibit => (
-              <GridListTile key={exhibit.name}>
+              <ImageListItem key={exhibit.name}>
                 <img src={exhibit.imageURL} alt={exhibit.name} />
-                <GridListTileBar
+                <ImageListItemBar
                   title={exhibit.name}
                   subtitle={<span>{`${exhibit.dateCreated}, ${exhibit.collection} Collection`}</span>}
                   actionIcon={
-                    <IconButton onClick={() => enqueueSnackbar('Coming soon!', { variant: 'info' })}>
+                    <IconButton
+                      onClick={() => enqueueSnackbar('Coming soon!', { variant: 'info' })}
+                      size="large">
                       <InfoIcon />
                     </IconButton>
                   }
                 />
-              </GridListTile>
+              </ImageListItem>
             ))
           }
-        </GridList>
+        </ImageList>
       </Grid>
     </Grow>
   );
 
   return (
-    <Grid container justify="center" alignItems="center" direction="column" spacing={3}>
+    <Grid container justifyContent="center" alignItems="center" direction="column" spacing={3}>
       <Grid item xs>
         <Grow in timeout={750}>
           <Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2019-460x460.jpg"}/>

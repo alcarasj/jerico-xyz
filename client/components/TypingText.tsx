@@ -1,9 +1,8 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
+import Typography from '@mui/material/Typography';
 import { MuiColor } from '../utils/Types';
 
-type Variant = "button" | "caption" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "inherit" | 
-  "subtitle1" | "subtitle2" | "body1" | "body2" | "overline" | "srOnly";
+type Variant = "inherit" | "button" | "overline" | "caption" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "subtitle1" | "subtitle2" | "body1" | "body2";
 
 interface TypingTextMessage {
   getText: () => string;

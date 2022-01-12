@@ -1,8 +1,10 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import packageJSON = require('../../package.json');
 import SocialBar from './SocialBar';
 
@@ -26,7 +28,7 @@ const Footer: React.FC = (): JSX.Element => {
 
   return (
     <Paper className={classes.root}>
-      <Grid container alignItems="center" justify="space-between" spacing={3}>
+      <Grid container alignItems="center" justifyContent="space-between" spacing={3}>
         <Grid item xs>
           <Typography align="left" variant="body1" gutterBottom>
 						© JERICO ALCARAS 2022. All rights reserved.
@@ -35,7 +37,7 @@ const Footer: React.FC = (): JSX.Element => {
 						Use this site at your own risk!
           </Typography>
         </Grid>
-        <Grid container alignItems="center" justify="center">
+        <Grid container alignItems="center" justifyContent="center">
           <SocialBar />
         </Grid>
         <Grid item xs>

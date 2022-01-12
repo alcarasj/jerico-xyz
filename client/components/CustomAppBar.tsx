@@ -1,9 +1,11 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import HomeIcon from '@material-ui/icons/Home';
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import HomeIcon from '@mui/icons-material/Home';
 import SocialBar from './SocialBar';
 import TypingText from './TypingText';
 import { sendAPIRequest } from '../utils/Helpers';
@@ -44,13 +46,13 @@ const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps): JS
   return (
     <AppBar id={props.id} color='inherit'>
       <Toolbar>
-        <IconButton 
-          edge="start" 
-          className={classes.menuButton} 
-          color="primary" 
+        <IconButton
+          edge="start"
+          className={classes.menuButton}
+          color="primary"
           aria-label="menu"
           onClick={() => navigate('/', { replace: true })}
-        >
+          size="large">
           <HomeIcon />
         </IconButton>
         <TypingText 
@@ -59,8 +61,8 @@ const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps): JS
             { getText: () => "jerico.xyz", color: 'primary' },
             { getText: () => "Welcome to my website!" },
             { getText: () => `The local time is ${new Date().toLocaleString()}.` },
-            ... clientData.address ? [{ getText: () => `Your detected IP address is ${clientData.address}.` }] : [],
-            ... clientData.location ? [{ getText: () => `Your detected location is ${clientData.location}.`}] : [],
+            ... (clientData.address ? [{ getText: () => `Your detected IP address is ${clientData.address}.` }] : []),
+            ... (clientData.location ? [{ getText: () => `Your detected location is ${clientData.location}.`}] : []),
           ]} 
           className={classes.title}
         />
