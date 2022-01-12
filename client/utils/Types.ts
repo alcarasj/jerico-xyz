@@ -1,6 +1,3 @@
-export const VERIFY_IMAGE_START = 'VERIFY_IMAGE_START';
-export const VERIFY_IMAGE_SUCCESS = 'VERIFY_IMAGE_SUCCESS';
-export const VERIFY_IMAGE_FAILURE = 'VERIFY_IMAGE_FAILURE';
 export const GET_EXHIBITS_START = 'GET_EXHIBITS_START';
 export const GET_EXHIBITS_SUCCESS = 'GET_EXHIBITS_SUCCESS';
 export const GET_EXHIBITS_FAILURE = 'GET_EXHIBITS_FAILURE';
@@ -17,24 +14,11 @@ export interface Exhibit {
 
 export interface AppState {
   imageFileURL: string;
-  isVerifying: boolean;
   isFetching: boolean;
   counter: number;
   error: string;
   exhibits: Exhibit[];
 }
-
-export interface VerifyImageStartAction {
-  readonly type: typeof VERIFY_IMAGE_START;
-}
-export interface VerifyImageSuccessAction {
-  readonly type: typeof VERIFY_IMAGE_SUCCESS;
-}
-export interface VerifyImageFailureAction {
-  readonly type: typeof VERIFY_IMAGE_FAILURE;
-  payload: Error;
-}
-export type VerifyImageAction = VerifyImageStartAction | VerifyImageSuccessAction | VerifyImageFailureAction;
 
 export interface GetExhibitsStartAction {
   readonly type: typeof GET_EXHIBITS_START;
@@ -59,8 +43,6 @@ export interface SetImageAction {
   payload: File;
 }
 
-export type AppAction = VerifyImageStartAction | VerifyImageFailureAction | VerifyImageSuccessAction |
-  GetExhibitsStartAction | GetExhibitsSuccessAction | GetExhibitsFailureAction | SetCounterAction | 
-  SetImageAction;
+export type AppAction = GetExhibitsAction | SetCounterAction | SetImageAction;
 
 export type MuiColor = "inherit" | "initial" | "primary" | "secondary" | "textPrimary" | "textSecondary" | "error";

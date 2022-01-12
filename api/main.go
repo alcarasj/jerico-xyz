@@ -33,6 +33,19 @@ func getPackageVersion() string {
 	return result["version"].(string)
 }
 
+func serveReactBundle(c *gin.Context, bucketURL string, mode string) {
+	var bundleURL string
+	packageVersion := getPackageVersion()
+	if mode == PRODUCTION {
+		bundleURL = fmt.Sprintf("%s/bundle/main-%s.js", bucketURL, packageVersion)
+	} else {
+		bundleURL = fmt.Sprintf("./static/bundle/bundle-%s/main.js", packageVersion)
+	}
+	c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
+		"bundleURL": bundleURL,
+	})
+}
+
 func main() {
 	MODE := os.Getenv("MODE")
 	PORT := os.Getenv("PORT")
@@ -54,16 +67,11 @@ func main() {
 	router.Static("/static", "static")
 
 	router.GET("/", func(c *gin.Context) {
-		var bundleURL string
-		packageVersion := getPackageVersion()
-		if MODE == PRODUCTION {
-			bundleURL = fmt.Sprintf("%s/bundle/main-%s.js", BUCKET_URL, packageVersion)
-		} else {
-			bundleURL = fmt.Sprintf("./static/bundle/bundle-%s/main.js", packageVersion)
-		}
-		c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
-			"bundleURL": bundleURL,
-		})
+		serveReactBundle(c, BUCKET_URL, MODE)
+	})
+
+	router.GET("/dev", func(c *gin.Context) {
+		serveReactBundle(c, BUCKET_URL, MODE)
 	})
 
 	router.GET("/client", func(c *gin.Context) {

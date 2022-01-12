@@ -4,6 +4,9 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".tsx", '.js', '.json']
   },
+  watchOptions: {
+    ignored: /node_modules/,
+  },
   module: {
     rules: [
       {

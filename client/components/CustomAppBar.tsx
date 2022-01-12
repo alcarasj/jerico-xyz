@@ -7,6 +7,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import SocialBar from './SocialBar';
 import TypingText from './TypingText';
 import { sendAPIRequest } from '../utils/Helpers';
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,6 +35,7 @@ interface CustomAppBarProps {
 const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps): JSX.Element => {
   const classes = useStyles();
   const [clientData, setClientData] = React.useState<ClientData>({ address: '', location: '' });
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     sendAPIRequest('/client').then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
@@ -42,16 +44,15 @@ const CustomAppBar: React.FC<CustomAppBarProps> = (props: CustomAppBarProps): JS
   return (
     <AppBar id={props.id} color='inherit'>
       <Toolbar>
-        <a href="/">
-          <IconButton 
-            edge="start" 
-            className={classes.menuButton} 
-            color="primary" 
-            aria-label="menu"
-          >
-            <HomeIcon />
-          </IconButton>
-        </a>
+        <IconButton 
+          edge="start" 
+          className={classes.menuButton} 
+          color="primary" 
+          aria-label="menu"
+          onClick={() => navigate('/', { replace: true })}
+        >
+          <HomeIcon />
+        </IconButton>
         <TypingText 
           variant="h6" 
           messages={[

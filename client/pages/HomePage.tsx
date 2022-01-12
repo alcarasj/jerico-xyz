@@ -18,10 +18,9 @@ import { HOME_CARDS, STATIC_DIR } from "../utils/Settings";
 import { atLimit } from '../utils/Helpers';
 import {
   getExhibits,
-  setCounter,
-  // setImage,
-  // verifyImage
+  setCounter
 } from '../utils/ActionCreators';
+import { useNavigate } from "react-router-dom";
 import { AppState, AppAction } from '../utils/Types';
 import TypingText from '../components/TypingText';
 
@@ -34,9 +33,6 @@ const useStyles = makeStyles((theme: Theme) =>
     me: {
       height: theme.spacing(30),
       width: theme.spacing(30)
-    },
-    body: {
-      paddingTop: theme.spacing(15)
     },
     paper: {
       backgroundImage: `url(${STATIC_DIR}img/bg.jpg)`
@@ -59,6 +55,7 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
   const { enqueueSnackbar, state, dispatch } = props;
   const classes = useStyles();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (atLimit(state.counter)) {
@@ -89,14 +86,18 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
                       size="small"
                       color="primary"
                       onClick={() => {
-                        const newValue = state.counter + 1;
-                        if (atLimit(newValue)) {
-                          enqueueSnackbar('You have unlocked my art exhibits!', { variant: 'success' });
+                        if (card.linkTo) {
+                          navigate(card.linkTo, { replace: true });
+                        } else {
+                          const newValue = state.counter + 1;
+                          if (atLimit(newValue)) {
+                            enqueueSnackbar('You have unlocked my art exhibits!', { variant: 'success' });
+                          }
+                          dispatch(setCounter(newValue));
                         }
-                        dispatch(setCounter(newValue));
                       }}
                     >
-                        Coming soon™
+                      { card.linkTo ? "Under construction!" : "Coming soon™" }
                     </Button>
                   </CardActions>
                 </Card>
@@ -129,79 +130,37 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
             ))
           }
         </GridList>
-        { 
-          //renderImageVerifier() 
-        }
       </Grid>
     </Grow>
   );
 
-  /**
-  const renderImageVerifier = () => (
-    <Grid item xs>
-      <Card className={classes.card}>
-        <CardActionArea>
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="h2">
-              Image Verifier
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              This feature verifies the checksum of any full-resolution art file made by me.
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-        <CardActions>
-          <input
-            accept="image/*"
-            id="upload-image-for-verify"
-            type="file"
-            onChange={event => dispatch(setImage(event.target.files[0]))}
-          />
-          <Button 
-            color="primary" 
-            size="large"
-            onClick={() => verifyImage(dispatch)}
-            disabled={!state.imageFileURL}
-          >
-            { !state.imageFileURL ? "Please provide a file" : "Check authenticity" }
-          </Button>
-        </CardActions>
-      </Card>
-    </Grid>
-  );
-  **/
-
   return (
-    <Grid className={classes.body} container justify="center" alignItems="center" direction="column" spacing={3}>
+    <Grid container justify="center" alignItems="center" direction="column" spacing={3}>
       <Grid item xs>
         <Grow in timeout={750}>
           <Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2019-460x460.jpg"}/>
         </Grow>
       </Grid>
       <Grid item xs>
-        <Grow in timeout={1000}>
-          <TypingText 
-            align="center"
-            variant="h3"
-            component="h1"
-            messages={[{ getText: () => 'Hi! My name is Jerico.' }]}
-          />
-        </Grow>
-        <Grow in timeout={1200}>
-          <TypingText 
-            align="center"
-            variant="subtitle1"
-            component="h1"
-            gutterBottom
-            messages={[
-              { 
-                getText: () => atLimit(state.counter) ? 
-                  "Thanks for supporting my art!" :
-                  "Thanks for visiting! Select an area of interest below to learn more about me."
-              }
-            ]}
-          />
-        </Grow>
+        <TypingText 
+          align="center"
+          variant="h3"
+          component="h1"
+          messages={[{ getText: () => 'Hi! My name is Jerico.' }]}
+        />
+        <TypingText 
+          align="center"
+          variant="subtitle1"
+          component="h1"
+          gutterBottom
+          messages={[
+            { 
+              getText: () => atLimit(state.counter) ? 
+                "Thanks for supporting my art!" :
+                "Thanks for visiting! Select an area of interest below to learn more about me."
+            }
+          ]}
+        />
       </Grid>
       { atLimit(state.counter) ? renderExhibits() : renderCards() }
     </Grid>

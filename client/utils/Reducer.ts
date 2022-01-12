@@ -2,9 +2,6 @@ import { atLimit } from './Helpers';
 import { 
   AppState, 
   AppAction,
-  VERIFY_IMAGE_START,
-  VERIFY_IMAGE_SUCCESS,
-  VERIFY_IMAGE_FAILURE,
   GET_EXHIBITS_SUCCESS,
   GET_EXHIBITS_FAILURE,
   GET_EXHIBITS_START,
@@ -15,12 +12,6 @@ import { INITIAL_APP_STATE } from './Settings';
 
 const AppReducer = (state: AppState=INITIAL_APP_STATE, action: AppAction): AppState => {
   switch (action.type) {
-  case VERIFY_IMAGE_START:
-    return { ...state, isVerifying: true  };
-  case VERIFY_IMAGE_SUCCESS:
-    return { ...state, isVerifying: false };
-  case VERIFY_IMAGE_FAILURE:
-    return { ...state, isVerifying: false };
   case GET_EXHIBITS_START:
     return { ...state, isFetching: true };
   case GET_EXHIBITS_SUCCESS:

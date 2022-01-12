@@ -29,10 +29,10 @@ const Footer: React.FC = (): JSX.Element => {
       <Grid container alignItems="center" justify="space-between" spacing={3}>
         <Grid item xs>
           <Typography align="left" variant="body1" gutterBottom>
-						© JERICO ALCARAS 2020. All rights reserved.
+						© JERICO ALCARAS 2022. All rights reserved.
           </Typography>
           <Typography align="left" variant="body1" gutterBottom>
-						DISCLAIMER: Use this site at your own risk!
+						Use this site at your own risk!
           </Typography>
         </Grid>
         <Grid container alignItems="center" justify="center">

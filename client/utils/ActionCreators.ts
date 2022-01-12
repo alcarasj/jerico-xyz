@@ -1,8 +1,4 @@
 import {
-  VerifyImageStartAction,
-  VerifyImageSuccessAction,
-  VerifyImageFailureAction,
-  VerifyImageAction,
   GetExhibitsStartAction,
   GetExhibitsSuccessAction,
   GetExhibitsFailureAction,
@@ -10,9 +6,6 @@ import {
   SetCounterAction,
   SetImageAction,
   Exhibit,
-  VERIFY_IMAGE_START,
-  VERIFY_IMAGE_SUCCESS,
-  VERIFY_IMAGE_FAILURE,
   GET_EXHIBITS_SUCCESS,
   GET_EXHIBITS_START,
   GET_EXHIBITS_FAILURE,
@@ -29,16 +22,6 @@ export const getExhibits = (dispatch: (action: GetExhibitsAction) => void): void
   sendAPIRequest('/api/art')
     .then(data => dispatch(getExhibitsSuccess(data.exhibits)))
     .catch(error => dispatch(getExhibitsFailure(error)));
-};
-
-const verifyImageStart = (): VerifyImageStartAction => ({ type: VERIFY_IMAGE_START });
-const verifyImageFailure = (error: Error): VerifyImageFailureAction => ({ type: VERIFY_IMAGE_FAILURE, payload: error });
-const verifyImageSuccess = (): VerifyImageSuccessAction => ({ type: VERIFY_IMAGE_SUCCESS });
-export const verifyImage = (dispatch: (action: VerifyImageAction) => void): void => {
-  dispatch(verifyImageStart());
-  sendAPIRequest('/api/art')
-    .then(() => dispatch(verifyImageSuccess()))
-    .catch(error => dispatch(verifyImageFailure(error)))
 };
 
 export const setCounter = (newValue: number): SetCounterAction => ({ type: SET_COUNTER, payload: newValue });
