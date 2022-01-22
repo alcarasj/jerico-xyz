@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 const PRODUCTION = "PRODUCTION"
@@ -100,14 +101,14 @@ func main() {
 
 	router.GET("/api/art", func(c *gin.Context) {
 		exhibits := []Exhibit{
-			Exhibit{
+			{
 				Name:        "Velocity",
 				Description: "test",
 				DateCreated: "November 2020",
 				Collection:  "Geometric",
 				ImageURL:    fmt.Sprintf("%s/Velocity50pc.png", BUCKET_URL),
 			},
-			Exhibit{
+			{
 				Name:        "Unity",
 				Description: "test",
 				DateCreated: "November 2020",

@@ -59,7 +59,7 @@ const App: React.FC<AppProps> = ({ enqueueSnackbar }: AppProps): JSX.Element => 
       <CssBaseline />
       <div className={classes.root}>
         <div className={classes.page}>
-          <CustomAppBar id='appbar'/>
+          <CustomAppBar />
           <Routes>
             <Route path="/dev" element={
               <DevPage 

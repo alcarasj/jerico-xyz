@@ -1,6 +1,6 @@
 {
   "name": "jerico-xyz",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "My personal website.",
   "main": "index.js",
   "scripts": {
@@ -16,8 +16,8 @@
     "url": "git+https://github.com/alcarasj/jerico-xyz.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Jerico Alcaras",
+  "license": "WTFPL",
   "bugs": {
     "url": "https://github.com/alcarasj/jerico-xyz/issues"
   },

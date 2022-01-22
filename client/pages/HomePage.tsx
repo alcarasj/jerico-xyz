@@ -3,19 +3,9 @@ import Avatar from '@mui/material/Avatar';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import CardActions from '@mui/material/CardActions';
-import Grid from '@mui/material/Grid';
-import Grow from '@mui/material/Grow';
-import Card from '@mui/material/Card';
-import CardActionArea from '@mui/material/CardActionArea';
-import CardContent from '@mui/material/CardContent';
-import ImageList from '@mui/material/ImageList';
-import IconButton from '@mui/material/IconButton';
+import { Typography, Button, CardActions, Grid, Grow, Card, CardActionArea, CardContent, ImageList, IconButton
+  , ImageListItem, ImageListItemBar } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import ImageListItem from '@mui/material/ImageListItem';
-import ImageListItemBar from '@mui/material/ImageListItemBar';
 import { HOME_CARDS, STATIC_DIR } from "../utils/Settings";
 import { atLimit } from '../utils/Helpers';
 import {
@@ -54,6 +44,12 @@ interface HomePageProps {
   enqueueSnackbar: (message: string, options?: unknown) => string | number;
 }
 
+interface HomeCard {
+  title: string;
+  description: string;
+  linkTo: string;
+}
+
 const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
   const { enqueueSnackbar, state, dispatch } = props;
   const classes = useStyles();
@@ -65,15 +61,19 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
     }
   }, [state.counter]);
 
-  const renderCards = () => (
+  const renderCards = (): JSX.Element => (
     <Grid item xs>
       <Grid container spacing={1} alignItems='flex-start' justifyContent='center'>
         { 
-          HOME_CARDS.map((card, index) => (
+          HOME_CARDS.map((card: HomeCard, index: number) => (
             <Grow key={card.title} in timeout={1200 + (index * 250)}>
               <Grid item xs={12} className={classes.cardContainer}>
                 <Card className={classes.card}>
-                  <CardActionArea>
+                  <CardActionArea onClick={() => {
+                    if (card.linkTo) {
+                      navigate(card.linkTo);
+                    }
+                  }}>
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="h2">
                         { card.title }
@@ -89,7 +89,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
                       color="primary"
                       onClick={() => {
                         if (card.linkTo) {
-                          navigate(card.linkTo, { replace: true });
+                          navigate(card.linkTo);
                         } else {
                           const newValue = state.counter + 1;
                           if (atLimit(newValue)) {
@@ -111,7 +111,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
     </Grid>
   );
 
-  const renderExhibits = () => (
+  const renderExhibits = (): JSX.Element => (
     <Grow in timeout={750}>
       <Grid item xs>
         <ImageList>
