@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(30)
     },
     cardContainer: {
-      width: 500,
+      maxWidth: 300,
     },
     card: {
       minWidth: "100%"
@@ -43,8 +43,8 @@ export interface DevPageProps {
 const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
   const classes = useStyles();
 
-  const getExperienceTimeRange = (from: MonthYearDate, to: MonthYearDate) => `${new Date(from.year, --from.month).toLocaleString('default', { month: 'short' })} ${from.year} ` + 
-    `- ${to ? `${new Date(to.year, --to.month).toLocaleString('default', { month: 'short' })} ${to.year}` : "present"}`;
+  const getExperienceTimeRange = (from: MonthYearDate, to: MonthYearDate) => `${new Date(from.year, from.month - 1).toLocaleString('default', { month: 'short' })} ${from.year} ` + 
+    `- ${to ? `${new Date(to.year, to.month - 1).toLocaleString('default', { month: 'short' })} ${to.year}` : "present"}`;
 
   const renderExperienceCards = (): JSX.Element => (
     <Grid item xs>
@@ -95,7 +95,7 @@ const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
           component="h1"
           gutterBottom
           messages={[
-            { getText: () => 'I\'m currently specializing in full-stack software development and dev-ops.' },
+            { getText: () => 'I\'m currently specializing in product development and dev-ops.' },
             { getText: () => 'Feel free to contact me to learn more!' },
             { getText: () => '(I\'m still building this page, check back later!)' },
           ]}

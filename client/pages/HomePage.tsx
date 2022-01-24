@@ -18,10 +18,6 @@ import TypingText from '../components/TypingText';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      flexGrow: 1,
-      width: '100vw'
-    },
     me: {
       height: theme.spacing(30),
       width: theme.spacing(30)
@@ -99,7 +95,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
                         }
                       }}
                     >
-                      { card.linkTo ? "Under construction!" : "Coming soon™" }
+                      { card.linkTo ? "Learn more" : "Coming soon™" }
                     </Button>
                   </CardActions>
                 </Card>

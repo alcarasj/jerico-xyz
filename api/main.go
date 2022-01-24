@@ -1,9 +1,9 @@
 package main
 
 import (
+	"container/list"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -13,45 +13,13 @@ import (
 
 const PRODUCTION = "PRODUCTION"
 
-type Exhibit struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	DateCreated string `json:"dateCreated"`
-	Collection  string `json:"collection"`
-	ImageURL    string `json:"imageURL"`
-}
-
-func getPackageVersion() string {
-	jsonFile, error := os.Open("package.json")
-	if error != nil {
-		fmt.Println(error)
-	}
-	defer jsonFile.Close()
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	var result map[string]interface{}
-	json.Unmarshal([]byte(byteValue), &result)
-	return result["version"].(string)
-}
-
-func serveReactBundle(c *gin.Context, bucketURL string, mode string) {
-	var bundleURL string
-	packageVersion := getPackageVersion()
-	if mode == PRODUCTION {
-		bundleURL = fmt.Sprintf("%s/bundle/main-%s.js", bucketURL, packageVersion)
-	} else {
-		bundleURL = fmt.Sprintf("./static/bundle/bundle-%s/main.js", packageVersion)
-	}
-	c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
-		"bundleURL": bundleURL,
-	})
-}
-
 func main() {
 	MODE := os.Getenv("MODE")
 	PORT := os.Getenv("PORT")
 	S3_HOST := os.Getenv("S3_HOST")
 	BUCKET_NAME := os.Getenv("BUCKET_NAME")
+	CHAT := list.New()
+	VIEW_COUNTER := make(ViewCounter)
 
 	if PORT == "" || S3_HOST == "" || BUCKET_NAME == "" {
 		log.Fatal("PORT, BUCKET_NAME and S3_HOST must be set!")
@@ -75,7 +43,7 @@ func main() {
 		serveReactBundle(c, BUCKET_URL, MODE)
 	})
 
-	router.GET("/client", func(c *gin.Context) {
+	router.GET("api/client", func(c *gin.Context) {
 		address := c.ClientIP()
 
 		res, err := http.Get(fmt.Sprintf("https://ipapi.co/%s/json/", address))
@@ -117,6 +85,24 @@ func main() {
 			},
 		}
 		c.JSON(http.StatusOK, gin.H{"exhibits": exhibits})
+	})
+
+	router.GET("/api/chat", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"messages": getMessages(CHAT)})
+	})
+
+	router.POST("/api/chat", func(c *gin.Context) {
+		c.JSON(http.StatusCreated, gin.H{"messages": getMessages(CHAT)})
+	})
+
+	router.GET("/api/views", func(c *gin.Context) {
+		c.JSON(http.StatusCreated, gin.H{"views": VIEW_COUNTER})
+	})
+
+	router.POST("/api/views", func(c *gin.Context) {
+		address := c.ClientIP()
+		addView(VIEW_COUNTER, address)
+		c.JSON(http.StatusCreated, gin.H{"views": VIEW_COUNTER})
 	})
 
 	router.Run(":" + PORT)

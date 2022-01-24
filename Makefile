@@ -3,7 +3,7 @@ clean:
 	rm -rf bin
 
 go:
-	PORT=8000 go run ./api/main.go
+	PORT=8000 go run ./api/*.go
 
 go-build:
 	go build -o bin -v ./api

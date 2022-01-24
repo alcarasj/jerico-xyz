@@ -20,6 +20,11 @@ export interface AppState {
   exhibits: Exhibit[];
 }
 
+export enum HttpMethod {
+  GET = 'GET',
+  POST=  'POST'
+}
+
 export interface GetExhibitsStartAction {
   readonly type: typeof GET_EXHIBITS_START;
 }

@@ -2,13 +2,14 @@ import React from 'react';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
-import { Toolbar, AppBar, IconButton, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Box, SwipeableDrawer } from '@mui/material';
+import { Toolbar, AppBar, IconButton, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 import SocialBar from './SocialBar';
 import TypingText from './TypingText';
 import { sendAPIRequest } from '../utils/Helpers';
+import { HttpMethod } from '../utils/Types';
 import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -40,7 +41,8 @@ const CustomAppBar: React.FC = (): JSX.Element => {
   const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    sendAPIRequest('/client').then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
+    sendAPIRequest('/api/client').then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
+    sendAPIRequest('/api/views', HttpMethod.POST).then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
   }, []);
 
   return (
@@ -66,13 +68,13 @@ const CustomAppBar: React.FC = (): JSX.Element => {
             onKeyDown={() => setIsDrawerOpen(false)}
           >
             <List>
-              <ListItemButton onClick={() => navigate('/')}>
+              <ListItemButton onClick={() => navigate('/')} selected={window.location.pathname === '/'}>
                 <ListItemIcon>
                   <HomeIcon />
                 </ListItemIcon>
                 <ListItemText primary={"Home"} />
               </ListItemButton>
-              <ListItemButton onClick={() => navigate('/dev')}>
+              <ListItemButton onClick={() => navigate('/dev')} selected={window.location.pathname === '/dev'}>
                 <ListItemIcon>
                   <DeveloperBoardIcon />
                 </ListItemIcon>
