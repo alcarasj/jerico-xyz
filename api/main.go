@@ -2,7 +2,6 @@ package main
 
 import (
 	"container/list"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -18,6 +17,7 @@ func main() {
 	PORT := os.Getenv("PORT")
 	S3_HOST := os.Getenv("S3_HOST")
 	BUCKET_NAME := os.Getenv("BUCKET_NAME")
+	CACHE := NewCache()
 	CHAT := list.New()
 	VIEW_COUNTER := make(ViewCounter)
 
@@ -45,16 +45,21 @@ func main() {
 
 	router.GET("api/client", func(c *gin.Context) {
 		address := c.ClientIP()
+		getCall := func() (interface{}, error) { return getClientData(address) }
 
-		res, err := http.Get(fmt.Sprintf("https://ipapi.co/%s/json/", address))
+		clientDataInterface, err := CACHE.Get(address, getCall)
 		if err != nil {
-			log.Fatal(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
 		}
 
-		var clientData map[string]string
-		var location string
-		json.NewDecoder(res.Body).Decode(&clientData)
+		clientData, assertionWasSuccess := clientDataInterface.(map[string]string)
+		if !assertionWasSuccess {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse client data"})
+			return
+		}
 
+		var location string
 		if clientData["city"] != "" && clientData["region"] != "" && clientData["country_name"] != "" {
 			location = fmt.Sprintf("%s, %s, %s", clientData["city"], clientData["region"], clientData["country_name"])
 		} else {

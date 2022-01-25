@@ -25,3 +25,13 @@ type ViewCounterClientEntry struct {
 type ViewCounterDayEntry map[string]*ViewCounterClientEntry
 
 type ViewCounter map[string]ViewCounterDayEntry
+
+type CacheEntry struct {
+	Value       interface{}
+	LastUpdated time.Time
+}
+
+type Cache struct {
+	Entries        map[string]CacheEntry
+	DefaultTTLSecs int
+}

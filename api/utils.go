@@ -3,6 +3,7 @@ package main
 import (
 	"container/list"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -11,6 +12,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+const VIEW_COUNTER_BUFFER_SECONDS = 10
 
 func getPackageVersion() string {
 	jsonFile, error := os.Open("package.json")
@@ -74,4 +77,21 @@ func getMessages(chat *list.List) []Message {
 		messages = append(messages, message.Value.(Message))
 	}
 	return messages
+}
+
+func getClientData(clientIP string) (interface{}, error) {
+	url := fmt.Sprintf("https://ipapi.co/%s/json/", clientIP)
+	res, err := http.Get(url)
+	if err != nil || res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("request to %s returned %d", url, res.StatusCode)
+	}
+
+	var clientData map[string]string
+	json.NewDecoder(res.Body).Decode(&clientData)
+
+	if _, errorWasFound := clientData["error"]; errorWasFound {
+		return nil, errors.New("failed to get client data")
+	}
+
+	return clientData, nil
 }
