@@ -5,8 +5,11 @@ clean:
 go:
 	PORT=8000 go run ./api/*.go
 
+go-prod:
+	PORT=8000 MODE=PRODUCTION go run ./api/*.go
+
 go-build:
-	go build -o bin -v ./api
+	go build -o ./bin/api -v ./api
 
 react-build:
 	rm -rf ./static/bundle

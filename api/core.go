@@ -41,12 +41,10 @@ func recordView(clientIP string, persistence Persistence) error {
 				shouldUpdatePersistence = true
 			}
 		} else {
-			dayEntry := make(ViewCounterDayEntry)
-			newClientEntry := ViewCounterClientEntry{
+			dayEntry[clientIP] = ViewCounterClientEntry{
 				Views:       1,
 				LastUpdated: now,
 			}
-			dayEntry[clientIP] = newClientEntry
 			viewCounter[currentDateStr] = dayEntry
 			shouldUpdatePersistence = true
 		}

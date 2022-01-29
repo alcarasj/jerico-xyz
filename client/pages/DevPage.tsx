@@ -55,25 +55,27 @@ const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
     <Grid item xs>
       <Grid container spacing={1} alignItems='flex-start' justifyContent='center' flexDirection="column">
         { 
-          DEV_XP_CARDS.map((xp: Experience) => (
-            <Grid item xs={12} key={xp.employer} className={classes.cardContainer}>
-              <Card className={classes.card}>
-                <CardContent>
-                  <Typography variant="h5" component="h2">
-                    { xp.employer }
-                  </Typography>
-                  <Typography gutterBottom>
-                    { getExperienceTimeRange(xp.from, xp.to) }
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" component="p">
-                    { xp.description }
-                  </Typography>
-                  <Grid className={classes.tagsContainer} container justifyContent="flex-start" alignItems="center" spacing={1}>
-                    {xp.tags.map(tag => <Grid item  key={tag}><Chip color="primary" label={tag} /></Grid>)}
-                  </Grid>
-                </CardContent>
-              </Card>
-            </Grid>
+          DEV_XP_CARDS.map((xp: Experience, index: number) => (
+            <Grow key={xp.employer} in timeout={1200 + (index * 250)}>
+              <Grid item xs={12} className={classes.cardContainer}>
+                <Card className={classes.card}>
+                  <CardContent>
+                    <Typography variant="h5" component="h2">
+                      { xp.employer }
+                    </Typography>
+                    <Typography gutterBottom>
+                      { getExperienceTimeRange(xp.from, xp.to) }
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      { xp.description }
+                    </Typography>
+                    <Grid className={classes.tagsContainer} container justifyContent="flex-start" alignItems="center" spacing={1}>
+                      {xp.tags.map(tag => <Grid item  key={tag}><Chip color="primary" label={tag} /></Grid>)}
+                    </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grow>
           ))
         }
       </Grid>
