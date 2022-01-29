@@ -13,6 +13,8 @@ import (
 )
 
 const REQUEST_TIMEOUT_SECS = 10
+const PRODUCTION = "PRODUCTION"
+const DB_NAME = "jerico-xyz"
 
 var ErrNotFound = errors.New("not found")
 
@@ -131,4 +133,32 @@ func getIAMToken(apiKey string, iamTokenEndpoint string) (*IAMToken, error) {
 
 func (t IAMToken) isExpired() bool {
 	return time.Now().Unix() > int64(t.ExpirationEpoch)
+}
+
+func buildCoreConfigFromEnvVars() CoreConfig {
+	envVars := make(map[string]string)
+
+	requiredEnvVars := []string{"PORT", "S3_HOST", "BUCKET_NAME", "IBM_CLOUD_API_KEY", "IBM_CLOUD_IAM_TOKEN_ENDPOINT", "CLOUDANT_HOST"}
+	for _, varName := range requiredEnvVars {
+		val := os.Getenv(varName)
+		if val == "" {
+			log.Fatalf("%s must be set!", varName)
+		}
+		envVars[varName] = val
+	}
+
+	optionalEnvVars := []string{"MODE"}
+	for _, varName := range optionalEnvVars {
+		envVars[varName] = os.Getenv(varName)
+	}
+
+	return CoreConfig{
+		Port:                     envVars["PORT"],
+		Mode:                     envVars["MODE"],
+		S3BucketURL:              fmt.Sprintf("%s/%s", envVars["S3_HOST"], envVars["BUCKET_NAME"]),
+		IBMCloudAPIKey:           envVars["IBM_CLOUD_API_KEY"],
+		IBMCloudIAMTokenEndpoint: envVars["IBM_CLOUD_IAM_TOKEN_ENDPOINT"],
+		CloudantHost:             envVars["CLOUDANT_HOST"],
+		DatabaseName:             DB_NAME,
+	}
 }

@@ -24,8 +24,6 @@ type ViewCounterClientEntry struct {
 
 type ViewCounterDayEntry map[string]ViewCounterClientEntry
 
-type ViewCounter map[string]ViewCounterDayEntry
-
 type IAMToken struct {
 	AccessToken     string
 	RefreshToken    string
@@ -48,4 +46,14 @@ type CloudantDoc struct {
 	ID   string      `json:"_id"`
 	Rev  string      `json:"_rev"`
 	Data interface{} `json:"data"`
+}
+
+type CoreConfig struct {
+	Port                     string
+	Mode                     string
+	S3BucketURL              string
+	IBMCloudAPIKey           string
+	IBMCloudIAMTokenEndpoint string
+	CloudantHost             string
+	DatabaseName             string
 }

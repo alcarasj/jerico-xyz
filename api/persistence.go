@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 )
@@ -21,28 +20,24 @@ type Persistence struct {
 	RetryIntervalSecs        int
 }
 
-func InitPersistence(dbName string, apiKey string, host string, iamTokenEndpoint string) (*Persistence, error) {
-	if dbName == "" || apiKey == "" || host == "" || iamTokenEndpoint == "" {
-		return nil, errors.New("database name, host, IAM token endpoint and API key must not be blank")
-	}
-
-	token, err := getIAMToken(apiKey, iamTokenEndpoint)
+func InitPersistence(config CoreConfig) (*Persistence, error) {
+	token, err := getIAMToken(config.IBMCloudAPIKey, config.IBMCloudIAMTokenEndpoint)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Persistence{
-		DatabaseName:      dbName,
-		IBMCloudAPIKey:    apiKey,
-		Host:              host,
-		URL:               fmt.Sprintf("%s/%s", host, dbName),
+		DatabaseName:      config.DatabaseName,
+		IBMCloudAPIKey:    config.IBMCloudAPIKey,
+		Host:              config.CloudantHost,
+		URL:               fmt.Sprintf("%s/%s", config.CloudantHost, config.DatabaseName),
 		IAMToken:          token,
 		RetryAmount:       DEFAULT_RETRY_AMOUNT,
 		RetryIntervalSecs: DEFAULT_RETRY_INTERVAL_SECS,
 	}, nil
 }
 
-func (p Persistence) BuildURLWithId(id string) string {
+func (p Persistence) BuildURLWithID(id string) string {
 	return fmt.Sprintf("%s/%s", p.URL, id)
 }
 
@@ -81,8 +76,8 @@ func (p Persistence) GetDatabaseInfo() error {
 	return nil
 }
 
-func (p Persistence) GetDocumentById(id string, withRetry bool) (*CloudantDoc, error) {
-	url := p.BuildURLWithId(id)
+func (p Persistence) GetDocumentByID(id string, withRetry bool) (*CloudantDoc, error) {
+	url := p.BuildURLWithID(id)
 	headers, err := p.BuildReqHeaders("")
 	if err != nil {
 		return nil, err
@@ -118,8 +113,8 @@ func (p Persistence) GetDocumentById(id string, withRetry bool) (*CloudantDoc, e
 	}, nil
 }
 
-func (p Persistence) ModifyDocumentById(id string, data interface{}, rev string) error {
-	url := p.BuildURLWithId(id)
+func (p Persistence) ModifyDocumentByID(id string, data interface{}, rev string) error {
+	url := p.BuildURLWithID(id)
 	headers, err := p.BuildReqHeaders(rev)
 	if err != nil {
 		return err
@@ -144,7 +139,7 @@ func (p Persistence) ModifyDocumentById(id string, data interface{}, rev string)
 	var result map[string]interface{}
 	json.NewDecoder(resp.Body).Decode(&result)
 	if !result["ok"].(bool) {
-		return fmt.Errorf("failed to create or modify document with ID %s", id)
+		return fmt.Errorf("failed to create document with ID %s", id)
 	}
 	return nil
 }
