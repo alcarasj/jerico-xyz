@@ -8,6 +8,16 @@ import (
 
 const DEFAULT_TTL_SECS = 300
 
+type CacheEntry struct {
+	Value       interface{}
+	LastUpdated time.Time
+}
+
+type Cache struct {
+	Entries        map[string]CacheEntry
+	DefaultTTLSecs int
+}
+
 func NewCache() Cache {
 	return Cache{
 		Entries:        make(map[string]CacheEntry),

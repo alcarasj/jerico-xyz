@@ -2,14 +2,14 @@ import ReactDOM from "react-dom";
 import React from "react";
 import App from "./components/App";
 import { SnackbarProvider } from 'notistack';
-import { blue, lightBlue } from "@mui/material/colors";
+import { blue, indigo } from "@mui/material/colors";
 import { adaptV4Theme, createTheme, StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme(adaptV4Theme({
   palette: {
     mode: "dark",
     primary: blue,
-    secondary: lightBlue
+    secondary: indigo
   },
   typography: {
     fontFamily: [

@@ -1,19 +1,20 @@
 package main
 
 import (
-	"container/list"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
-const VIEW_COUNTER_BUFFER_SECONDS = 10
+const REQUEST_TIMEOUT_SECS = 10
+
+var ErrNotFound = errors.New("not found")
 
 func getPackageVersion() string {
 	jsonFile, error := os.Open("package.json")
@@ -28,70 +29,106 @@ func getPackageVersion() string {
 	return result["version"].(string)
 }
 
-func serveReactBundle(c *gin.Context, bucketURL string, mode string) {
-	var bundleURL string
+func getBundleURL(bucketURL string, mode string) string {
 	packageVersion := getPackageVersion()
 	if mode == PRODUCTION {
-		bundleURL = fmt.Sprintf("%s/bundle/main-%s.js", bucketURL, packageVersion)
+		return fmt.Sprintf("%s/bundle/main-%s.js", bucketURL, packageVersion)
 	} else {
-		bundleURL = fmt.Sprintf("./static/bundle/bundle-%s/main.js", packageVersion)
+		return fmt.Sprintf("./static/bundle/bundle-%s/main.js", packageVersion)
 	}
-	c.HTML(http.StatusOK, "index.tmpl.html", gin.H{
-		"bundleURL": bundleURL,
-	})
 }
 
-func addView(viewCounter ViewCounter, clientIP string) {
-	now := time.Now().UTC()
-	currentDateStr := now.Format("2006-01-02")
-	if dayEntry, dayEntryWasFound := viewCounter[currentDateStr]; dayEntryWasFound {
-		if clientEntry, clientEntryWasFound := dayEntry[clientIP]; clientEntryWasFound {
-			if now.Sub(clientEntry.LastUpdated).Seconds() > 10 {
-				clientEntry.Views = clientEntry.Views + 1
-				clientEntry.LastUpdated = now
-			}
+func sendRequest(params SendRequestParams) (*http.Response, error) {
+	if params.URL == "" || params.Method == "" {
+		return nil, errors.New("URL and method must be provided")
+	}
+
+	dataBytes := []byte{}
+	if params.Body != nil {
+		if params.Headers != nil && params.Headers["Content-Type"] == "application/x-www-form-urlencoded" {
+			data, _ := params.Body.(string)
+			dataBytes = []byte(data)
 		} else {
-			newClientEntry := ViewCounterClientEntry{
-				Views:       0,
-				LastUpdated: now,
-			}
-			dayEntry[clientIP] = &newClientEntry
+			data, _ := params.Body.(map[string]interface{})
+			dataBytes, _ = json.Marshal(data)
 		}
-	} else {
-		newDayEntry := make(ViewCounterDayEntry)
-		newDayEntry[clientIP] = &ViewCounterClientEntry{
-			Views:       1,
-			LastUpdated: time.Now().UTC(),
+	}
+
+	req, err := http.NewRequest(params.Method, params.URL, bytes.NewBuffer(dataBytes))
+	if err != nil {
+		return nil, err
+	}
+	for key, val := range params.Headers {
+		req.Header.Set(key, val)
+	}
+
+	client := &http.Client{
+		Timeout: time.Duration(REQUEST_TIMEOUT_SECS) * time.Second,
+	}
+	var resp *http.Response
+	i := 0
+
+	for ok := true; ok; ok = i < params.RetryAmount {
+		resp, err = client.Do(req)
+		if resp != nil {
+			log.Println(fmt.Sprintf("%s %d %s", params.Method, resp.StatusCode, params.URL))
 		}
-		viewCounter[currentDateStr] = newDayEntry
+		if err == nil && resp != nil && resp.StatusCode == params.ExpectedRespStatus {
+			break
+		}
+		if i < params.RetryAmount-1 {
+			log.Println(fmt.Sprintf("%s %s failed on attempt #%d, retrying...", params.Method, params.URL, i+1))
+			time.Sleep(time.Duration(params.RetryIntervalSecs) * time.Second)
+		}
+		i++
 	}
+
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != params.ExpectedRespStatus {
+		if resp.StatusCode == http.StatusNotFound {
+			return nil, ErrNotFound
+		}
+		var errorBody map[string]string
+		json.NewDecoder(resp.Body).Decode(&errorBody)
+		return nil, fmt.Errorf("request to %s returned %d: %v", params.URL, resp.StatusCode, errorBody)
+	}
+
+	return resp, nil
 }
 
-func addMessage(newMessage Message, chat *list.List) {
-	chat.PushFront(newMessage)
+func getIAMToken(apiKey string, iamTokenEndpoint string) (*IAMToken, error) {
+	headers := make(map[string]string)
+	headers["Content-Type"] = "application/x-www-form-urlencoded"
+	body := fmt.Sprintf("grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=%s", apiKey)
+	resp, err := sendRequest(SendRequestParams{
+		URL:                iamTokenEndpoint,
+		Method:             http.MethodPost,
+		Body:               body,
+		Headers:            headers,
+		ExpectedRespStatus: http.StatusOK,
+		RetryAmount:        DEFAULT_RETRY_AMOUNT,
+		RetryIntervalSecs:  DEFAULT_RETRY_INTERVAL_SECS,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var tokenData map[string]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&tokenData); err != nil {
+		return nil, err
+	}
+
+	return &IAMToken{
+		AccessToken:     tokenData["access_token"].(string),
+		RefreshToken:    tokenData["refresh_token"].(string),
+		ExpiresInSecs:   tokenData["expires_in"].(float64),
+		ExpirationEpoch: tokenData["expiration"].(float64),
+		Type:            tokenData["token_type"].(string),
+	}, nil
 }
 
-func getMessages(chat *list.List) []Message {
-	messages := make([]Message, chat.Len())
-	for message := chat.Front(); message != nil; message = message.Next() {
-		messages = append(messages, message.Value.(Message))
-	}
-	return messages
-}
-
-func getClientData(clientIP string) (interface{}, error) {
-	url := fmt.Sprintf("https://ipapi.co/%s/json/", clientIP)
-	res, err := http.Get(url)
-	if err != nil || res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("request to %s returned %d", url, res.StatusCode)
-	}
-
-	var clientData map[string]string
-	json.NewDecoder(res.Body).Decode(&clientData)
-
-	if _, errorWasFound := clientData["error"]; errorWasFound {
-		return nil, errors.New("failed to get client data")
-	}
-
-	return clientData, nil
+func (t IAMToken) isExpired() bool {
+	return time.Now().Unix() > int64(t.ExpirationEpoch)
 }

@@ -51,3 +51,17 @@ export interface SetImageAction {
 export type AppAction = GetExhibitsAction | SetCounterAction | SetImageAction;
 
 export type MuiColor = "inherit" | "initial" | "primary" | "secondary" | "textPrimary" | "textSecondary" | "error";
+
+export enum Tag {
+  JAVA = "Java",
+  NODE = "NodeJS",
+  REACT = "React",
+  PYTHON = "Python",
+  SQL = "SQL",
+  NOSQL = "NoSQL",
+  JAVASCRIPT = "JavaScript",
+  TYPESCRIPT = "TypeScript",
+  SASS = "Sass",
+  HTML = "HTML",
+  GO = "Go"
+}

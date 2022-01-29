@@ -22,16 +22,30 @@ type ViewCounterClientEntry struct {
 	LastUpdated time.Time `json:"lastUpdated"`
 }
 
-type ViewCounterDayEntry map[string]*ViewCounterClientEntry
+type ViewCounterDayEntry map[string]ViewCounterClientEntry
 
 type ViewCounter map[string]ViewCounterDayEntry
 
-type CacheEntry struct {
-	Value       interface{}
-	LastUpdated time.Time
+type IAMToken struct {
+	AccessToken     string
+	RefreshToken    string
+	Type            string
+	ExpiresInSecs   float64
+	ExpirationEpoch float64
 }
 
-type Cache struct {
-	Entries        map[string]CacheEntry
-	DefaultTTLSecs int
+type SendRequestParams struct {
+	URL                string
+	Method             string
+	Body               interface{}
+	Headers            map[string]string
+	ExpectedRespStatus int
+	RetryAmount        int
+	RetryIntervalSecs  int
+}
+
+type CloudantDoc struct {
+	ID   string      `json:"_id"`
+	Rev  string      `json:"_rev"`
+	Data interface{} `json:"data"`
 }

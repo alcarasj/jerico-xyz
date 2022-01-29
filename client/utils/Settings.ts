@@ -1,4 +1,4 @@
-import { AppState } from './Types';
+import { AppState, Tag } from './Types';
 
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/jcalcaras';
 export const GITHUB_URL = 'https://github.com/alcarasj';
@@ -25,27 +25,31 @@ export const DEV_XP_CARDS = [
   {
     from: { month: 1, year: 2020 },
     employer: "IBM",
-    description: "Currently working as part of the Identity team in the Cloud IAM organization using J2EE/React. Also worked in other teams using React/Express/Gin."
+    description: "Currently working as part of the Identity team in the Cloud IAM organization using J2EE/React/Cloudant. Also worked in other teams using React/Express/Gin/Cloudant.",
+    tags: [Tag.JAVA, Tag.TYPESCRIPT, Tag.JAVASCRIPT, Tag.REACT, Tag.SASS, Tag.GO, Tag.NOSQL],
   },
   {
     from: { month: 4, year: 2019 },
     to: { month: 5, year: 2020 },
     employer: "Applaud",
-    description: "Full-stack development with React/Django/PostgreSQL from concept to production. Received the bronze award at the 2019 Irish National Startup Awards."
+    description: "Full-stack development with React/Django/PostgreSQL from concept to production. Received the bronze award at the 2019 Irish National Startup Awards.",
+    tags: [Tag.PYTHON, Tag.JAVASCRIPT, Tag.REACT, Tag.SQL]
   },
   {
     from: { month: 8, year: 2018 },
     to: { month: 4, year: 2019 },
     employer: "Keep Appy",
-    description: "Full-stack development with React/React Native/Django/PostgreSQL."
+    description: "Full-stack development with React/React Native/Django/PostgreSQL.",
+    tags: [Tag.PYTHON, Tag.JAVASCRIPT, Tag.REACT, Tag.SQL]
   },
   {
     from: { month: 11, year: 2017 },
     to: { month: 9, year: 2018 },
     employer: "Hosted Graphite",
-    description: "Full-stack development with Django/MySQL."
+    description: "Full-stack development with Django/MySQL.",
+    tags: [Tag.PYTHON, Tag.JAVASCRIPT, Tag.HTML, Tag.SQL]
   }
-]
+];
 export const LIMIT = 5;
 export const INITIAL_APP_STATE: AppState = {
   imageFileURL: '',

@@ -4,7 +4,7 @@ import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import { AppState, AppAction } from '../utils/Types';
 import TypingText from '../components/TypingText';
-import { Grow, Grid, Avatar, Card, CardContent, Typography } from '@mui/material';
+import { Grow, Grid, Avatar, Card, CardContent, Typography, Chip } from '@mui/material';
 import { STATIC_DIR, DEV_XP_CARDS } from "../utils/Settings";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -14,24 +14,29 @@ const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(30)
     },
     cardContainer: {
-      maxWidth: 300,
+      width: 350,
     },
     card: {
       minWidth: "100%"
-    }
+    },
+    tagsContainer: {
+      marginTop: theme.spacing(1),
+      width: "100%"
+    },
   })
 );
 
 interface MonthYearDate {
-  month: 1|2|3|4|5|6|7|8|9|10|11|12,
+  month: number,
   year: number;
 }
 
 interface Experience {
   from: MonthYearDate;
-  to: MonthYearDate;
+  to?: MonthYearDate;
   employer: string;
   description: string;
+  tags: string[];
 }
 
 export interface DevPageProps {
@@ -63,6 +68,9 @@ const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
                   <Typography variant="body2" color="textSecondary" component="p">
                     { xp.description }
                   </Typography>
+                  <Grid className={classes.tagsContainer} container justifyContent="flex-start" alignItems="center" spacing={1}>
+                    {xp.tags.map(tag => <Grid item  key={tag}><Chip color="primary" label={tag} /></Grid>)}
+                  </Grid>
                 </CardContent>
               </Card>
             </Grid>
@@ -86,7 +94,7 @@ const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
           component="h1"
           messages={[
             { getText: () => 'Hi! My name is Jerico.' },
-            { getText: () => 'I\'m a software engineer at IBM Cloud.', color: 'secondary' },
+            { getText: () => 'I\'m a software engineer at IBM Cloud.', color: 'primary' },
           ]}
         />
         <TypingText 
