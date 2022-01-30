@@ -38,6 +38,7 @@ func main() {
 
 	for _, route := range UI_ROUTES {
 		router.GET(route, func(c *gin.Context) {
+			core.RecordView(c.ClientIP())
 			c.HTML(http.StatusOK, "index.tmpl.html", gin.H{"bundleURL": getBundleURL(config.S3BucketURL, config.Mode)})
 		})
 	}
@@ -82,16 +83,6 @@ func main() {
 			return
 		}
 		c.JSON(http.StatusOK, views)
-	})
-
-	router.POST("/api/views", func(c *gin.Context) {
-		address := c.ClientIP()
-		err := core.RecordView(address)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		c.Status(http.StatusCreated)
 	})
 
 	router.Run(":" + config.Port)
