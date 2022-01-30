@@ -2,23 +2,31 @@ import React, { FC, useState, useEffect } from 'react';
 import { sendAPIRequest } from '../utils/Helpers';
 import { EnqueueSnackbar } from '../utils/Types';
 import { Theme } from '@mui/material/styles';
-import { ResponsiveLine, Datum } from '@nivo/line';
+import { ResponsiveLine, Serie } from '@nivo/line';
 import { withSnackbar } from 'notistack';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
-import { Paper } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    card: {
+      paddingBottom: theme.spacing(5)
+    },
     line: {
       height: 400,
-      width: "100%",
-      marginTop: theme.spacing(10)
+      width: "100%"
     }
   }),
 );
 
-type TrafficDataRaw = Map<string, number>;
+interface TrafficDatapoint {
+    readonly uniqueViews: number;
+    readonly totalViews: number;
+    readonly selfViews: number;
+}
+
+type TrafficDataRaw = Map<string, TrafficDatapoint>;
 
 interface Props {
     readonly enqueueSnackbar: EnqueueSnackbar;
@@ -27,84 +35,98 @@ interface Props {
 const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
   const classes = useStyles();
   const { enqueueSnackbar } = props;
-  const [trafficData, setTrafficData] = useState<Datum[]>([]);
+  const [trafficData, setTrafficData] = useState<Serie[]>([]);
 
   useEffect(() => {
-    sendAPIRequest<TrafficDataRaw>('/api/views')
+    sendAPIRequest<TrafficDataRaw>('/api/traffic')
       .then(data => {
-        const dataPoints = Object.keys(data).sort().map(key => ({ x: key, y: data[key] }));
-        setTrafficData(dataPoints);
+        const keys = Object.keys(data).sort();
+        const totalViews: Serie = {
+          id: "Total Views",
+          data: keys.map(key => ({ x: key, y: data[key].totalViews }))
+        };
+        const uniqueViews: Serie = {
+          id: "Unique Visitors",
+          data: keys.map(key => ({ x: key, y: data[key].uniqueViews }))
+        };
+        const selfViews: Serie = {
+          id: "Your Views",
+          data: keys.map(key => ({ x: key, y: data[key].selfViews }))
+        };
+        setTrafficData([totalViews, uniqueViews, selfViews]);
       })
       .catch(error => enqueueSnackbar(error.toString(), { variant: 'error' }));
   }, [])
 
   return (
-    <Paper className={classes.line}>
-      <ResponsiveLine
-        data={[{ id: "Visitors", data: trafficData }]}
-        margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-        xScale={{ type: 'point' }}
-        yScale={{
-          type: 'linear',
-          min: 'auto',
-          max: 'auto',
-          stacked: true,
-          reverse: false
-        }}
-        yFormat=" >-.2f"
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: 'Date',
-          legendOffset: 36,
-          legendPosition: 'middle'
-        }}
-        axisLeft={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-          legend: 'Visitors',
-          legendOffset: -40,
-          legendPosition: 'middle'
-        }}
-        theme={{
-          "textColor": "white",
-        }}
-        pointSize={10}
-        pointBorderWidth={2}
-        pointLabelYOffset={-12}
-        isInteractive={false}
-        useMesh={true}
-        legends={[
-          {
-            anchor: 'bottom-right',
-            direction: 'column',
-            justify: false,
-            translateX: 100,
-            translateY: 0,
-            itemsSpacing: 0,
-            itemDirection: 'left-to-right',
-            itemWidth: 80,
-            itemHeight: 20,
-            itemOpacity: 0.75,
-            symbolSize: 12,
-            symbolShape: 'circle',
-            effects: [
-              {
-                on: 'hover',
-                style: {
-                  itemBackground: 'rgba(0, 0, 0, .03)',
-                  itemOpacity: 1
+    <Card className={classes.card}>
+      <CardContent className={classes.line}>
+        <Typography gutterBottom variant="h5" component="h2">Traffic</Typography>
+        <ResponsiveLine
+          data={trafficData}
+          margin={{ top: 50, right: 120, bottom: 50, left: 60 }}
+          xScale={{ type: 'point' }}
+          yScale={{
+            type: 'linear',
+            min: 'auto',
+            max: 'auto',
+            reverse: false
+          }}
+          yFormat=" >-.2f"
+          axisTop={null}
+          axisRight={null}
+          axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'Date',
+            legendOffset: 36,
+            legendPosition: 'middle'
+          }}
+          axisLeft={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+            legend: 'Visitors',
+            legendOffset: -40,
+            legendPosition: 'middle'
+          }}
+          theme={{
+            "textColor": "white",
+          }}
+          pointSize={10}
+          pointBorderWidth={2}
+          pointLabelYOffset={-12}
+          isInteractive={false}
+          useMesh={true}
+          legends={[
+            {
+              anchor: 'bottom-right',
+              direction: 'column',
+              justify: false,
+              translateX: 100,
+              translateY: 0,
+              itemsSpacing: 0,
+              itemDirection: 'left-to-right',
+              itemWidth: 80,
+              itemHeight: 20,
+              itemOpacity: 0.75,
+              symbolSize: 12,
+              symbolShape: 'circle',
+              effects: [
+                {
+                  on: 'hover',
+                  style: {
+                    itemBackground: 'rgba(0, 0, 0, .03)',
+                    itemOpacity: 1
+                  }
                 }
-              }
-            ]
-          }
-        ]}
-      />
-    </Paper>
+              ]
+            }
+          ]}
+        />
+      </CardContent>
+    </Card>
   );
 } ;
 

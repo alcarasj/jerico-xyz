@@ -1,6 +1,8 @@
 package main
 
-import "time"
+import (
+	"time"
+)
 
 type Exhibit struct {
 	Name        string `json:"name"`
@@ -43,9 +45,9 @@ type SendRequestParams struct {
 }
 
 type CloudantDoc struct {
-	ID   string      `json:"_id"`
-	Rev  string      `json:"_rev"`
-	Data interface{} `json:"data"`
+	ID   string
+	Rev  string
+	Data interface{}
 }
 
 type CoreConfig struct {
@@ -56,4 +58,10 @@ type CoreConfig struct {
 	IBMCloudIAMTokenEndpoint string
 	CloudantHost             string
 	DatabaseName             string
+}
+
+type TrafficDatapoint struct {
+	TotalViews  int `json:"totalViews"`
+	UniqueViews int `json:"uniqueViews"`
+	SelfViews   int `json:"selfViews"`
 }

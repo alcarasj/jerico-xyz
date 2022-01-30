@@ -76,8 +76,8 @@ func main() {
 		c.JSON(http.StatusOK, exhibits)
 	})
 
-	router.GET("/api/views", func(c *gin.Context) {
-		views, err := core.GetTotalViewsPerDay()
+	router.GET("/api/traffic", func(c *gin.Context) {
+		views, err := core.GetTrafficData(c.ClientIP())
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

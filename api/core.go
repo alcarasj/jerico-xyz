@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const VIEW_COUNTER_BUFFER_SECONDS = 10
+const VIEW_COUNTER_BUFFER_SECONDS = 60
 const VIEW_COUNTER_DOC_ID = "ViewCounter"
 const IP_DETAILS_DOC_ID = "IPDetails"
 
@@ -70,22 +70,33 @@ func (c Core) RecordView(ip string) error {
 	}
 }
 
-func (c Core) GetTotalViewsPerDay() (map[string]int, error) {
+func (c Core) GetTrafficData(callerIP string) (map[string]TrafficDatapoint, error) {
 	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID, true)
 	if err != nil {
 		return nil, err
 	}
 
 	data := doc.Data.(map[string]interface{})
-	result := make(map[string]int)
+	result := make(map[string]TrafficDatapoint)
 	for date, dayEntry := range data {
 		dayEntry := dayEntry.(map[string]interface{})
-		dayViews := 0
-		for _, clientEntry := range dayEntry {
+		dayTotalViews := 0
+		dayUniqueViews := 0
+		daySelfViews := 0
+		for ip, clientEntry := range dayEntry {
 			clientEntry := clientEntry.(map[string]interface{})
-			dayViews += int(clientEntry["views"].(float64))
+			totalClientViews := int(clientEntry["views"].(float64))
+			dayTotalViews += totalClientViews
+			if callerIP == ip {
+				daySelfViews += totalClientViews
+			}
+			dayUniqueViews++
 		}
-		result[date] = dayViews
+		result[date] = TrafficDatapoint{
+			TotalViews:  dayTotalViews,
+			UniqueViews: dayUniqueViews,
+			SelfViews:   daySelfViews,
+		}
 	}
 
 	return result, err
