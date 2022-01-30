@@ -16,7 +16,11 @@ type Core struct {
 	Cache       Cache
 }
 
-func (c Core) RecordView(clientIP string) error {
+func (c Core) RecordView(ip string) error {
+	if isLocalhost(ip) {
+		return fmt.Errorf("cannot record view for %s", ip)
+	}
+
 	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID, false)
 	if err != nil {
 		return err
@@ -29,12 +33,12 @@ func (c Core) RecordView(clientIP string) error {
 
 	if dayEntry, dayEntryWasFound := viewCounter[currentDateStr]; dayEntryWasFound {
 		dayEntry, _ := dayEntry.(map[string]interface{})
-		if clientEntry, clientEntryWasFound := dayEntry[clientIP]; clientEntryWasFound {
+		if clientEntry, clientEntryWasFound := dayEntry[ip]; clientEntryWasFound {
 			clientEntry := clientEntry.(map[string]interface{})
 			lastUpdatedStr := clientEntry["lastUpdated"].(string)
 			lastUpdated, _ := time.Parse(time.RFC3339, lastUpdatedStr)
 			if now.Sub(lastUpdated).Seconds() > VIEW_COUNTER_BUFFER_SECONDS {
-				dayEntry[clientIP] = ViewCounterClientEntry{
+				dayEntry[ip] = ViewCounterClientEntry{
 					Views:       int(clientEntry["views"].(float64)) + 1,
 					LastUpdated: now,
 				}
@@ -42,7 +46,7 @@ func (c Core) RecordView(clientIP string) error {
 				shouldUpdatePersistence = true
 			}
 		} else {
-			dayEntry[clientIP] = ViewCounterClientEntry{
+			dayEntry[ip] = ViewCounterClientEntry{
 				Views:       1,
 				LastUpdated: now,
 			}
@@ -51,7 +55,7 @@ func (c Core) RecordView(clientIP string) error {
 		}
 	} else {
 		newDayEntry := make(ViewCounterDayEntry)
-		newDayEntry[clientIP] = ViewCounterClientEntry{
+		newDayEntry[ip] = ViewCounterClientEntry{
 			Views:       1,
 			LastUpdated: now,
 		}
@@ -93,7 +97,7 @@ func (c Core) SaveClientData(ip string, data map[string]string, savedData map[st
 }
 
 func (c Core) GetClientData(ip string) (string, error) {
-	if ip == "::1" || ip == "127.0.0.1" {
+	if isLocalhost(ip) {
 		return "", fmt.Errorf("cannot lookup client data for %s", ip)
 	}
 

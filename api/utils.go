@@ -135,6 +135,10 @@ func (t IAMToken) isExpired() bool {
 	return time.Now().Unix() > int64(t.ExpirationEpoch)
 }
 
+func isLocalhost(ip string) bool {
+	return ip == "::1" || ip == "127.0.0.1"
+}
+
 func buildCoreConfigFromEnvVars() CoreConfig {
 	envVars := make(map[string]string)
 
