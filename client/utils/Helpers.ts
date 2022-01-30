@@ -7,7 +7,7 @@ export const atEasterEggCounterLimit = (x: number): boolean => x >= EASTER_EGG_C
 export async function sendAPIRequest<T>(url: string, method: HttpMethod = HttpMethod.GET, expectedStatus: HttpStatus = HttpStatus.OK): Promise<T> {
   const response = await axios({ url, method });
   if (response.status !== expectedStatus) {
-    throw new Error(`Expected ${expectedStatus} from ${method} ${url} but returned ${response.status}`)
+    throw new Error(`${method} ${url} returned ${response.status}: ${response.data.error}`)
   }
   return response.data;
 }

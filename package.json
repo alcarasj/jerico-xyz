@@ -1,6 +1,6 @@
 {
   "name": "jerico-xyz",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "description": "My personal website.",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,8 @@
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.8",
     "@mui/styles": "^5.2.3",
+    "@nivo/core": "^0.79.0",
+    "@nivo/line": "^0.79.1",
     "@types/node": "^17.0.8",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",

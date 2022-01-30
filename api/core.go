@@ -93,6 +93,10 @@ func (c Core) SaveClientData(ip string, data map[string]string, savedData map[st
 }
 
 func (c Core) GetClientData(ip string) (string, error) {
+	if ip == "::1" || ip == "127.0.0.1" {
+		return "", fmt.Errorf("cannot lookup client data for %s", ip)
+	}
+
 	buildLocationString := func(city string, region string, countryName string) string {
 		if city != "" && region != "" && countryName != "" {
 			return fmt.Sprintf("%s, %s, %s", city, region, countryName)
@@ -109,8 +113,8 @@ func (c Core) GetClientData(ip string) (string, error) {
 			Body:               nil,
 			Headers:            nil,
 			ExpectedRespStatus: http.StatusOK,
-			RetryAmount:        DEFAULT_RETRY_AMOUNT,
-			RetryIntervalSecs:  DEFAULT_RETRY_INTERVAL_SECS,
+			RetryAmount:        0,
+			RetryIntervalSecs:  0,
 		})
 		if err != nil {
 			return nil, err
@@ -125,8 +129,16 @@ func (c Core) GetClientData(ip string) (string, error) {
 		return result, nil
 	}
 
-	doc, _ := c.Persistence.GetDocumentByID(IP_DETAILS_DOC_ID, false)
-	savedData := doc.Data.(map[string]interface{})
+	doc, err := c.Persistence.GetDocumentByID(IP_DETAILS_DOC_ID, false)
+	if err != nil {
+		return "", err
+	}
+
+	savedData, ok := doc.Data.(map[string]interface{})
+	if !ok {
+		return "", fmt.Errorf("failed to parse client data: %v", savedData)
+	}
+
 	if savedEntry, ok := savedData[ip].(map[string]interface{}); ok {
 		return buildLocationString(savedEntry["city"].(string), savedEntry["region"].(string), savedEntry["country_name"].(string)), nil
 	}

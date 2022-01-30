@@ -9,19 +9,19 @@ interface TypingTextMessage {
   color?: MuiColor;
 }
 
-interface TypingTextProps {
-   messages: TypingTextMessage[];
-   variant?: Variant;
-   component?: Variant;
-   className?: string;
-   gutterBottom?: boolean;
-   align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
+interface Props {
+  readonly messages: TypingTextMessage[];
+  readonly variant?: Variant;
+  readonly component?: Variant;
+  readonly className?: string;
+  readonly gutterBottom?: boolean;
+  readonly align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
 }
 
 const TYPING_DELAY_MS = 50;
 const NEXT_MESSAGE_DELAY_MS = 5000; 
 
-const TypingText: FC<TypingTextProps> = (props: TypingTextProps): JSX.Element => {
+const TypingText: FC<Props> = (props: Props): JSX.Element => {
   const { messages, variant, className, gutterBottom, align } = props;
   const [msgIndex, setMsgIndex] = React.useState<number>(0);
   const [textIndex, setTextIndex] = React.useState<number>(0);

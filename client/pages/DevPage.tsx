@@ -40,11 +40,11 @@ interface Experience {
   readonly tags: string[];
 }
 
-export interface DevPageProps {
+interface Props {
   enqueueSnackbar: EnqueueSnackbar;
 }
 
-const DevPage: React.FC<DevPageProps> = (): JSX.Element => {
+const DevPage: React.FC<Props> = (): JSX.Element => {
   const classes = useStyles();
 
   const getExperienceTimeRange = (from: MonthYearDate, to: MonthYearDate) => `${new Date(from.year, from.month - 1).toLocaleString('default', { month: 'short' })} ${from.year} ` + 

@@ -12,15 +12,13 @@ import { useNavigate } from "react-router-dom";
 import { EnqueueSnackbar, Exhibit } from '../utils/Types';
 import TypingText from '../components/TypingText';
 import { withSnackbar } from 'notistack';
+import SiteMetrics from '../components/SiteMetrics';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     me: {
       height: theme.spacing(30),
       width: theme.spacing(30)
-    },
-    paper: {
-      backgroundImage: `url(${STATIC_DIR}img/bg.jpg)`
     },
     card: {
       height: '100%'
@@ -31,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface HomePageProps {
+interface Props {
   readonly enqueueSnackbar: EnqueueSnackbar;
 }
 
@@ -41,13 +39,10 @@ interface HomeCard {
   readonly linkTo: string;
 }
 
-type TrafficData = Map<string, number>;
-
-const HomePage: FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
+const HomePage: FC<Props> = (props: Props): JSX.Element => {
   const { enqueueSnackbar } = props;
   const [counter, setCounter] = useState<number>(0);
   const [exhibits, setExhibits] = useState<Exhibit[]>([]);
-  const [trafficData, setTrafficData] = useState<TrafficData>(new Map<string, number>());
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -55,15 +50,9 @@ const HomePage: FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
     if (atEasterEggCounterLimit(counter)) {
       sendAPIRequest<Exhibit[]>('/api/art')
         .then(exhibits => setExhibits(exhibits))
-        .catch(error => enqueueSnackbar(error, { variant: 'error' }));
+        .catch(error => enqueueSnackbar(error.toString(), { variant: 'error' }));
     }
   }, [counter]);
-
-  useEffect(() => {
-    sendAPIRequest<TrafficData>('/api/views')
-      .then(trafficData => setTrafficData(trafficData))
-      .catch(error => enqueueSnackbar(error, { variant: 'error' }));
-  }, [])
 
   const renderCards = (): JSX.Element => (
     <Grid item xs>
@@ -173,6 +162,9 @@ const HomePage: FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
         />
       </Grid>
       { atEasterEggCounterLimit(counter) ? renderExhibits() : renderCards() }
+      <Grid item>
+        <SiteMetrics />
+      </Grid>
     </Grid>
   );
 };
