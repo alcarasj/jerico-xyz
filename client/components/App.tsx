@@ -21,8 +21,11 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100vw',
-      backgroundImage: "url(" + STATIC_DIR + "img/stars.gif)",
-      backgroundSize: "contain"
+      backgroundImage: "url(" + STATIC_DIR + "img/bg.jpg)",
+      backgroundAttachment: "fixed",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover"
     },
     page: {
       paddingTop: theme.spacing(25),

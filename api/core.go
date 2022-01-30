@@ -87,8 +87,9 @@ func (c Core) GetTotalViewsPerDay() (map[string]int, error) {
 	return result, err
 }
 
-func (c Core) SaveClientData(data map[string]string, rev string) error {
-	return c.Persistence.ModifyDocumentByID(IP_DETAILS_DOC_ID, data, rev)
+func (c Core) SaveClientData(ip string, data map[string]string, savedData map[string]interface{}, rev string) error {
+	savedData[ip] = data
+	return c.Persistence.ModifyDocumentByID(IP_DETAILS_DOC_ID, savedData, rev)
 }
 
 func (c Core) GetClientData(ip string) (string, error) {
@@ -125,8 +126,9 @@ func (c Core) GetClientData(ip string) (string, error) {
 	}
 
 	doc, _ := c.Persistence.GetDocumentByID(IP_DETAILS_DOC_ID, false)
-	if savedData, ok := doc.Data.(map[string]interface{})[ip].(map[string]interface{}); ok {
-		return buildLocationString(savedData["city"].(string), savedData["region"].(string), savedData["countryName"].(string)), nil
+	savedData := doc.Data.(map[string]interface{})
+	if savedEntry, ok := savedData[ip].(map[string]interface{}); ok {
+		return buildLocationString(savedEntry["city"].(string), savedEntry["region"].(string), savedEntry["country_name"].(string)), nil
 	}
 
 	val, err := c.Cache.Get(ip, fetchIPDetails)
@@ -134,7 +136,7 @@ func (c Core) GetClientData(ip string) (string, error) {
 		return "", err
 	}
 	clientData := val.(map[string]string)
-	c.SaveClientData(clientData, doc.Rev)
+	c.SaveClientData(ip, clientData, savedData, doc.Rev)
 
 	return buildLocationString(clientData["city"], clientData["region"], clientData["country_name"]), nil
 }
