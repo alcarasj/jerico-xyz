@@ -72,7 +72,7 @@ func main() {
 				ImageURL:    fmt.Sprintf("%s/Unity50pc.png", config.S3BucketURL),
 			},
 		}
-		c.JSON(http.StatusOK, gin.H{"exhibits": exhibits})
+		c.JSON(http.StatusOK, exhibits)
 	})
 
 	router.GET("/api/views", func(c *gin.Context) {

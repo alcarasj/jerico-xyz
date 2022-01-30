@@ -1,15 +1,13 @@
-import { LIMIT } from './Settings';
-import { HttpMethod } from './Types';
+import { EASTER_EGG_COUNTER_LIMIT } from './Settings';
+import { HttpMethod, HttpStatus } from './Types';
 import axios from 'axios';
 
-export const atLimit = (x: number): boolean => x >= LIMIT;
+export const atEasterEggCounterLimit = (x: number): boolean => x >= EASTER_EGG_COUNTER_LIMIT;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const sendAPIRequest = async (url: string, method: HttpMethod = HttpMethod.GET): Promise<any> => {
+export async function sendAPIRequest<T>(url: string, method: HttpMethod = HttpMethod.GET, expectedStatus: HttpStatus = HttpStatus.OK): Promise<T> {
   const response = await axios({ url, method });
-  if (response.data) {
-    return response.data;
-  } else {
-    throw new Error(`Received invalid response body: ${JSON.stringify(response.data)}`);
+  if (response.status !== expectedStatus) {
+    throw new Error(`Expected ${expectedStatus} from ${method} ${url} but returned ${response.status}`)
   }
-};
+  return response.data;
+}

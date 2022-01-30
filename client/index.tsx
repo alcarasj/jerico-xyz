@@ -3,9 +3,9 @@ import React from "react";
 import App from "./components/App";
 import { SnackbarProvider } from 'notistack';
 import { blue, indigo } from "@mui/material/colors";
-import { adaptV4Theme, createTheme, StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
+import { createTheme, StyledEngineProvider, ThemeProvider } from "@mui/material/styles";
 
-const theme = createTheme(adaptV4Theme({
+const theme = createTheme({
   palette: {
     mode: "dark",
     primary: blue,
@@ -25,7 +25,7 @@ const theme = createTheme(adaptV4Theme({
       '"Segoe UI Symbol"',
     ].join(','),
   }
-}));
+});
 
 ReactDOM.render(
   <SnackbarProvider maxSnack={3}>

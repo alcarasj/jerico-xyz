@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, useEffect } from 'react';
 import Typography from '@mui/material/Typography';
 import { MuiColor } from '../utils/Types';
 
@@ -21,7 +21,7 @@ interface TypingTextProps {
 const TYPING_DELAY_MS = 50;
 const NEXT_MESSAGE_DELAY_MS = 5000; 
 
-const TypingText: React.FC<TypingTextProps> = (props: TypingTextProps): JSX.Element => {
+const TypingText: FC<TypingTextProps> = (props: TypingTextProps): JSX.Element => {
   const { messages, variant, className, gutterBottom, align } = props;
   const [msgIndex, setMsgIndex] = React.useState<number>(0);
   const [textIndex, setTextIndex] = React.useState<number>(0);
@@ -52,7 +52,7 @@ const TypingText: React.FC<TypingTextProps> = (props: TypingTextProps): JSX.Elem
     }, TYPING_DELAY_MS);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     startTyping();
   }, [textIndex])
 

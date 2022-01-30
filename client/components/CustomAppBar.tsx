@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
@@ -9,14 +9,10 @@ import DeveloperBoardIcon from '@mui/icons-material/DeveloperBoard';
 import SocialBar from './SocialBar';
 import TypingText from './TypingText';
 import { sendAPIRequest } from '../utils/Helpers';
-import { HttpMethod } from '../utils/Types';
 import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      flexGrow: 1,
-    },
     menuButton: {
       marginRight: theme.spacing(2),
     },
@@ -30,19 +26,18 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ClientData {
-  address: string;
-  location: string;
+  readonly address: string;
+  readonly location: string;
 }
 
-const CustomAppBar: React.FC = (): JSX.Element => {
+const CustomAppBar: FC = (): JSX.Element => {
   const classes = useStyles();
-  const [clientData, setClientData] = React.useState<ClientData>({ address: '', location: '' });
+  const [clientData, setClientData] = useState<ClientData>({ address: '', location: '' });
   const navigate = useNavigate();
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
-  React.useEffect(() => {
-    sendAPIRequest('/api/client').then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
-    sendAPIRequest('/api/views', HttpMethod.POST).then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
+  useEffect(() => {
+    sendAPIRequest<ClientData>('/api/client').then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, useState, useEffect } from "react";
 import Avatar from '@mui/material/Avatar';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
@@ -7,14 +7,11 @@ import { Typography, Button, CardActions, Grid, Grow, Card, CardActionArea, Card
   , ImageListItem, ImageListItemBar } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { HOME_CARDS, STATIC_DIR } from "../utils/Settings";
-import { atLimit } from '../utils/Helpers';
-import {
-  getExhibits,
-  setCounter
-} from '../utils/ActionCreators';
+import { atEasterEggCounterLimit, sendAPIRequest } from '../utils/Helpers';
 import { useNavigate } from "react-router-dom";
-import { AppState, AppAction } from '../utils/Types';
+import { EnqueueSnackbar, Exhibit } from '../utils/Types';
 import TypingText from '../components/TypingText';
+import { withSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,27 +32,38 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface HomePageProps {
-  state: AppState;
-  dispatch: (action: AppAction) => void;
-  enqueueSnackbar: (message: string, options?: unknown) => string | number;
+  readonly enqueueSnackbar: EnqueueSnackbar;
 }
 
 interface HomeCard {
-  title: string;
-  description: string;
-  linkTo: string;
+  readonly title: string;
+  readonly description: string;
+  readonly linkTo: string;
 }
 
-const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
-  const { enqueueSnackbar, state, dispatch } = props;
+type TrafficData = Map<string, number>;
+
+const HomePage: FC<HomePageProps> = (props: HomePageProps): JSX.Element => {
+  const { enqueueSnackbar } = props;
+  const [counter, setCounter] = useState<number>(0);
+  const [exhibits, setExhibits] = useState<Exhibit[]>([]);
+  const [trafficData, setTrafficData] = useState<TrafficData>(new Map<string, number>());
   const classes = useStyles();
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    if (atLimit(state.counter)) {
-      getExhibits(dispatch);
+  useEffect(() => {
+    if (atEasterEggCounterLimit(counter)) {
+      sendAPIRequest<Exhibit[]>('/api/art')
+        .then(exhibits => setExhibits(exhibits))
+        .catch(error => enqueueSnackbar(error, { variant: 'error' }));
     }
-  }, [state.counter]);
+  }, [counter]);
+
+  useEffect(() => {
+    sendAPIRequest<TrafficData>('/api/views')
+      .then(trafficData => setTrafficData(trafficData))
+      .catch(error => enqueueSnackbar(error, { variant: 'error' }));
+  }, [])
 
   const renderCards = (): JSX.Element => (
     <Grid item xs>
@@ -68,6 +76,8 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
                   <CardActionArea onClick={() => {
                     if (card.linkTo) {
                       navigate(card.linkTo);
+                    } else {
+                      enqueueSnackbar('Coming soon!', { variant: 'info' });
                     }
                   }}>
                     <CardContent>
@@ -87,11 +97,11 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
                         if (card.linkTo) {
                           navigate(card.linkTo);
                         } else {
-                          const newValue = state.counter + 1;
-                          if (atLimit(newValue)) {
+                          const newValue = counter + 1;
+                          if (atEasterEggCounterLimit(newValue)) {
                             enqueueSnackbar('You have unlocked my art exhibits!', { variant: 'success' });
                           }
-                          dispatch(setCounter(newValue));
+                          setCounter(newValue);
                         }
                       }}
                     >
@@ -112,7 +122,7 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
       <Grid item xs>
         <ImageList>
           {
-            state.exhibits.map(exhibit => (
+            exhibits.map(exhibit => (
               <ImageListItem key={exhibit.name}>
                 <img src={exhibit.imageURL} alt={exhibit.name} />
                 <ImageListItemBar
@@ -155,15 +165,16 @@ const HomePage: React.FC<HomePageProps> = (props: HomePageProps): JSX.Element =>
           gutterBottom
           messages={[
             { 
-              getText: () => atLimit(state.counter) ? 
+              getText: () => atEasterEggCounterLimit(counter) ? 
                 "Thanks for supporting my art!" :
                 "Thanks for visiting! Select an area of interest below to learn more about me."
             }
           ]}
         />
       </Grid>
-      { atLimit(state.counter) ? renderExhibits() : renderCards() }
+      { atEasterEggCounterLimit(counter) ? renderExhibits() : renderCards() }
     </Grid>
   );
 };
-export default  HomePage;
+
+export default withSnackbar(HomePage);

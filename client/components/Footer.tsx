@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const Footer: React.FC = (): JSX.Element => {
+const Footer: FC = (): JSX.Element => {
   const classes = useStyles();
   const packageVersion = packageJSON.version;
 

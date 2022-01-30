@@ -2,10 +2,11 @@ import React from 'react';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
-import { AppState, AppAction } from '../utils/Types';
+import { EnqueueSnackbar } from '../utils/Types';
 import TypingText from '../components/TypingText';
 import { Grow, Grid, Avatar, Card, CardContent, Typography, Chip } from '@mui/material';
 import { STATIC_DIR, DEV_XP_CARDS } from "../utils/Settings";
+import { withSnackbar } from 'notistack';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,25 +28,23 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface MonthYearDate {
-  month: number,
-  year: number;
+  readonly month: number,
+  readonly year: number;
 }
 
 interface Experience {
-  from: MonthYearDate;
-  to?: MonthYearDate;
-  employer: string;
-  description: string;
-  tags: string[];
+  readonly from: MonthYearDate;
+  readonly to?: MonthYearDate;
+  readonly employer: string;
+  readonly description: string;
+  readonly tags: string[];
 }
 
 export interface DevPageProps {
-  state: AppState;
-  dispatch: (action: AppAction) => void;
-  enqueueSnackbar: (message: string, options?: unknown) => string | number;
+  enqueueSnackbar: EnqueueSnackbar;
 }
 
-const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
+const DevPage: React.FC<DevPageProps> = (): JSX.Element => {
   const classes = useStyles();
 
   const getExperienceTimeRange = (from: MonthYearDate, to: MonthYearDate) => `${new Date(from.year, from.month - 1).toLocaleString('default', { month: 'short' })} ${from.year} ` + 
@@ -116,4 +115,4 @@ const DevPage: React.FC<DevPageProps> = (props: DevPageProps): JSX.Element => {
   );
 };
 
-export default DevPage;
+export default withSnackbar(DevPage);

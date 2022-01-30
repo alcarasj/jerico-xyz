@@ -1,4 +1,4 @@
-import { AppState, Tag } from './Types';
+import { Tag } from './Types';
 
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/jcalcaras';
 export const GITHUB_URL = 'https://github.com/alcarasj';
@@ -50,11 +50,4 @@ export const DEV_XP_CARDS = [
     tags: [Tag.PYTHON, Tag.JAVASCRIPT, Tag.HTML, Tag.SQL]
   }
 ];
-export const LIMIT = 5;
-export const INITIAL_APP_STATE: AppState = {
-  imageFileURL: '',
-  isFetching: false,
-  counter: 0,
-  error: '',
-  exhibits: []
-};
+export const EASTER_EGG_COUNTER_LIMIT = 5;

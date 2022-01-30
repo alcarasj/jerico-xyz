@@ -1,15 +1,11 @@
-import React from "react";
-import HomePage from "../pages/HomePage";
-import DevPage from "../pages/DevPage";
+import React, { FC, lazy, Suspense } from "react";
 import Footer from "./Footer";
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { STATIC_DIR, INITIAL_APP_STATE } from '../utils/Settings';
-import AppReducer from '../utils/Reducer';
+import { STATIC_DIR } from '../utils/Settings';
 import CustomAppBar from "./CustomAppBar";
-import { withSnackbar } from 'notistack';
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,20 +14,15 @@ import {
 import ScrollToTop from "./ScrollToTop";
 import { Grid, Grow } from "@mui/material";
 
+const HomePage = lazy(() => import('../pages/HomePage'));
+const DevPage = lazy(() => import('../pages/DevPage'));
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100vw',
       backgroundImage: "url(" + STATIC_DIR + "img/stars.gif)",
       backgroundSize: "contain"
-    },
-    me: {
-      height: theme.spacing(30),
-      width: theme.spacing(30)
-    },
-    body: {
-      paddingTop: theme.spacing(15),
-      paddingBottom: theme.spacing(20),
     },
     page: {
       paddingTop: theme.spacing(25),
@@ -45,13 +36,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface AppProps {
-  enqueueSnackbar: (message: string, options?: unknown) => string | number;
-}
-
-const App: React.FC<AppProps> = ({ enqueueSnackbar }: AppProps): JSX.Element => {
+const App: FC = (): JSX.Element => {
   const classes = useStyles();
-  const [state, dispatch] = React.useReducer(AppReducer, INITIAL_APP_STATE);
 
   return (
     <Router>
@@ -62,17 +48,15 @@ const App: React.FC<AppProps> = ({ enqueueSnackbar }: AppProps): JSX.Element => 
           <CustomAppBar />
           <Routes>
             <Route path="/dev" element={
-              <DevPage 
-                state={state} 
-                dispatch={dispatch} 
-                enqueueSnackbar={enqueueSnackbar} 
-              />} />
+              <Suspense fallback={<div>Loading...</div>}>
+                <DevPage />
+              </Suspense>
+            } />
             <Route path="/" element={
-              <HomePage 
-                state={state} 
-                dispatch={dispatch} 
-                enqueueSnackbar={enqueueSnackbar} 
-              />} />
+              <Suspense fallback={<div>Loading...</div>}>
+                <HomePage />
+              </Suspense>
+            } />
           </Routes>
           <Grid container alignItems='center' justifyContent='center'>
             <Grow in timeout={1500}>
@@ -86,4 +70,4 @@ const App: React.FC<AppProps> = ({ enqueueSnackbar }: AppProps): JSX.Element => 
   );
 };
 
-export default withSnackbar(App);
+export default App;

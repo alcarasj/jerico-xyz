@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { FC, Fragment } from 'react';
 import { Github, Linkedin } from 'mdi-material-ui';
 import IconButton from '@mui/material/IconButton';
 import { GITHUB_URL, LINKEDIN_URL, EMAIL } from "../utils/Settings";
 import MailIcon from '@mui/icons-material/Mail';
 
-const SocialBar: React.FC = (): JSX.Element => (
-  <React.Fragment>
+const SocialBar: FC = (): JSX.Element => (
+  <Fragment>
     <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">
       <IconButton aria-label="linkedin" color="primary" size="large">
         <Linkedin />
@@ -21,7 +21,7 @@ const SocialBar: React.FC = (): JSX.Element => (
         <MailIcon />
       </IconButton>
     </a>
-  </React.Fragment>
+  </Fragment>
 );
 
 export default SocialBar;

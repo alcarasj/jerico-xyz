@@ -9,6 +9,7 @@ import (
 
 const VIEW_COUNTER_BUFFER_SECONDS = 10
 const VIEW_COUNTER_DOC_ID = "ViewCounter"
+const IP_DETAILS_DOC_ID = "IPDetails"
 
 type Core struct {
 	Persistence Persistence
@@ -86,7 +87,19 @@ func (c Core) GetTotalViewsPerDay() (map[string]int, error) {
 	return result, err
 }
 
+func (c Core) SaveClientData(data map[string]string, rev string) error {
+	return c.Persistence.ModifyDocumentByID(IP_DETAILS_DOC_ID, data, rev)
+}
+
 func (c Core) GetClientData(ip string) (string, error) {
+	buildLocationString := func(city string, region string, countryName string) string {
+		if city != "" && region != "" && countryName != "" {
+			return fmt.Sprintf("%s, %s, %s", city, region, countryName)
+		} else {
+			return ""
+		}
+	}
+
 	fetchIPDetails := func() (interface{}, error) {
 		url := fmt.Sprintf("https://ipapi.co/%s/json/", ip)
 		resp, err := sendRequest(SendRequestParams{
@@ -108,8 +121,12 @@ func (c Core) GetClientData(ip string) (string, error) {
 		if _, found := result["error"]; found {
 			return nil, fmt.Errorf("failed to get client data: %v", result)
 		}
-
 		return result, nil
+	}
+
+	doc, _ := c.Persistence.GetDocumentByID(IP_DETAILS_DOC_ID, false)
+	if savedData, ok := doc.Data.(map[string]interface{})[ip].(map[string]interface{}); ok {
+		return buildLocationString(savedData["city"].(string), savedData["region"].(string), savedData["countryName"].(string)), nil
 	}
 
 	val, err := c.Cache.Get(ip, fetchIPDetails)
@@ -117,12 +134,7 @@ func (c Core) GetClientData(ip string) (string, error) {
 		return "", err
 	}
 	clientData := val.(map[string]string)
+	c.SaveClientData(clientData, doc.Rev)
 
-	var location string
-	if clientData["city"] != "" && clientData["region"] != "" && clientData["country_name"] != "" {
-		location = fmt.Sprintf("%s, %s, %s", clientData["city"], clientData["region"], clientData["country_name"])
-	} else {
-		location = ""
-	}
-	return location, nil
+	return buildLocationString(clientData["city"], clientData["region"], clientData["country_name"]), nil
 }

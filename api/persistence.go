@@ -41,7 +41,7 @@ func (p Persistence) BuildURLWithID(id string) string {
 	return fmt.Sprintf("%s/%s", p.URL, id)
 }
 
-func (p *Persistence) BuildReqHeaders(rev string) (map[string]string, error) {
+func (p Persistence) BuildReqHeaders(rev string) (map[string]string, error) {
 	headers := make(map[string]string)
 	if p.IAMToken == nil || p.IAMToken.isExpired() {
 		token, err := getIAMToken(p.IBMCloudAPIKey, p.IBMCloudIAMTokenEndpoint)
