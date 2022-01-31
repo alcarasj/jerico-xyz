@@ -5,6 +5,9 @@ clean:
 go:
 	PORT=8000 go run ./api/*.go
 
+go-race:
+	PORT=8000 go -race run ./api/*.go
+
 go-prod:
 	PORT=8000 MODE=PRODUCTION go run ./api/*.go
 

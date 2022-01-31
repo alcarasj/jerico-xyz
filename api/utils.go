@@ -139,7 +139,7 @@ func isLocalhost(ip string) bool {
 	return ip == "::1" || ip == "127.0.0.1"
 }
 
-func buildCoreConfigFromEnvVars() CoreConfig {
+func buildMainConfigFromEnvVars() MainConfig {
 	envVars := make(map[string]string)
 
 	requiredEnvVars := []string{"PORT", "S3_HOST", "BUCKET_NAME", "IBM_CLOUD_API_KEY", "IBM_CLOUD_IAM_TOKEN_ENDPOINT", "CLOUDANT_HOST"}
@@ -156,7 +156,7 @@ func buildCoreConfigFromEnvVars() CoreConfig {
 		envVars[varName] = os.Getenv(varName)
 	}
 
-	return CoreConfig{
+	return MainConfig{
 		Port:                     envVars["PORT"],
 		Mode:                     envVars["MODE"],
 		S3BucketURL:              fmt.Sprintf("%s/%s", envVars["S3_HOST"], envVars["BUCKET_NAME"]),

@@ -50,7 +50,7 @@ type CloudantDoc struct {
 	Data interface{}
 }
 
-type CoreConfig struct {
+type MainConfig struct {
 	Port                     string
 	Mode                     string
 	S3BucketURL              string
@@ -64,4 +64,11 @@ type TrafficDatapoint struct {
 	TotalViews  int `json:"totalViews"`
 	UniqueViews int `json:"uniqueViews"`
 	SelfViews   int `json:"selfViews"`
+}
+
+type ClientData struct {
+	IP          string `json:"ip"`
+	City        string `json:"city"`
+	Region      string `json:"region"`
+	CountryName string `json:"countryName"`
 }

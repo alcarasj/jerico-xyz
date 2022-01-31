@@ -11,11 +11,11 @@ import { Card, CardContent, Typography } from '@mui/material';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
-      paddingBottom: theme.spacing(5)
+      paddingBottom: theme.spacing(5),
     },
     line: {
       height: 400,
-      width: "100%"
+      width: "100%",
     }
   }),
 );
@@ -38,7 +38,7 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
   const [trafficData, setTrafficData] = useState<Serie[]>([]);
 
   useEffect(() => {
-    sendAPIRequest<TrafficDataRaw>('/api/traffic')
+    sendAPIRequest<TrafficDataRaw>('/api/traffic?sinceNDaysAgo=7')
       .then(data => {
         const keys = Object.keys(data).sort();
         const totalViews: Serie = {
@@ -46,7 +46,7 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
           data: keys.map(key => ({ x: key, y: data[key].totalViews }))
         };
         const uniqueViews: Serie = {
-          id: "Unique Visitors",
+          id: "Unique Views",
           data: keys.map(key => ({ x: key, y: data[key].uniqueViews }))
         };
         const selfViews: Serie = {
@@ -87,18 +87,23 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: 'Visitors',
+            legend: 'Views',
             legendOffset: -40,
             legendPosition: 'middle'
           }}
           theme={{
-            "textColor": "white",
+            textColor: 'white',
+            tooltip: {
+              container: {
+                background: 'black'
+              }
+            }
           }}
           pointSize={10}
+          isInteractive
           pointBorderWidth={2}
           pointLabelYOffset={-12}
-          isInteractive={false}
-          useMesh={true}
+          useMesh
           legends={[
             {
               anchor: 'bottom-right',

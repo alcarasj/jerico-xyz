@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     menuButton: {
-      marginRight: theme.spacing(2),
+      marginRight: theme.spacing(10),
     },
     title: {
       flexGrow: 1,
@@ -26,19 +26,31 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface ClientData {
-  readonly address: string;
-  readonly location: string;
+  readonly ip: string;
+  readonly city: string;
+  readonly country: string;
+  readonly region: string;
 }
+
+const BLANK_CLIENT_DATA: ClientData = {
+  ip: '',
+  city: '',
+  country: '',
+  region: ''
+};
 
 const CustomAppBar: FC = (): JSX.Element => {
   const classes = useStyles();
-  const [clientData, setClientData] = useState<ClientData>({ address: '', location: '' });
+  const [clientData, setClientData] = useState<ClientData>({ ...BLANK_CLIENT_DATA });
   const navigate = useNavigate();
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    sendAPIRequest<ClientData>('/api/client').then(data => setClientData(data)).catch(() => setClientData({ address: '', location: '' }));
+    sendAPIRequest<ClientData>('/api/client').then(data => setClientData(data)).catch(() => setClientData({ ...BLANK_CLIENT_DATA }));
   }, []);
+
+  const getLocationString = ({ city, country, region }: ClientData) => 
+    city !== '' && country !== '' && region !== '' ? `${city}, ${country}, ${region}` : '';
 
   return (
     <AppBar id='appbar' color='inherit'>
@@ -84,8 +96,8 @@ const CustomAppBar: FC = (): JSX.Element => {
             { getText: () => "jerico.xyz", color: 'primary' },
             { getText: () => "Welcome to my website!" },
             { getText: () => `The local time is ${new Date().toLocaleString()}.` },
-            ... (clientData.address ? [{ getText: () => `Your detected IP address is ${clientData.address}.` }] : []),
-            ... (clientData.location ? [{ getText: () => `Your detected location is ${clientData.location}.`}] : []),
+            ... (clientData.ip ? [{ getText: () => `Your IP address is ${clientData.ip}.` }] : []),
+            ... (getLocationString(clientData) ? [{ getText: () => `Your IP location is ${getLocationString(clientData)}.`}] : []),
           ]} 
           className={classes.title}
         />

@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	UI_ROUTES := []string{"/", "/dev"}
-	config := buildCoreConfigFromEnvVars()
+	config := buildMainConfigFromEnvVars()
 
 	if config.Mode == PRODUCTION {
 		log.Println("Production mode is enabled.")
@@ -45,15 +46,12 @@ func main() {
 
 	router.GET("/api/client", func(c *gin.Context) {
 		ip := c.ClientIP()
-		location, err := core.GetClientData(ip)
+		result, err := core.GetClientData(ip)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"address":  ip,
-			"location": location,
-		})
+		c.JSON(http.StatusOK, result)
 	})
 
 	router.GET("/api/art", func(c *gin.Context) {
@@ -77,12 +75,13 @@ func main() {
 	})
 
 	router.GET("/api/traffic", func(c *gin.Context) {
-		views, err := core.GetTrafficData(c.ClientIP())
+		sinceNDaysAgo, _ := strconv.Atoi(c.Query("sinceNDaysAgo"))
+		result, err := core.GetTrafficData(c.ClientIP(), sinceNDaysAgo)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, views)
+		c.JSON(http.StatusOK, result)
 	})
 
 	router.Run(":" + config.Port)

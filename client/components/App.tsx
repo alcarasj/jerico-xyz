@@ -34,7 +34,8 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBottom: theme.spacing(20)
     },
     embedPlayer: {
-      marginTop: theme.spacing(10)
+      marginTop: theme.spacing(10),
+      maxWidth: 500
     },
   }),
 );
@@ -63,7 +64,7 @@ const App: FC = (): JSX.Element => {
           </Routes>
           <Grid container alignItems='center' justifyContent='center'>
             <Grow in timeout={1500}>
-              <iframe className={classes.embedPlayer} width="50%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/545610837&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+              <iframe className={classes.embedPlayer} width="100%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/545610837&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
             </Grow>
           </Grid>
         </div>

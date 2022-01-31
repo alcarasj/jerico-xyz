@@ -70,16 +70,28 @@ func (c Core) RecordView(ip string) error {
 	}
 }
 
-func (c Core) GetTrafficData(callerIP string) (map[string]TrafficDatapoint, error) {
+func (c Core) GetTrafficData(callerIP string, sinceNDaysAgo int) (map[string]TrafficDatapoint, error) {
+	if sinceNDaysAgo <= 0 {
+		return nil, fmt.Errorf("must be at least N >= 1 days ago but was %d", sinceNDaysAgo)
+	}
+
 	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID, true)
 	if err != nil {
 		return nil, err
 	}
 
 	data := doc.Data.(map[string]interface{})
+	sortedKeys := make([]string, len(data))
+	i := 0
+	for key, _ := range data {
+		sortedKeys[i] = key
+		i++
+	}
+
 	result := make(map[string]TrafficDatapoint)
-	for date, dayEntry := range data {
-		dayEntry := dayEntry.(map[string]interface{})
+	nDaysCounted := 1
+	for _, date := range sortedKeys {
+		dayEntry := data[date].(map[string]interface{})
 		dayTotalViews := 0
 		dayUniqueViews := 0
 		daySelfViews := 0
@@ -97,6 +109,10 @@ func (c Core) GetTrafficData(callerIP string) (map[string]TrafficDatapoint, erro
 			UniqueViews: dayUniqueViews,
 			SelfViews:   daySelfViews,
 		}
+		if nDaysCounted >= sinceNDaysAgo {
+			break
+		}
+		nDaysCounted++
 	}
 
 	return result, err
@@ -107,17 +123,9 @@ func (c Core) SaveClientData(ip string, data map[string]string, savedData map[st
 	return c.Persistence.ModifyDocumentByID(IP_DETAILS_DOC_ID, savedData, rev)
 }
 
-func (c Core) GetClientData(ip string) (string, error) {
+func (c Core) GetClientData(ip string) (*ClientData, error) {
 	if isLocalhost(ip) {
-		return "", fmt.Errorf("cannot lookup client data for %s", ip)
-	}
-
-	buildLocationString := func(city string, region string, countryName string) string {
-		if city != "" && region != "" && countryName != "" {
-			return fmt.Sprintf("%s, %s, %s", city, region, countryName)
-		} else {
-			return ""
-		}
+		return nil, fmt.Errorf("cannot lookup client data for %s", ip)
 	}
 
 	fetchIPDetails := func() (interface{}, error) {
@@ -146,24 +154,39 @@ func (c Core) GetClientData(ip string) (string, error) {
 
 	doc, err := c.Persistence.GetDocumentByID(IP_DETAILS_DOC_ID, false)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	savedData, ok := doc.Data.(map[string]interface{})
 	if !ok {
-		return "", fmt.Errorf("failed to parse client data: %v", savedData)
+		return nil, fmt.Errorf("failed to parse client data: %v", savedData)
 	}
 
 	if savedEntry, ok := savedData[ip].(map[string]interface{}); ok {
-		return buildLocationString(savedEntry["city"].(string), savedEntry["region"].(string), savedEntry["country_name"].(string)), nil
+		return &ClientData{
+			IP:          ip,
+			City:        savedEntry["city"].(string),
+			Region:      savedEntry["region"].(string),
+			CountryName: savedEntry["country_name"].(string),
+		}, nil
 	}
 
 	val, err := c.Cache.Get(ip, fetchIPDetails)
 	if err != nil {
-		return "", err
+		return &ClientData{
+			IP:          ip,
+			City:        "",
+			Region:      "",
+			CountryName: "",
+		}, err
 	}
-	clientData := val.(map[string]string)
-	c.SaveClientData(ip, clientData, savedData, doc.Rev)
+	result := val.(map[string]string)
+	c.SaveClientData(ip, result, savedData, doc.Rev)
 
-	return buildLocationString(clientData["city"], clientData["region"], clientData["country_name"]), nil
+	return &ClientData{
+		IP:          ip,
+		City:        result["city"],
+		Region:      result["region"],
+		CountryName: result["country_name"],
+	}, nil
 }

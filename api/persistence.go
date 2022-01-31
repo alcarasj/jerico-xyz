@@ -20,7 +20,7 @@ type Persistence struct {
 	RetryIntervalSecs        int
 }
 
-func InitPersistence(config CoreConfig) (*Persistence, error) {
+func InitPersistence(config MainConfig) (*Persistence, error) {
 	token, err := getIAMToken(config.IBMCloudAPIKey, config.IBMCloudIAMTokenEndpoint)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (p Persistence) BuildURLWithID(id string) string {
 	return fmt.Sprintf("%s/%s", p.URL, id)
 }
 
-func (p Persistence) BuildReqHeaders(rev string) (map[string]string, error) {
+func (p *Persistence) BuildReqHeaders(rev string) (map[string]string, error) {
 	headers := make(map[string]string)
 	if p.IAMToken == nil || p.IAMToken.isExpired() {
 		token, err := getIAMToken(p.IBMCloudAPIKey, p.IBMCloudIAMTokenEndpoint)

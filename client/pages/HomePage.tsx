@@ -26,7 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
     cardContainer: {
       maxWidth: 300
     },
-    siteMetrics: { 
+    siteMetrics: {
+      marginTop: theme.spacing(10),
       width: "100%"
     }
   }),
@@ -165,7 +166,7 @@ const HomePage: FC<Props> = (props: Props): JSX.Element => {
         />
       </Grid>
       { atEasterEggCounterLimit(counter) ? renderExhibits() : renderCards() }
-      <Grid item className={classes.siteMetrics}>
+      <Grid item xs className={classes.siteMetrics}>
         <SiteMetrics />
       </Grid>
     </Grid>
