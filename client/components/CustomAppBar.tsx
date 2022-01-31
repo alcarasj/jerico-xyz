@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     menuButton: {
-      marginRight: theme.spacing(10),
+      marginRight: theme.spacing(2),
     },
     title: {
       flexGrow: 1,
@@ -28,14 +28,14 @@ const useStyles = makeStyles((theme: Theme) =>
 interface ClientData {
   readonly ip: string;
   readonly city: string;
-  readonly country: string;
+  readonly countryName: string;
   readonly region: string;
 }
 
 const BLANK_CLIENT_DATA: ClientData = {
   ip: '',
   city: '',
-  country: '',
+  countryName: '',
   region: ''
 };
 
@@ -49,8 +49,8 @@ const CustomAppBar: FC = (): JSX.Element => {
     sendAPIRequest<ClientData>('/api/client').then(data => setClientData(data)).catch(() => setClientData({ ...BLANK_CLIENT_DATA }));
   }, []);
 
-  const getLocationString = ({ city, country, region }: ClientData) => 
-    city !== '' && country !== '' && region !== '' ? `${city}, ${country}, ${region}` : '';
+  const getLocationString = ({ city, region, countryName }: ClientData) => 
+    city !== '' && countryName !== '' && region !== '' ? `${city}, ${region}, ${countryName}` : '';
 
   return (
     <AppBar id='appbar' color='inherit'>
