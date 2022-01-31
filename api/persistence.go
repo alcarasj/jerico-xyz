@@ -27,13 +27,14 @@ func InitPersistence(config MainConfig) (*Persistence, error) {
 	}
 
 	return &Persistence{
-		DatabaseName:      config.DatabaseName,
-		IBMCloudAPIKey:    config.IBMCloudAPIKey,
-		Host:              config.CloudantHost,
-		URL:               fmt.Sprintf("%s/%s", config.CloudantHost, config.DatabaseName),
-		IAMToken:          token,
-		RetryAmount:       DEFAULT_RETRY_AMOUNT,
-		RetryIntervalSecs: DEFAULT_RETRY_INTERVAL_SECS,
+		DatabaseName:             config.DatabaseName,
+		IBMCloudAPIKey:           config.IBMCloudAPIKey,
+		IBMCloudIAMTokenEndpoint: config.IBMCloudIAMTokenEndpoint,
+		Host:                     config.CloudantHost,
+		URL:                      fmt.Sprintf("%s/%s", config.CloudantHost, config.DatabaseName),
+		IAMToken:                 token,
+		RetryAmount:              DEFAULT_RETRY_AMOUNT,
+		RetryIntervalSecs:        DEFAULT_RETRY_INTERVAL_SECS,
 	}, nil
 }
 
