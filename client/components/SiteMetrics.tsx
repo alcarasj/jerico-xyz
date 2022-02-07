@@ -103,6 +103,7 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
           isInteractive
           pointBorderWidth={2}
           pointLabelYOffset={-12}
+          enableSlices='x'
           useMesh
           legends={[
             {

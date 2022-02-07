@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sort"
 	"time"
 )
 
@@ -83,10 +84,11 @@ func (c Core) GetTrafficData(callerIP string, sinceNDaysAgo int) (map[string]Tra
 	data := doc.Data.(map[string]interface{})
 	sortedKeys := make([]string, len(data))
 	i := 0
-	for key, _ := range data {
+	for key := range data {
 		sortedKeys[i] = key
 		i++
 	}
+	sort.Sort(sort.Reverse(sort.StringSlice(sortedKeys)))
 
 	result := make(map[string]TrafficDatapoint)
 	nDaysCounted := 1
