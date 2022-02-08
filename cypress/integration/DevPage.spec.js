@@ -1,6 +1,6 @@
-describe('Home page spec', () => {
+describe('Dev page spec', () => {
   it('Should show correct contents', () => {
-    cy.visit('/');
+    cy.visit('/dev');
     cy.get('#appbar').should('be.visible');
     cy.get('h3').should('be.visible');
     cy.get('h6').should('be.visible');

@@ -72,3 +72,18 @@ type ClientData struct {
 	Region      string `json:"region"`
 	CountryName string `json:"countryName"`
 }
+
+type Card struct {
+	Suit string `json:"suit"`
+	Rank int    `json:"rank"`
+}
+
+type Game struct {
+	ID    string `json:"id"`
+	Moves []Move `json:"moves"`
+}
+
+type Move struct {
+	ID     string     `json:"id"`
+	Player ClientData `json:"player"`
+}
