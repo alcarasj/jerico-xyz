@@ -95,7 +95,7 @@ const DevPage: React.FC<Props> = (): JSX.Element => {
           component="h1"
           messages={[
             { getText: () => 'Hi! My name is Jerico.' },
-            { getText: () => 'I\'m a software engineer at IBM Cloud.', color: 'primary' },
+            { getText: () => 'I\'m a software engineer at Microsoft.', color: 'primary' },
           ]}
         />
         <TypingText 

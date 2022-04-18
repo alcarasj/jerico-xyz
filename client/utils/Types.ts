@@ -18,7 +18,8 @@ export enum Tag {
   TYPESCRIPT = "TypeScript",
   SASS = "Sass",
   HTML = "HTML",
-  GO = "Go"
+  GO = "Go",
+  CSHARP = "C#"
 }
 
 export interface Exhibit {

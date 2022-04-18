@@ -64,7 +64,7 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
         <Typography gutterBottom variant="h5" component="h2">Traffic</Typography>
         <ResponsiveLine
           data={trafficData}
-          margin={{ top: 50, right: 120, bottom: 50, left: 60 }}
+          margin={{ top: 50, right: 120, bottom: 60, left: 60 }}
           xScale={{ type: 'point' }}
           yScale={{
             type: 'linear',
@@ -78,8 +78,7 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
           axisBottom={{
             tickSize: 5,
             tickPadding: 5,
-            tickRotation: 0,
-            legend: 'Date',
+            tickRotation: 30,
             legendOffset: 36,
             legendPosition: 'middle'
           }}

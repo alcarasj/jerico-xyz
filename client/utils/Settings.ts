@@ -23,9 +23,16 @@ export const HOME_CARDS = [
 ];
 export const DEV_XP_CARDS = [
   {
+    from: { month: 4, year: 2022 },
+    employer: "Microsoft",
+    description: "Working as part of the Azure Attestion team.",
+    tags: [Tag.CSHARP]
+  },
+  {
     from: { month: 1, year: 2020 },
+    to: { month: 4, year: 2022 },
     employer: "IBM",
-    description: "Currently working as part of the Identity team in the Cloud IAM organization using J2EE/React/Cloudant. Also worked in other teams using React/Express/Gin/Cloudant.",
+    description: "Worked as part of the UI and Identity teams in the Cloud IAM organization using J2EE/React/Express/Gin/Cloudant.",
     tags: [Tag.JAVA, Tag.TYPESCRIPT, Tag.JAVASCRIPT, Tag.REACT, Tag.SASS, Tag.GO, Tag.NOSQL],
   },
   {
