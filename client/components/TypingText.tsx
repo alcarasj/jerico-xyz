@@ -1,11 +1,11 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { MuiColor } from '../utils/Types';
 
 type Variant = "inherit" | "button" | "overline" | "caption" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "subtitle1" | "subtitle2" | "body1" | "body2";
 
 interface TypingTextMessage {
-  getText: () => string;
+  getText: () => string; // This is a function so that time can be displayed live real-time.
   color?: MuiColor;
 }
 
@@ -23,10 +23,10 @@ const NEXT_MESSAGE_DELAY_MS = 5000;
 
 const TypingText: FC<Props> = (props: Props): JSX.Element => {
   const { messages, variant, className, gutterBottom, align } = props;
-  const [msgIndex, setMsgIndex] = React.useState<number>(0);
-  const [textIndex, setTextIndex] = React.useState<number>(0);
-  const [output, setOutput] = React.useState<string>(messages[msgIndex].getText());
-  const [color, setColor] = React.useState<MuiColor>(messages[msgIndex].color);
+  const [msgIndex, setMsgIndex] = useState<number>(0);
+  const [textIndex, setTextIndex] = useState<number>(0);
+  const [output, setOutput] = useState<string>(messages[msgIndex].getText());
+  const [color, setColor] = useState<MuiColor>(messages[msgIndex].color);
 
   const startTyping = () => {
     setTimeout(() => {

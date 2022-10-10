@@ -50,7 +50,7 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
           data: keys.map(key => ({ x: key, y: data[key].uniqueViews }))
         };
         const selfViews: Serie = {
-          id: "Your Views",
+          id: "Your IP's Views",
           data: keys.map(key => ({ x: key, y: data[key].selfViews }))
         };
         setTrafficData([totalViews, uniqueViews, selfViews]);

@@ -25,8 +25,8 @@ export const DEV_XP_CARDS = [
   {
     from: { month: 4, year: 2022 },
     employer: "Microsoft",
-    description: "Working as part of the Azure Attestation team.",
-    tags: [Tag.CSHARP]
+    description: "Working as part of the Azure Attestation team using .NET.",
+    tags: [Tag.CSHARP, Tag.SQL]
   },
   {
     from: { month: 1, year: 2020 },
