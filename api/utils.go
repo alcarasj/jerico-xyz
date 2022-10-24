@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -165,4 +166,24 @@ func buildMainConfigFromEnvVars() MainConfig {
 		CloudantHost:             envVars["CLOUDANT_HOST"],
 		DatabaseName:             DB_NAME,
 	}
+}
+
+func (t TimeInterval) String() (string, bool) {
+	switch t {
+	case Daily:
+		return "Daily", true
+	case Weekly:
+		return "Weekly", true
+	}
+	return "", false
+}
+
+func stringToTimeInterval(s string) (TimeInterval, bool) {
+	switch strings.ToLower(s) {
+	case "daily":
+		return Daily, true
+	case "weekly":
+		return Weekly, true
+	}
+	return 0, false
 }

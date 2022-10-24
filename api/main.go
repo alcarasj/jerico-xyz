@@ -75,8 +75,15 @@ func main() {
 	})
 
 	router.GET("/api/traffic", func(c *gin.Context) {
-		sinceNDaysAgo, _ := strconv.Atoi(c.Query("sinceNDaysAgo"))
-		result, err := core.GetTrafficData(c.ClientIP(), sinceNDaysAgo)
+		intervals, _ := strconv.Atoi(c.Query("intervals"))
+		timeIntervalStr := c.Query("timeInterval")
+		timeInterval, ok := stringToTimeInterval(timeIntervalStr)
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid time interval, must be one of Daily, Weekly but was: %s", timeIntervalStr)})
+			return
+		}
+
+		result, err := core.GetTrafficData(c.ClientIP(), timeInterval, intervals)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

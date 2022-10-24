@@ -4,6 +4,13 @@ import (
 	"time"
 )
 
+type TimeInterval int
+
+const (
+	Daily TimeInterval = iota
+	Weekly
+)
+
 type Exhibit struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`

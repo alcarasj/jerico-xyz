@@ -71,9 +71,9 @@ func (c Core) RecordView(ip string) error {
 	}
 }
 
-func (c Core) GetTrafficData(callerIP string, sinceNDaysAgo int) (map[string]TrafficDatapoint, error) {
-	if sinceNDaysAgo <= 0 {
-		return nil, fmt.Errorf("must be at least N >= 1 days ago but was %d", sinceNDaysAgo)
+func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, intervals int) (map[string]TrafficDatapoint, error) {
+	if intervals <= 0 {
+		return nil, fmt.Errorf("must be at least N >= 1 intervals but was %d", intervals)
 	}
 
 	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID, true)
@@ -91,30 +91,74 @@ func (c Core) GetTrafficData(callerIP string, sinceNDaysAgo int) (map[string]Tra
 	sort.Sort(sort.Reverse(sort.StringSlice(sortedKeys)))
 
 	result := make(map[string]TrafficDatapoint)
-	nDaysCounted := 1
-	for _, date := range sortedKeys {
-		dayEntry := data[date].(map[string]interface{})
-		dayTotalViews := 0
-		dayUniqueViews := 0
-		daySelfViews := 0
-		for ip, clientEntry := range dayEntry {
-			clientEntry := clientEntry.(map[string]interface{})
-			totalClientViews := int(clientEntry["views"].(float64))
-			dayTotalViews += totalClientViews
-			if callerIP == ip {
-				daySelfViews += totalClientViews
+
+	// TO-DO Use concurrency.
+	if timeInterval == Daily {
+		nDaysCounted := 1
+		for _, date := range sortedKeys {
+			dayEntry := data[date].(map[string]interface{})
+			dayTotalViews := 0
+			dayUniqueViews := 0
+			daySelfViews := 0
+			for ip, clientEntry := range dayEntry {
+				clientEntry := clientEntry.(map[string]interface{})
+				totalClientViews := int(clientEntry["views"].(float64))
+				dayTotalViews += totalClientViews
+				if callerIP == ip {
+					daySelfViews += totalClientViews
+				}
+				dayUniqueViews++
 			}
-			dayUniqueViews++
+			result[date] = TrafficDatapoint{
+				TotalViews:  dayTotalViews,
+				UniqueViews: dayUniqueViews,
+				SelfViews:   daySelfViews,
+			}
+			nDaysCounted++
+			if nDaysCounted >= intervals {
+				break
+			}
 		}
-		result[date] = TrafficDatapoint{
-			TotalViews:  dayTotalViews,
-			UniqueViews: dayUniqueViews,
-			SelfViews:   daySelfViews,
+	} else if timeInterval == Weekly {
+		nWeeksCounted := 1
+		weekTotalViews := 0
+		weekUniqueViews := 0
+		weekSelfViews := 0
+
+		for _, date := range sortedKeys {
+			dayEntry := data[date].(map[string]interface{})
+			dayTotalViews := 0
+			dayUniqueViews := 0
+			daySelfViews := 0
+			for ip, clientEntry := range dayEntry {
+				clientEntry := clientEntry.(map[string]interface{})
+				totalClientViews := int(clientEntry["views"].(float64))
+				dayTotalViews += totalClientViews
+				if callerIP == ip {
+					daySelfViews += totalClientViews
+				}
+				dayUniqueViews++
+			}
+			weekTotalViews += dayTotalViews
+			weekUniqueViews += dayUniqueViews
+			weekSelfViews += daySelfViews
+
+			timeObj, _ := time.Parse("2006-01-02", date)
+			if timeObj.Weekday() == time.Monday {
+				result[fmt.Sprintf("Week of %s", date)] = TrafficDatapoint{
+					TotalViews:  weekTotalViews,
+					UniqueViews: weekUniqueViews,
+					SelfViews:   weekSelfViews,
+				}
+				weekTotalViews = 0
+				weekUniqueViews = 0
+				weekSelfViews = 0
+				nWeeksCounted++
+			}
+			if nWeeksCounted >= intervals {
+				break
+			}
 		}
-		if nDaysCounted >= sinceNDaysAgo {
-			break
-		}
-		nDaysCounted++
 	}
 
 	return result, err
