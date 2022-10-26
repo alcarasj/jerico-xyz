@@ -174,6 +174,10 @@ func (t TimeInterval) String() (string, bool) {
 		return "Daily", true
 	case Weekly:
 		return "Weekly", true
+	case Monthly:
+		return "Monthly", true
+	case Yearly:
+		return "Yearly", true
 	}
 	return "", false
 }
@@ -184,6 +188,10 @@ func stringToTimeInterval(s string) (TimeInterval, bool) {
 		return Daily, true
 	case "weekly":
 		return Weekly, true
+	case "monthly":
+		return Monthly, true
+	case "yearly":
+		return Yearly, true
 	}
 	return 0, false
 }

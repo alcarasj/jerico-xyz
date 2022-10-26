@@ -79,7 +79,7 @@ func main() {
 		timeIntervalStr := c.Query("timeInterval")
 		timeInterval, ok := stringToTimeInterval(timeIntervalStr)
 		if !ok {
-			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid time interval, must be one of Daily, Weekly but was: %s", timeIntervalStr)})
+			c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Invalid time interval, must be one of Daily, Weekly, Monthly, Yearly but was: %s", timeIntervalStr)})
 			return
 		}
 

@@ -9,6 +9,8 @@ type TimeInterval int
 const (
 	Daily TimeInterval = iota
 	Weekly
+	Monthly
+	Yearly
 )
 
 type Exhibit struct {

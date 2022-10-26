@@ -26,7 +26,7 @@ export const DEV_XP_CARDS = [
     from: { month: 4, year: 2022 },
     employer: "Microsoft",
     description: "Working as part of the Azure Attestation team using .NET.",
-    tags: [Tag.CSHARP, Tag.SQL]
+    tags: [Tag.CSHARP, Tag.CPP, Tag.SQL, Tag.NOSQL]
   },
   {
     from: { month: 1, year: 2020 },
@@ -58,3 +58,4 @@ export const DEV_XP_CARDS = [
   }
 ];
 export const EASTER_EGG_COUNTER_LIMIT = 5;
+export const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];

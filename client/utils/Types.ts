@@ -19,7 +19,8 @@ export enum Tag {
   SASS = "Sass",
   HTML = "HTML",
   GO = "Go",
-  CSHARP = "C#"
+  CSHARP = "C#",
+  CPP = "C++"
 }
 
 export interface Exhibit {

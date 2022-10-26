@@ -92,9 +92,9 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 
 	result := make(map[string]TrafficDatapoint)
 
-	// TO-DO Use concurrency.
+	// TO-DO Refactor and save calculated values (since when a day has ended the values will stay the same forever)
 	if timeInterval == Daily {
-		nDaysCounted := 1
+		nDaysCounted := 0
 		for _, date := range sortedKeys {
 			dayEntry := data[date].(map[string]interface{})
 			dayTotalViews := 0
@@ -120,12 +120,13 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 			}
 		}
 	} else if timeInterval == Weekly {
-		nWeeksCounted := 1
+		nWeeksCounted := 0
 		weekTotalViews := 0
 		weekUniqueViews := 0
 		weekSelfViews := 0
+		seenIPs := make(map[string]bool)
 
-		for _, date := range sortedKeys {
+		for index, date := range sortedKeys {
 			dayEntry := data[date].(map[string]interface{})
 			dayTotalViews := 0
 			dayUniqueViews := 0
@@ -137,15 +138,19 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 				if callerIP == ip {
 					daySelfViews += totalClientViews
 				}
-				dayUniqueViews++
+				_, isIPSeen := seenIPs[ip]
+				if !isIPSeen {
+					seenIPs[ip] = true
+					dayUniqueViews++
+				}
 			}
 			weekTotalViews += dayTotalViews
 			weekUniqueViews += dayUniqueViews
 			weekSelfViews += daySelfViews
 
 			timeObj, _ := time.Parse("2006-01-02", date)
-			if timeObj.Weekday() == time.Monday {
-				result[fmt.Sprintf("Week of %s", date)] = TrafficDatapoint{
+			if timeObj.Weekday() == time.Monday || index+1 == len(sortedKeys) {
+				result[date] = TrafficDatapoint{
 					TotalViews:  weekTotalViews,
 					UniqueViews: weekUniqueViews,
 					SelfViews:   weekSelfViews,
@@ -156,6 +161,96 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 				nWeeksCounted++
 			}
 			if nWeeksCounted >= intervals {
+				break
+			}
+		}
+	} else if timeInterval == Monthly {
+		nMonthsCounted := 0
+		monthTotalViews := 0
+		monthUniqueViews := 0
+		monthSelfViews := 0
+		seenIPs := make(map[string]bool)
+
+		for index, date := range sortedKeys {
+			dayEntry := data[date].(map[string]interface{})
+			dayTotalViews := 0
+			dayUniqueViews := 0
+			daySelfViews := 0
+			for ip, clientEntry := range dayEntry {
+				clientEntry := clientEntry.(map[string]interface{})
+				totalClientViews := int(clientEntry["views"].(float64))
+				dayTotalViews += totalClientViews
+				if callerIP == ip {
+					daySelfViews += totalClientViews
+				}
+				_, isIPSeen := seenIPs[ip]
+				if !isIPSeen {
+					seenIPs[ip] = true
+					dayUniqueViews++
+				}
+			}
+			monthTotalViews += dayTotalViews
+			monthUniqueViews += dayUniqueViews
+			monthSelfViews += daySelfViews
+
+			timeObj, _ := time.Parse("2006-01-02", date)
+			if timeObj.Day() == 1 || index+1 == len(sortedKeys) {
+				result[date] = TrafficDatapoint{
+					TotalViews:  monthTotalViews,
+					UniqueViews: monthUniqueViews,
+					SelfViews:   monthSelfViews,
+				}
+				monthTotalViews = 0
+				monthUniqueViews = 0
+				monthSelfViews = 0
+				nMonthsCounted++
+			}
+			if nMonthsCounted >= intervals {
+				break
+			}
+		}
+	} else if timeInterval == Yearly {
+		nYearsCounted := 0
+		yearTotalViews := 0
+		yearUniqueViews := 0
+		yearSelfViews := 0
+		seenIPs := make(map[string]bool)
+
+		for index, date := range sortedKeys {
+			dayEntry := data[date].(map[string]interface{})
+			dayTotalViews := 0
+			dayUniqueViews := 0
+			daySelfViews := 0
+			for ip, clientEntry := range dayEntry {
+				clientEntry := clientEntry.(map[string]interface{})
+				totalClientViews := int(clientEntry["views"].(float64))
+				dayTotalViews += totalClientViews
+				if callerIP == ip {
+					daySelfViews += totalClientViews
+				}
+				_, isIPSeen := seenIPs[ip]
+				if !isIPSeen {
+					seenIPs[ip] = true
+					dayUniqueViews++
+				}
+			}
+			yearTotalViews += dayTotalViews
+			yearUniqueViews += dayUniqueViews
+			yearSelfViews += daySelfViews
+
+			timeObj, _ := time.Parse("2006-01-02", date)
+			if (timeObj.Day() == 1 && timeObj.Month() == time.January) || (index+1 == len(sortedKeys)) {
+				result[date] = TrafficDatapoint{
+					TotalViews:  yearTotalViews,
+					UniqueViews: yearUniqueViews,
+					SelfViews:   yearSelfViews,
+				}
+				yearTotalViews = 0
+				yearUniqueViews = 0
+				yearSelfViews = 0
+				nYearsCounted++
+			}
+			if nYearsCounted >= intervals {
 				break
 			}
 		}
