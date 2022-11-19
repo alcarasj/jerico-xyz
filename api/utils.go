@@ -16,6 +16,7 @@ import (
 const REQUEST_TIMEOUT_SECS = 10
 const PRODUCTION = "PRODUCTION"
 const DB_NAME = "jerico-xyz"
+const IBM_CLOUD_IAM_TOKEN_ENDPOINT = "https://iam.cloud.ibm.com/identity/token"
 
 var ErrNotFound = errors.New("not found")
 
@@ -143,7 +144,7 @@ func isLocalhost(ip string) bool {
 func buildMainConfigFromEnvVars() MainConfig {
 	envVars := make(map[string]string)
 
-	requiredEnvVars := []string{"PORT", "S3_HOST", "BUCKET_NAME", "IBM_CLOUD_API_KEY", "IBM_CLOUD_IAM_TOKEN_ENDPOINT", "CLOUDANT_HOST"}
+	requiredEnvVars := []string{"PORT", "S3_HOST", "BUCKET_NAME", "IBM_CLOUD_API_KEY", "CLOUDANT_HOST"}
 	for _, varName := range requiredEnvVars {
 		val := os.Getenv(varName)
 		if val == "" {
@@ -162,7 +163,7 @@ func buildMainConfigFromEnvVars() MainConfig {
 		Mode:                     envVars["MODE"],
 		S3BucketURL:              fmt.Sprintf("%s/%s", envVars["S3_HOST"], envVars["BUCKET_NAME"]),
 		IBMCloudAPIKey:           envVars["IBM_CLOUD_API_KEY"],
-		IBMCloudIAMTokenEndpoint: envVars["IBM_CLOUD_IAM_TOKEN_ENDPOINT"],
+		IBMCloudIAMTokenEndpoint: IBM_CLOUD_IAM_TOKEN_ENDPOINT,
 		CloudantHost:             envVars["CLOUDANT_HOST"],
 		DatabaseName:             DB_NAME,
 	}

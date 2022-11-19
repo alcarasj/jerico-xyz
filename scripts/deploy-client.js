@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 /* Script used in CircleCI for uploading production bundle. */
-const ibmCos = require('ibm-cos-sdk'),
-  fs = require('fs'),
-  packageJSON = require('../package.json');
+const ibmCos = require('ibm-cos-sdk');
+const fs = require('fs');
+const packageJSON = require('../package.json');
 
-const { S3_HOST, IBM_CLOUD_API_KEY, BUCKET_NAME } = process.env,
-  IAM_ENDPOINT = 'https://iam.cloud.ibm.com/identity/token',
-  VERSION = packageJSON.version,
-  COS_RESOURCE_NAME = 'jerico-cloud-storage',
-  REQUIRED_PARAMS = { S3_HOST, IBM_CLOUD_API_KEY, BUCKET_NAME };
+const { S3_HOST, IBM_CLOUD_API_KEY, BUCKET_NAME } = process.env;
+const IAM_ENDPOINT = 'https://iam.cloud.ibm.com/identity/token';
+const VERSION = packageJSON.version;
+const COS_RESOURCE_NAME = 'jerico-cloud-storage';
+const REQUIRED_PARAMS = { S3_HOST, IBM_CLOUD_API_KEY, BUCKET_NAME };
 
 for (const [name, value] of Object.entries(REQUIRED_PARAMS)) {
   if (!value) {

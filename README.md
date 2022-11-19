@@ -8,14 +8,17 @@ My personal website that I built from scratch (guess who loves to code?) :)
 1. Start the Gin app with `make go` (this requires restart when changes are made in Go code)
 1. Start the React webpack server with `make react-dev`
 
+## Debugging
+- For React app: insert `debugger` statement in code, and go to developer tools in browser.
+- For Gin app: place breakpoint in VS Code, generate `launch.json` with `make go-debug-config`, and debug via `Run and Debug` in VS Code.
+
 ## Configuration
 ```
 export S3_HOST='https://s3.eu-gb.cloud-object-storage.appdomain.cloud' 
-export BUCKET_NAME='name-of-s3-bucket-for-uploading-static-files'
+export BUCKET_NAME='jerico-xyz'
 export PORT=8080
 export IBM_CLOUD_API_KEY='ibm-cloud-service-id-api-key-secret-value'
 export CLOUDANT_HOST='https://some-cloudant-host-bluemix.cloudantnosqldb.appdomain.cloud'
-export IBM_CLOUD_IAM_TOKEN_ENDPOINT='https://iam.cloud.ibm.com/identity/token'
 ```
 
 ## Architecture

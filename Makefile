@@ -11,6 +11,9 @@ go-race:
 go-prod:
 	PORT=8000 MODE=PRODUCTION go run ./api/*.go
 
+go-debug-config:
+	PORT=8000 MODE=DEBUG node ./scripts/generate-go-debug-config.js
+
 go-build:
 	go build -o ./bin/api -v ./api
 
