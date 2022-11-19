@@ -11,8 +11,8 @@ export const HOME_CARDS = [
     linkTo: '/dev'
   },
   { 
-    title: 'Graphic Design',
-    description: 'I\'m an amateur graphic designer that specializes in marketable artwork. My creations have been used for event posters, tickets and business cards.',
+    title: 'Web Design',
+    description: 'I\'m an amateur web designer specializing in SaaS/PaaS/IaaS UI/UX design. I can also provide simple graphics for digital content such as event banners and album art.',
     linkTo: ''
   },
   { 
