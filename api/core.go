@@ -77,16 +77,16 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		return nil, err
 	}
 
-	data := unmarshalViewCounterData(doc.Data)
-	sortedDates := make([]string, len(data))
+	viewCounter := unmarshalViewCounterData(doc.Data)
+	sortedDates := make([]string, len(viewCounter))
 	i := 0
-	for key := range data {
+	for key := range viewCounter {
 		sortedDates[i] = key
 		i++
 	}
 	sort.Sort(sort.Reverse(sort.StringSlice(sortedDates)))
 	// TO-DO Save calculated values (since when a day has ended the values will stay the same forever)
-	result := timeInterval.AggregateViews(sortedDates, data, intervals, callerIP)
+	result := viewCounter.AggregateViews(sortedDates, timeInterval, intervals, callerIP)
 	return result, nil
 }
 

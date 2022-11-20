@@ -1,10 +1,27 @@
 version: 2.1
 orbs:
-  browser-tools: circleci/browser-tools@1.2.5
-  node: circleci/node@5.0.0
-  heroku: circleci/heroku@1.2.6
+  browser-tools: circleci/browser-tools@1.4.0
+  node: circleci/node@5.0.3
+  heroku: circleci/heroku@2.0
+  go: circleci/go@1.7.1
 jobs:
-  build:
+  build-gin-app:
+    executor:
+      name: go/default
+      tag: '1.17'
+    steps:
+      - checkout
+      - node/install-packages
+      - go/load-cache
+      - go/mod-download
+      - go/save-cache
+      - run: 
+          name: Check fmt
+          command: gofmt -l .
+      - run:
+          name: Generate binaries
+          command: make go-build
+  build-react-app:
     executor:
       name: node/default
     steps:
@@ -37,7 +54,7 @@ jobs:
           path: ./cypress/screenshots/
       - store_artifacts:
           path: ./cypress/videos/
-  build-and-upload-bundle:
+  build-and-upload-react-app:
     executor:
       name: node/default
     steps:
@@ -55,7 +72,8 @@ jobs:
 workflows:
     main:
       jobs:
-        - build
+        - build-react-app
+        - build-gin-app
     daily:
       triggers:
         - schedule:
@@ -66,16 +84,22 @@ workflows:
                   - master
       jobs:
         - test
-    deploy-and-test:
+    build-deploy-test:
       jobs:
-        - build-and-upload-bundle:
+        - build-and-upload-react-app:
+            filters:
+              branches:
+                only:
+                  - master
+        - build-gin-app:
             filters:
               branches:
                 only:
                   - master
         - heroku/deploy-via-git:
             requires:
-              - build-and-upload-bundle
+              - build-and-upload-react-app
+              - build-gin-app
             filters:
               branches:
                 only:

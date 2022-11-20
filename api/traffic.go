@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (timeInterval TimeInterval) HasEnded(currentDate time.Time) bool {
+func (timeInterval TimeInterval) hasEnded(currentDate time.Time) bool {
 	switch timeInterval {
 	case Weekly:
 		return currentDate.Weekday() == time.Monday
@@ -19,7 +19,7 @@ func (timeInterval TimeInterval) HasEnded(currentDate time.Time) bool {
 	}
 }
 
-func (timeInterval TimeInterval) AggregateViews(sortedDates []string, data ViewCounterData, intervals int, callerIP string) TrafficData {
+func (data ViewCounterData) AggregateViews(sortedDates []string, timeInterval TimeInterval, intervals int, callerIP string) TrafficData {
 	result := make(TrafficData)
 	nIntervalsCounted := 0
 	intervalTotalViews := 0
@@ -44,7 +44,7 @@ func (timeInterval TimeInterval) AggregateViews(sortedDates []string, data ViewC
 
 			timeObj, _ := time.Parse("2006-01-02", date)
 			isLastDayEntry := index+1 == len(sortedDates)
-			if timeInterval.HasEnded(timeObj) || isLastDayEntry {
+			if timeInterval.hasEnded(timeObj) || isLastDayEntry {
 				result[date] = TrafficDatapoint{
 					TotalViews:  intervalTotalViews,
 					UniqueViews: intervalUniqueViews,
