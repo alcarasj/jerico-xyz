@@ -81,7 +81,7 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		return nil, err
 	}
 
-	data := doc.Data.(map[string]interface{})
+	data := unmarshalViewCounterData(doc.Data)
 	sortedKeys := make([]string, len(data))
 	i := 0
 	for key := range data {
@@ -96,13 +96,12 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 	if timeInterval == Daily {
 		nDaysCounted := 0
 		for _, date := range sortedKeys {
-			dayEntry := data[date].(map[string]interface{})
+			dayEntry := data[date]
 			dayTotalViews := 0
 			dayUniqueViews := 0
 			daySelfViews := 0
 			for ip, clientEntry := range dayEntry {
-				clientEntry := clientEntry.(map[string]interface{})
-				totalClientViews := int(clientEntry["views"].(float64))
+				totalClientViews := clientEntry.Views
 				dayTotalViews += totalClientViews
 				if callerIP == ip {
 					daySelfViews += totalClientViews
@@ -127,13 +126,12 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		seenIPs := make(map[string]bool)
 
 		for index, date := range sortedKeys {
-			dayEntry := data[date].(map[string]interface{})
+			dayEntry := data[date]
 			dayTotalViews := 0
 			dayUniqueViews := 0
 			daySelfViews := 0
 			for ip, clientEntry := range dayEntry {
-				clientEntry := clientEntry.(map[string]interface{})
-				totalClientViews := int(clientEntry["views"].(float64))
+				totalClientViews := clientEntry.Views
 				dayTotalViews += totalClientViews
 				if callerIP == ip {
 					daySelfViews += totalClientViews
@@ -172,13 +170,12 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		seenIPs := make(map[string]bool)
 
 		for index, date := range sortedKeys {
-			dayEntry := data[date].(map[string]interface{})
+			dayEntry := data[date]
 			dayTotalViews := 0
 			dayUniqueViews := 0
 			daySelfViews := 0
 			for ip, clientEntry := range dayEntry {
-				clientEntry := clientEntry.(map[string]interface{})
-				totalClientViews := int(clientEntry["views"].(float64))
+				totalClientViews := clientEntry.Views
 				dayTotalViews += totalClientViews
 				if callerIP == ip {
 					daySelfViews += totalClientViews
@@ -217,13 +214,12 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		seenIPs := make(map[string]bool)
 
 		for index, date := range sortedKeys {
-			dayEntry := data[date].(map[string]interface{})
+			dayEntry := data[date]
 			dayTotalViews := 0
 			dayUniqueViews := 0
 			daySelfViews := 0
 			for ip, clientEntry := range dayEntry {
-				clientEntry := clientEntry.(map[string]interface{})
-				totalClientViews := int(clientEntry["views"].(float64))
+				totalClientViews := clientEntry.Views
 				dayTotalViews += totalClientViews
 				if callerIP == ip {
 					daySelfViews += totalClientViews

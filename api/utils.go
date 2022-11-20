@@ -196,3 +196,10 @@ func stringToTimeInterval(s string) (TimeInterval, bool) {
 	}
 	return 0, false
 }
+
+func unmarshalViewCounterData(rawData interface{}) ViewCounterData {
+	rawDataBytes, _ := json.Marshal(rawData)
+	var result ViewCounterData
+	json.Unmarshal(rawDataBytes, &result)
+	return result
+}

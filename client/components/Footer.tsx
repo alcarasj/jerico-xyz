@@ -34,7 +34,7 @@ const Footer: FC = (): JSX.Element => {
 						© JERICO ALCARAS 2022. All rights reserved.
           </Typography>
           <Typography align="left" variant="body1" gutterBottom>
-						"You miss 100% of the shots you don't take." -Albert Einstein
+            { "\"You miss 100% of the shots you don't take.\" -Albert Einstein" }
           </Typography>
         </Grid>
         <Grid container alignItems="center" justifyContent="center">

@@ -35,6 +35,8 @@ type ViewCounterClientEntry struct {
 
 type ViewCounterDayEntry map[string]ViewCounterClientEntry
 
+type ViewCounterData map[string]ViewCounterDayEntry
+
 type IAMToken struct {
 	AccessToken     string
 	RefreshToken    string
