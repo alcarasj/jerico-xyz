@@ -71,6 +71,8 @@ type MainConfig struct {
 	DatabaseName             string
 }
 
+type TrafficData map[string]TrafficDatapoint
+
 type TrafficDatapoint struct {
 	TotalViews  int `json:"totalViews"`
 	UniqueViews int `json:"uniqueViews"`

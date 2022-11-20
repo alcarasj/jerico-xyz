@@ -27,20 +27,16 @@ func (c Core) RecordView(ip string) error {
 		return err
 	}
 
-	viewCounter := doc.Data.(map[string]interface{})
+	viewCounter := unmarshalViewCounterData(doc.Data)
 	shouldUpdatePersistence := false
 	now := time.Now().UTC()
 	currentDateStr := now.Format("2006-01-02")
 
 	if dayEntry, dayEntryWasFound := viewCounter[currentDateStr]; dayEntryWasFound {
-		dayEntry, _ := dayEntry.(map[string]interface{})
 		if clientEntry, clientEntryWasFound := dayEntry[ip]; clientEntryWasFound {
-			clientEntry := clientEntry.(map[string]interface{})
-			lastUpdatedStr := clientEntry["lastUpdated"].(string)
-			lastUpdated, _ := time.Parse(time.RFC3339, lastUpdatedStr)
-			if now.Sub(lastUpdated).Seconds() > VIEW_COUNTER_BUFFER_SECONDS {
+			if now.Sub(clientEntry.LastUpdated).Seconds() > VIEW_COUNTER_BUFFER_SECONDS {
 				dayEntry[ip] = ViewCounterClientEntry{
-					Views:       int(clientEntry["views"].(float64)) + 1,
+					Views:       clientEntry.Views + 1,
 					LastUpdated: now,
 				}
 				viewCounter[currentDateStr] = dayEntry
@@ -82,177 +78,16 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 	}
 
 	data := unmarshalViewCounterData(doc.Data)
-	sortedKeys := make([]string, len(data))
+	sortedDates := make([]string, len(data))
 	i := 0
 	for key := range data {
-		sortedKeys[i] = key
+		sortedDates[i] = key
 		i++
 	}
-	sort.Sort(sort.Reverse(sort.StringSlice(sortedKeys)))
-
-	result := make(map[string]TrafficDatapoint)
-
-	// TO-DO Refactor and save calculated values (since when a day has ended the values will stay the same forever)
-	if timeInterval == Daily {
-		nDaysCounted := 0
-		for _, date := range sortedKeys {
-			dayEntry := data[date]
-			dayTotalViews := 0
-			dayUniqueViews := 0
-			daySelfViews := 0
-			for ip, clientEntry := range dayEntry {
-				totalClientViews := clientEntry.Views
-				dayTotalViews += totalClientViews
-				if callerIP == ip {
-					daySelfViews += totalClientViews
-				}
-				dayUniqueViews++
-			}
-			result[date] = TrafficDatapoint{
-				TotalViews:  dayTotalViews,
-				UniqueViews: dayUniqueViews,
-				SelfViews:   daySelfViews,
-			}
-			nDaysCounted++
-			if nDaysCounted >= intervals {
-				break
-			}
-		}
-	} else if timeInterval == Weekly {
-		nWeeksCounted := 0
-		weekTotalViews := 0
-		weekUniqueViews := 0
-		weekSelfViews := 0
-		seenIPs := make(map[string]bool)
-
-		for index, date := range sortedKeys {
-			dayEntry := data[date]
-			dayTotalViews := 0
-			dayUniqueViews := 0
-			daySelfViews := 0
-			for ip, clientEntry := range dayEntry {
-				totalClientViews := clientEntry.Views
-				dayTotalViews += totalClientViews
-				if callerIP == ip {
-					daySelfViews += totalClientViews
-				}
-				_, isIPSeen := seenIPs[ip]
-				if !isIPSeen {
-					seenIPs[ip] = true
-					dayUniqueViews++
-				}
-			}
-			weekTotalViews += dayTotalViews
-			weekUniqueViews += dayUniqueViews
-			weekSelfViews += daySelfViews
-
-			timeObj, _ := time.Parse("2006-01-02", date)
-			if timeObj.Weekday() == time.Monday || index+1 == len(sortedKeys) {
-				result[date] = TrafficDatapoint{
-					TotalViews:  weekTotalViews,
-					UniqueViews: weekUniqueViews,
-					SelfViews:   weekSelfViews,
-				}
-				weekTotalViews = 0
-				weekUniqueViews = 0
-				weekSelfViews = 0
-				nWeeksCounted++
-			}
-			if nWeeksCounted >= intervals {
-				break
-			}
-		}
-	} else if timeInterval == Monthly {
-		nMonthsCounted := 0
-		monthTotalViews := 0
-		monthUniqueViews := 0
-		monthSelfViews := 0
-		seenIPs := make(map[string]bool)
-
-		for index, date := range sortedKeys {
-			dayEntry := data[date]
-			dayTotalViews := 0
-			dayUniqueViews := 0
-			daySelfViews := 0
-			for ip, clientEntry := range dayEntry {
-				totalClientViews := clientEntry.Views
-				dayTotalViews += totalClientViews
-				if callerIP == ip {
-					daySelfViews += totalClientViews
-				}
-				_, isIPSeen := seenIPs[ip]
-				if !isIPSeen {
-					seenIPs[ip] = true
-					dayUniqueViews++
-				}
-			}
-			monthTotalViews += dayTotalViews
-			monthUniqueViews += dayUniqueViews
-			monthSelfViews += daySelfViews
-
-			timeObj, _ := time.Parse("2006-01-02", date)
-			if timeObj.Day() == 1 || index+1 == len(sortedKeys) {
-				result[date] = TrafficDatapoint{
-					TotalViews:  monthTotalViews,
-					UniqueViews: monthUniqueViews,
-					SelfViews:   monthSelfViews,
-				}
-				monthTotalViews = 0
-				monthUniqueViews = 0
-				monthSelfViews = 0
-				nMonthsCounted++
-			}
-			if nMonthsCounted >= intervals {
-				break
-			}
-		}
-	} else if timeInterval == Yearly {
-		nYearsCounted := 0
-		yearTotalViews := 0
-		yearUniqueViews := 0
-		yearSelfViews := 0
-		seenIPs := make(map[string]bool)
-
-		for index, date := range sortedKeys {
-			dayEntry := data[date]
-			dayTotalViews := 0
-			dayUniqueViews := 0
-			daySelfViews := 0
-			for ip, clientEntry := range dayEntry {
-				totalClientViews := clientEntry.Views
-				dayTotalViews += totalClientViews
-				if callerIP == ip {
-					daySelfViews += totalClientViews
-				}
-				_, isIPSeen := seenIPs[ip]
-				if !isIPSeen {
-					seenIPs[ip] = true
-					dayUniqueViews++
-				}
-			}
-			yearTotalViews += dayTotalViews
-			yearUniqueViews += dayUniqueViews
-			yearSelfViews += daySelfViews
-
-			timeObj, _ := time.Parse("2006-01-02", date)
-			if (timeObj.Day() == 1 && timeObj.Month() == time.January) || (index+1 == len(sortedKeys)) {
-				result[date] = TrafficDatapoint{
-					TotalViews:  yearTotalViews,
-					UniqueViews: yearUniqueViews,
-					SelfViews:   yearSelfViews,
-				}
-				yearTotalViews = 0
-				yearUniqueViews = 0
-				yearSelfViews = 0
-				nYearsCounted++
-			}
-			if nYearsCounted >= intervals {
-				break
-			}
-		}
-	}
-
-	return result, err
+	sort.Sort(sort.Reverse(sort.StringSlice(sortedDates)))
+	// TO-DO Save calculated values (since when a day has ended the values will stay the same forever)
+	result := timeInterval.AggregateViews(sortedDates, data, intervals, callerIP)
+	return result, nil
 }
 
 func (c Core) SaveClientData(ip string, data map[string]string, savedData map[string]interface{}, rev string) error {
