@@ -194,7 +194,8 @@ func (c Core) ClassifyImage(imagePath string) (map[string]string, error) {
 	io.Copy(part, file)
 	writer.Close()
 
-	req, err := http.NewRequest("POST", "http://localhost:8080/api/vision", body)
+	url := fmt.Sprintf("%s/api/vision", c.SkynetHost)
+	req, err := http.NewRequest("POST", url, body)
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	if err != nil {
 		return nil, err
