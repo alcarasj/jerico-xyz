@@ -69,6 +69,7 @@ type MainConfig struct {
 	IBMCloudIAMTokenEndpoint string
 	CloudantHost             string
 	DatabaseName             string
+	SkynetHost               string
 }
 
 type TrafficData map[string]TrafficDatapoint
@@ -84,4 +85,10 @@ type ClientData struct {
 	City        string `json:"city"`
 	Region      string `json:"region"`
 	CountryName string `json:"countryName"`
+}
+
+type ImageClassifierClasses map[string][]string
+
+type ImageClassifierPrediction struct {
+	Prediction string `json:"prediction"`
 }

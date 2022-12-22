@@ -21,3 +21,4 @@ cypress/videos
 cypress/screenshots
 static/bundle
 .vscode/launch.json
+tmp/

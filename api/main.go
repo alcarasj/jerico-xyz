@@ -1,9 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -35,6 +39,7 @@ func main() {
 	core := Core{
 		Persistence: *persistence,
 		Cache:       NewCache(),
+		SkynetHost:  config.SkynetHost,
 	}
 
 	for _, route := range UI_ROUTES {
@@ -84,6 +89,53 @@ func main() {
 		}
 
 		result, err := core.GetTrafficData(c.ClientIP(), timeInterval, intervals)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	})
+
+	router.GET("/api/vision", func(c *gin.Context) {
+		result, err := core.GetImageClassifierClasses()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	})
+
+	router.POST("/api/vision", func(c *gin.Context) {
+		multipartImage, err := c.FormFile("image")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		image, err := multipartImage.Open()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		buffer := bytes.NewBuffer(nil)
+		if _, err := io.Copy(buffer, image); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		if err := os.MkdirAll("tmp", os.ModePerm); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		imagePath := filepath.Join(".", "tmp", multipartImage.Filename)
+		if err := c.SaveUploadedFile(multipartImage, imagePath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		result, err := core.ClassifyImage(imagePath)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

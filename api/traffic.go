@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"sort"
 	"strings"
 	"time"
 )
@@ -19,13 +20,21 @@ func (timeInterval TimeInterval) hasEnded(currentDate time.Time) bool {
 	}
 }
 
-func (data ViewCounterData) AggregateViews(sortedDates []string, timeInterval TimeInterval, intervals int, callerIP string) TrafficData {
+func (data ViewCounterData) AggregateViews(timeInterval TimeInterval, intervals int, callerIP string) TrafficData {
 	result := make(TrafficData)
 	nIntervalsCounted := 0
 	intervalTotalViews := 0
 	intervalUniqueViews := 0
 	intervalSelfViews := 0
 	seenIPs := make(map[string]bool)
+
+	sortedDates := make([]string, len(data))
+	i := 0
+	for key := range data {
+		sortedDates[i] = key
+		i++
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(sortedDates)))
 
 	if timeInterval == Daily {
 		for _, date := range sortedDates {

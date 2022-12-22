@@ -2,11 +2,10 @@ import React from 'react';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
-import { EnqueueSnackbar } from '../utils/Types';
 import TypingText from '../components/TypingText';
 import { Grow, Grid, Avatar, Card, CardContent, Typography, Chip } from '@mui/material';
 import { STATIC_DIR, DEV_XP_CARDS } from "../utils/Settings";
-import { withSnackbar } from 'notistack';
+import ImageClassifier from '../components/ImageClassifier';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -24,6 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(1),
       width: "100%"
     },
+    imageRecognition: {
+      marginTop: theme.spacing(10)
+    }
   })
 );
 
@@ -40,11 +42,7 @@ interface Experience {
   readonly tags: string[];
 }
 
-interface Props {
-  enqueueSnackbar: EnqueueSnackbar;
-}
-
-const DevPage: React.FC<Props> = (): JSX.Element => {
+const DevPage: React.FC = (): JSX.Element => {
   const classes = useStyles();
 
   const getExperienceTimeRange = (from: MonthYearDate, to: MonthYearDate) => `${new Date(from.year, from.month - 1).toLocaleString('default', { month: 'short' })} ${from.year} ` + 
@@ -111,8 +109,13 @@ const DevPage: React.FC<Props> = (): JSX.Element => {
         />
       </Grid>
       { renderExperienceCards() }
+      <Grow in timeout={1000}>
+        <Grid item xs className={classes.imageRecognition}>
+          <ImageClassifier />
+        </Grid>
+      </Grow>
     </Grid>
   );
 };
 
-export default withSnackbar(DevPage);
+export default DevPage;

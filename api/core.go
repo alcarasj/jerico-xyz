@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"mime/multipart"
 	"net/http"
-	"sort"
+	"os"
 	"time"
 )
 
@@ -15,6 +18,7 @@ const IP_DETAILS_DOC_ID = "IPDetails"
 type Core struct {
 	Persistence Persistence
 	Cache       Cache
+	SkynetHost  string
 }
 
 func (c Core) RecordView(ip string) error {
@@ -78,15 +82,8 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 	}
 
 	viewCounter := unmarshalViewCounterData(doc.Data)
-	sortedDates := make([]string, len(viewCounter))
-	i := 0
-	for key := range viewCounter {
-		sortedDates[i] = key
-		i++
-	}
-	sort.Sort(sort.Reverse(sort.StringSlice(sortedDates)))
 	// TO-DO Save calculated values (since when a day has ended the values will stay the same forever)
-	result := viewCounter.AggregateViews(sortedDates, timeInterval, intervals, callerIP)
+	result := viewCounter.AggregateViews(timeInterval, intervals, callerIP)
 	return result, nil
 }
 
@@ -161,4 +158,59 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 		Region:      result["region"],
 		CountryName: result["country_name"],
 	}, nil
+}
+
+func (c Core) GetImageClassifierClasses() (ImageClassifierClasses, error) {
+	url := fmt.Sprintf("%s/api/vision", c.SkynetHost)
+	resp, err := sendRequest(SendRequestParams{
+		URL:                url,
+		Method:             http.MethodGet,
+		Body:               nil,
+		Headers:            nil,
+		ExpectedRespStatus: http.StatusOK,
+		RetryAmount:        0,
+		RetryIntervalSecs:  0,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var result ImageClassifierClasses
+	json.NewDecoder(resp.Body).Decode(&result)
+
+	if _, found := result["error"]; found {
+		return nil, fmt.Errorf("failed to get image classifier classes: %v", result)
+	}
+	return result, nil
+}
+
+func (c Core) ClassifyImage(imagePath string) (map[string]string, error) {
+	file, _ := os.Open(imagePath)
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, _ := writer.CreateFormFile("file", imagePath)
+	io.Copy(part, file)
+	writer.Close()
+
+	req, err := http.NewRequest("POST", "http://localhost:8080/api/vision", body)
+	req.Header.Add("Content-Type", writer.FormDataContentType())
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var result map[string]string
+	json.NewDecoder(resp.Body).Decode(&result)
+
+	if _, found := result["result"]; found {
+		return nil, fmt.Errorf("failed to get image classifier prediction: %v", result)
+	}
+	return result, nil
 }

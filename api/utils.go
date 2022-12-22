@@ -16,6 +16,7 @@ const REQUEST_TIMEOUT_SECS = 10
 const PRODUCTION = "PRODUCTION"
 const DB_NAME = "jerico-xyz"
 const IBM_CLOUD_IAM_TOKEN_ENDPOINT = "https://iam.cloud.ibm.com/identity/token"
+const SKYNET_HOST = "https://skynet-xyz.herokuapp.com"
 
 var ErrNotFound = errors.New("not found")
 
@@ -48,9 +49,11 @@ func sendRequest(params SendRequestParams) (*http.Response, error) {
 
 	dataBytes := []byte{}
 	if params.Body != nil {
-		if params.Headers != nil && params.Headers["Content-Type"] == "application/x-www-form-urlencoded" {
-			data, _ := params.Body.(string)
-			dataBytes = []byte(data)
+		if params.Headers != nil {
+			if params.Headers["Content-Type"] == "application/x-www-form-urlencoded" {
+				data, _ := params.Body.(string)
+				dataBytes = []byte(data)
+			}
 		} else {
 			data, _ := params.Body.(map[string]interface{})
 			dataBytes, _ = json.Marshal(data)
@@ -165,5 +168,6 @@ func buildMainConfigFromEnvVars() MainConfig {
 		IBMCloudIAMTokenEndpoint: IBM_CLOUD_IAM_TOKEN_ENDPOINT,
 		CloudantHost:             envVars["CLOUDANT_HOST"],
 		DatabaseName:             DB_NAME,
+		SkynetHost:               SKYNET_HOST,
 	}
 }
