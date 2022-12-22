@@ -49,11 +49,9 @@ func sendRequest(params SendRequestParams) (*http.Response, error) {
 
 	dataBytes := []byte{}
 	if params.Body != nil {
-		if params.Headers != nil {
-			if params.Headers["Content-Type"] == "application/x-www-form-urlencoded" {
-				data, _ := params.Body.(string)
-				dataBytes = []byte(data)
-			}
+		if params.Headers != nil && params.Headers["Content-Type"] == "application/x-www-form-urlencoded" {
+			data, _ := params.Body.(string)
+			dataBytes = []byte(data)
 		} else {
 			data, _ := params.Body.(map[string]interface{})
 			dataBytes, _ = json.Marshal(data)
