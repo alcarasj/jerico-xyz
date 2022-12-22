@@ -5,7 +5,7 @@ describe('Dev page spec', () => {
     cy.get('h3').should('be.visible');
     cy.get('h6').should('be.visible');
     cy.get('.MuiCard-root').should(cards => {
-      expect(cards).to.have.length(5);
+      expect(cards).to.have.length(6);
     });
   });
 });
