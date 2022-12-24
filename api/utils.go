@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 )
@@ -26,7 +27,7 @@ func getPackageVersion() string {
 		fmt.Println(error)
 	}
 	defer jsonFile.Close()
-	byteValue, _ := ioutil.ReadAll(jsonFile)
+	byteValue, _ := io.ReadAll(jsonFile)
 
 	var result map[string]interface{}
 	json.Unmarshal([]byte(byteValue), &result)
@@ -42,54 +43,59 @@ func getBundleURL(bucketURL string, mode string) string {
 	}
 }
 
-func sendRequest(params SendRequestParams) (*http.Response, error) {
+func sendRequest[T any](params SendRequestParams[T]) (*http.Response, error) {
 	if params.URL == "" || params.Method == "" {
 		return nil, errors.New("URL and method must be provided")
 	}
 
-	dataBytes := []byte{}
+	var dataBytes []byte
 	if params.Body != nil {
 		if params.Headers != nil && params.Headers["Content-Type"] == "application/x-www-form-urlencoded" {
-			data, _ := params.Body.(string)
+			data := fmt.Sprintf("%v", *params.Body)
 			dataBytes = []byte(data)
 		} else {
-			data, _ := params.Body.(map[string]interface{})
-			dataBytes, _ = json.Marshal(data)
+			var err error
+			dataBytes, err = json.Marshal(params.Body)
+			if err != nil {
+				return nil, err
+			}
 		}
-	}
-
-	req, err := http.NewRequest(params.Method, params.URL, bytes.NewBuffer(dataBytes))
-	if err != nil {
-		return nil, err
-	}
-	for key, val := range params.Headers {
-		req.Header.Set(key, val)
+	} else {
+		dataBytes = []byte{}
 	}
 
 	client := &http.Client{
 		Timeout: time.Duration(REQUEST_TIMEOUT_SECS) * time.Second,
 	}
 	var resp *http.Response
-	i := 0
+	i := 1
 
-	for ok := true; ok; ok = i < params.RetryAmount {
-		resp, err = client.Do(req)
-		if resp != nil {
-			log.Println(fmt.Sprintf("%s %d %s", params.Method, resp.StatusCode, params.URL))
+	for shouldRetryOnFailure := true; shouldRetryOnFailure; shouldRetryOnFailure = i <= params.RetryAmount {
+		req, err := http.NewRequest(params.Method, params.URL, bytes.NewBuffer(dataBytes))
+		if err != nil {
+			return nil, err
 		}
-		if err == nil && resp != nil && resp.StatusCode == params.ExpectedRespStatus {
+		for key, val := range params.Headers {
+			req.Header.Add(key, val)
+		}
+
+		resp, err = client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+		if resp != nil {
+			log.Printf("%s %d %s", params.Method, resp.StatusCode, params.URL)
+		}
+		if resp.StatusCode == params.ExpectedRespStatus {
 			break
 		}
-		if i < params.RetryAmount-1 {
-			log.Println(fmt.Sprintf("%s %s failed on attempt #%d, retrying...", params.Method, params.URL, i+1))
+		if i <= params.RetryAmount {
+			log.Printf("%s %s failed on attempt #%d, retrying...", params.Method, params.URL, i)
 			time.Sleep(time.Duration(params.RetryIntervalSecs) * time.Second)
 		}
 		i++
 	}
 
-	if err != nil {
-		return nil, err
-	}
 	if resp.StatusCode != params.ExpectedRespStatus {
 		if resp.StatusCode == http.StatusNotFound {
 			return nil, ErrNotFound
@@ -105,11 +111,14 @@ func sendRequest(params SendRequestParams) (*http.Response, error) {
 func getIAMToken(apiKey string, iamTokenEndpoint string) (*IAMToken, error) {
 	headers := make(map[string]string)
 	headers["Content-Type"] = "application/x-www-form-urlencoded"
-	body := fmt.Sprintf("grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=%s", apiKey)
-	resp, err := sendRequest(SendRequestParams{
+	data := url.Values{}
+	data.Set("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
+	data.Set("apikey", apiKey)
+	body := data.Encode()
+	resp, err := sendRequest(SendRequestParams[string]{
 		URL:                iamTokenEndpoint,
 		Method:             http.MethodPost,
-		Body:               body,
+		Body:               &body,
 		Headers:            headers,
 		ExpectedRespStatus: http.StatusOK,
 		RetryAmount:        DEFAULT_RETRY_AMOUNT,

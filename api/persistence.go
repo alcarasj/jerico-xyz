@@ -62,7 +62,7 @@ func (p *Persistence) BuildReqHeaders(rev string) (map[string]string, error) {
 
 func (p Persistence) GetDatabaseInfo() error {
 	headers, _ := p.BuildReqHeaders("")
-	_, err := sendRequest(SendRequestParams{
+	_, err := sendRequest(SendRequestParams[any]{
 		URL:                p.URL,
 		Method:             http.MethodGet,
 		Body:               nil,
@@ -91,7 +91,7 @@ func (p Persistence) GetDocumentByID(id string, withRetry bool) (*CloudantDoc, e
 		retryAmount = 0
 	}
 
-	resp, err := sendRequest(SendRequestParams{
+	resp, err := sendRequest(SendRequestParams[any]{
 		URL:                url,
 		Method:             http.MethodGet,
 		Body:               nil,
@@ -124,10 +124,10 @@ func (p Persistence) ModifyDocumentByID(id string, data interface{}, rev string)
 	body := make(map[string]interface{})
 	body["data"] = data
 
-	resp, err := sendRequest(SendRequestParams{
+	resp, err := sendRequest(SendRequestParams[map[string]any]{
 		URL:                url,
 		Method:             http.MethodPut,
-		Body:               body,
+		Body:               &body,
 		Headers:            headers,
 		ExpectedRespStatus: http.StatusCreated,
 		RetryAmount:        DEFAULT_RETRY_AMOUNT,

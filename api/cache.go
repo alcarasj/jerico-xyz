@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 )
@@ -37,10 +36,10 @@ func (c Cache) Get(key string, fetchFn func() (interface{}, error)) (interface{}
 	now := time.Now()
 	entry, wasFound := c.Entries[key]
 	if wasFound && now.Sub(entry.LastUpdated) <= time.Duration(c.DefaultTTLSecs)*time.Second {
-		log.Println(fmt.Sprintf("Cache hit for key %s", key))
+		log.Printf("Cache hit for key %s", key)
 		return entry.Value, nil
 	} else {
-		log.Println(fmt.Sprintf("Cache miss for key %s", key))
+		log.Printf("Cache miss for key %s", key)
 		result, err := fetchFn()
 		if err != nil {
 			return nil, err
