@@ -2,7 +2,7 @@
 My personal website that I built from scratch (guess who loves to code?) :)
 
 ## Setup
-1. Install Go 1.17 and Node LTS 16 on your machine.
+1. Install Go 1.18 and Node LTS 16 on your machine.
 1. Create an `.xyzrc` in the repo root for setting the required env vars (see Configuration section)
 1. Install Node packages using `npm install`
 1. Set the required env vars using `source .xyzrc` 
@@ -17,7 +17,7 @@ My personal website that I built from scratch (guess who loves to code?) :)
 ```
 export S3_HOST='https://s3.eu-gb.cloud-object-storage.appdomain.cloud' 
 export BUCKET_NAME='name-of-s3-bucket-for-uploading-static-files'
-export PORT=8080
+export PORT=8000
 export IBM_CLOUD_API_KEY='ibm-cloud-service-id-api-key-secret-value'
 export CLOUDANT_HOST='https://some-cloudant-host-bluemix.cloudantnosqldb.appdomain.cloud'
 ```

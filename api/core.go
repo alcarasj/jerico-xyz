@@ -184,7 +184,7 @@ func (c Core) GetImageClassifierClasses() (ImageClassifierClasses, error) {
 	return result, nil
 }
 
-func (c Core) ClassifyImage(imagePath string) (map[string]string, error) {
+func (c Core) ClassifyImage(imagePath string) (map[string]interface{}, error) {
 	file, _ := os.Open(imagePath)
 	defer file.Close()
 
@@ -207,10 +207,10 @@ func (c Core) ClassifyImage(imagePath string) (map[string]string, error) {
 		return nil, err
 	}
 
-	var result map[string]string
+	var result map[string]interface{}
 	json.NewDecoder(resp.Body).Decode(&result)
 
-	if _, found := result["result"]; found {
+	if _, found := result["result"]; !found {
 		return nil, fmt.Errorf("failed to get image classifier prediction: %v", result)
 	}
 	return result, nil

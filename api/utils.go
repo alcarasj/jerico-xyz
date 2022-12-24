@@ -11,6 +11,8 @@ import (
 	"net/url"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin/binding"
 )
 
 const REQUEST_TIMEOUT_SECS = 10
@@ -50,7 +52,7 @@ func sendRequest[T any](params SendRequestParams[T]) (*http.Response, error) {
 
 	var dataBytes []byte
 	if params.Body != nil {
-		if params.Headers != nil && params.Headers["Content-Type"] == "application/x-www-form-urlencoded" {
+		if params.Headers != nil && params.Headers["Content-Type"] == binding.MIMEPOSTForm {
 			data := fmt.Sprintf("%v", *params.Body)
 			dataBytes = []byte(data)
 		} else {
@@ -110,7 +112,7 @@ func sendRequest[T any](params SendRequestParams[T]) (*http.Response, error) {
 
 func getIAMToken(apiKey string, iamTokenEndpoint string) (*IAMToken, error) {
 	headers := make(map[string]string)
-	headers["Content-Type"] = "application/x-www-form-urlencoded"
+	headers["Content-Type"] = binding.MIMEPOSTForm
 	data := url.Values{}
 	data.Set("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
 	data.Set("apikey", apiKey)

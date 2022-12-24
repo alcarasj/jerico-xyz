@@ -114,7 +114,7 @@ func (p Persistence) GetDocumentByID(id string, withRetry bool) (*CloudantDoc, e
 	}, nil
 }
 
-func (p Persistence) ModifyDocumentByID(id string, data interface{}, rev string) error {
+func (p Persistence) ModifyDocumentByID(id string, data any, rev string) error {
 	url := p.BuildURLWithID(id)
 	headers, err := p.BuildReqHeaders(rev)
 	if err != nil {

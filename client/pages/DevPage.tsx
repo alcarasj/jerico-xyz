@@ -23,8 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: theme.spacing(1),
       width: "100%"
     },
-    imageRecognition: {
-      marginTop: theme.spacing(10)
+    imageClassifier: {
+      marginTop: theme.spacing(10),
+      width: 400
     }
   })
 );
@@ -110,7 +111,7 @@ const DevPage: React.FC = (): JSX.Element => {
       </Grid>
       { renderExperienceCards() }
       <Grow in timeout={1000}>
-        <Grid item xs className={classes.imageRecognition}>
+        <Grid item xs className={classes.imageClassifier}>
           <ImageClassifier />
         </Grid>
       </Grow>
