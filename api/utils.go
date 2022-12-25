@@ -23,25 +23,29 @@ const SKYNET_HOST = "https://skynet-xyz.herokuapp.com"
 
 var ErrNotFound = errors.New("not found")
 
-func getPackageVersion() string {
-	jsonFile, error := os.Open("package.json")
-	if error != nil {
-		fmt.Println(error)
+func getPackageVersion() (*string, error) {
+	jsonFile, err := os.Open("package.json")
+	if err != nil {
+		return nil, err
 	}
 	defer jsonFile.Close()
-	byteValue, _ := io.ReadAll(jsonFile)
+	byteValue, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return nil, err
+	}
 
 	var result map[string]interface{}
 	json.Unmarshal([]byte(byteValue), &result)
-	return result["version"].(string)
+	version := result["version"].(string)
+	return &version, nil
 }
 
 func getBundleURL(bucketURL string, mode string) string {
-	packageVersion := getPackageVersion()
+	packageVersion, _ := getPackageVersion()
 	if mode == PRODUCTION {
-		return fmt.Sprintf("%s/bundle/main-%s.js", bucketURL, packageVersion)
+		return fmt.Sprintf("%s/bundle/main-%s.js", bucketURL, *packageVersion)
 	} else {
-		return fmt.Sprintf("./static/bundle/bundle-%s/main.js", packageVersion)
+		return fmt.Sprintf("./static/bundle/bundle-%s/main.js", *packageVersion)
 	}
 }
 

@@ -22,3 +22,4 @@ cypress/screenshots
 static/bundle
 .vscode/launch.json
 tmp/
+xyz.env

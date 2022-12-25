@@ -1,6 +1,5 @@
 import React, { ChangeEvent, FC, useState } from "react";
 import { Grid, Card, CardContent, CardHeader, Button, CircularProgress, Box } from '@mui/material';
-import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
