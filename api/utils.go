@@ -49,7 +49,7 @@ func getBundleURL(bucketURL string, mode string) string {
 	}
 }
 
-func sendRequest[T any](params SendRequestParams[T]) (*http.Response, error) {
+func sendRequest(params SendRequestParams) (*http.Response, error) {
 	if params.URL == "" || params.Method == "" {
 		return nil, errors.New("URL and method must be provided")
 	}
@@ -57,7 +57,7 @@ func sendRequest[T any](params SendRequestParams[T]) (*http.Response, error) {
 	var dataBytes []byte
 	if params.Body != nil {
 		if params.Headers != nil && params.Headers["Content-Type"] == binding.MIMEPOSTForm {
-			data := fmt.Sprintf("%v", *params.Body)
+			data := params.Body.(string)
 			dataBytes = []byte(data)
 		} else {
 			var err error
@@ -121,10 +121,10 @@ func getIAMToken(apiKey string, iamTokenEndpoint string) (*IAMToken, error) {
 	data.Set("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
 	data.Set("apikey", apiKey)
 	body := data.Encode()
-	resp, err := sendRequest(SendRequestParams[string]{
+	resp, err := sendRequest(SendRequestParams{
 		URL:                iamTokenEndpoint,
 		Method:             http.MethodPost,
-		Body:               &body,
+		Body:               body,
 		Headers:            headers,
 		ExpectedRespStatus: http.StatusOK,
 		RetryAmount:        DEFAULT_RETRY_AMOUNT,

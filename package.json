@@ -1,8 +1,11 @@
 {
   "name": "jerico-xyz",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "My personal website.",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "webpack --mode development ./client/index.tsx --output-path ./static/bundle/bundle-$npm_package_version --watch --config ./configs/webpack.config.dev.js",
     "build": "webpack --mode production ./client/index.tsx --output-path ./static/bundle/bundle-$npm_package_version --config ./configs/webpack.config.prod.js",

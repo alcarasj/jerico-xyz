@@ -99,7 +99,7 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 
 	fetchIPDetails := func() (interface{}, error) {
 		url := fmt.Sprintf("https://ipapi.co/%s/json/", ip)
-		resp, err := sendRequest(SendRequestParams[any]{
+		resp, err := sendRequest(SendRequestParams{
 			URL:                url,
 			Method:             http.MethodGet,
 			Body:               nil,
@@ -162,7 +162,7 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 
 func (c Core) GetImageClassifierClasses() (ImageClassifierClasses, error) {
 	url := fmt.Sprintf("%s/api/vision", c.SkynetHost)
-	resp, err := sendRequest(SendRequestParams[any]{
+	resp, err := sendRequest(SendRequestParams{
 		URL:                url,
 		Method:             http.MethodGet,
 		Body:               nil,

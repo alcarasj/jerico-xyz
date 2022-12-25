@@ -45,10 +45,10 @@ type IAMToken struct {
 	ExpirationEpoch float64
 }
 
-type SendRequestParams[T any] struct {
+type SendRequestParams struct {
 	URL                string
 	Method             string
-	Body               *T
+	Body               any
 	Headers            map[string]string
 	ExpectedRespStatus int
 	RetryAmount        int
