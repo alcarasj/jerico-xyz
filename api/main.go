@@ -44,7 +44,7 @@ func main() {
 
 	for _, route := range UI_ROUTES {
 		router.GET(route, func(c *gin.Context) {
-			core.RecordView(c.ClientIP())
+			go core.RecordView(c.ClientIP())
 			c.HTML(http.StatusOK, "index.tmpl.html", gin.H{"bundleURL": getBundleURL(config.S3BucketURL, config.Mode)})
 		})
 	}
