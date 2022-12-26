@@ -56,13 +56,11 @@ func sendRequest[T any](params SendRequestParams) (*T, error) {
 
 	var dataBytes []byte
 	if params.Body != nil {
-		if params.Headers != nil {
-			if params.Headers["Content-Type"] == binding.MIMEPOSTForm {
-				data := params.Body.(string)
-				dataBytes = []byte(data)
-			} else if strings.Contains(params.Headers["Content-Type"], binding.MIMEMultipartPOSTForm) {
-				dataBytes = params.Body.([]byte)
-			}
+		if strings.Contains(params.Headers["Content-Type"], binding.MIMEPOSTForm) {
+			data := params.Body.(string)
+			dataBytes = []byte(data)
+		} else if strings.Contains(params.Headers["Content-Type"], binding.MIMEMultipartPOSTForm) {
+			dataBytes = params.Body.([]byte)
 		} else {
 			var err error
 			dataBytes, err = json.Marshal(params.Body)
