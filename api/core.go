@@ -194,15 +194,19 @@ func (c Core) ClassifyImage(imagePath string) (map[string]interface{}, error) {
 	io.Copy(part, file)
 	writer.Close()
 
-	url := fmt.Sprintf("%s/api/vision", c.SkynetHost)
-	req, err := http.NewRequest("POST", url, body)
-	req.Header.Add("Content-Type", writer.FormDataContentType())
-	if err != nil {
-		return nil, err
+	headers := map[string]string{
+		"Content-Type": writer.FormDataContentType(),
 	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	url := fmt.Sprintf("%s/api/vision", c.SkynetHost)
+	resp, err := sendRequest(SendRequestParams{
+		URL:                url,
+		Method:             http.MethodPost,
+		Body:               body.Bytes(),
+		Headers:            headers,
+		ExpectedRespStatus: http.StatusOK,
+		RetryAmount:        0,
+		RetryIntervalSecs:  0,
+	})
 	if err != nil {
 		return nil, err
 	}

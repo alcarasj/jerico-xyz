@@ -23,10 +23,6 @@ go-build:
 	rm -rf bin
 	GOOS=linux GOARCH=amd64 go build -o ./bin/api -v ./api
 
-go-build-arm64:
-	rm -rf bin
-	GOOS=linux GOARCH=arm64 go build -o ./bin/api -v ./api
-
 react-build:
 	rm -rf ./static/bundle
 	npm run build

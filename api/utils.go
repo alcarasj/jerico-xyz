@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin/binding"
@@ -56,9 +57,13 @@ func sendRequest(params SendRequestParams) (*http.Response, error) {
 
 	var dataBytes []byte
 	if params.Body != nil {
-		if params.Headers != nil && params.Headers["Content-Type"] == binding.MIMEPOSTForm {
-			data := params.Body.(string)
-			dataBytes = []byte(data)
+		if params.Headers != nil {
+			if params.Headers["Content-Type"] == binding.MIMEPOSTForm {
+				data := params.Body.(string)
+				dataBytes = []byte(data)
+			} else if strings.Contains(params.Headers["Content-Type"], binding.MIMEMultipartPOSTForm) {
+				dataBytes = params.Body.([]byte)
+			}
 		} else {
 			var err error
 			dataBytes, err = json.Marshal(params.Body)
