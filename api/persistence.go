@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 )
@@ -14,7 +13,7 @@ type Persistence struct {
 	DatabaseName             string
 	IBMCloudAPIKey           string
 	IBMCloudIAMTokenEndpoint string
-	IAMToken                 *IAMToken
+	IAMToken                 *IBMCloudIAMToken
 	URL                      string
 	RetryAmount              int
 	RetryIntervalSecs        int
@@ -62,7 +61,7 @@ func (p *Persistence) BuildReqHeaders(rev string) (map[string]string, error) {
 
 func (p Persistence) GetDatabaseInfo() error {
 	headers, _ := p.BuildReqHeaders("")
-	_, err := sendRequest(SendRequestParams{
+	_, err := sendRequest[any](SendRequestParams{
 		URL:                p.URL,
 		Method:             http.MethodGet,
 		Body:               nil,
@@ -91,7 +90,7 @@ func (p Persistence) GetDocumentByID(id string, withRetry bool) (*CloudantDoc, e
 		retryAmount = 0
 	}
 
-	resp, err := sendRequest(SendRequestParams{
+	doc, err := sendRequest[CloudantDoc](SendRequestParams{
 		URL:                url,
 		Method:             http.MethodGet,
 		Body:               nil,
@@ -104,14 +103,7 @@ func (p Persistence) GetDocumentByID(id string, withRetry bool) (*CloudantDoc, e
 		return nil, err
 	}
 
-	var doc map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&doc)
-
-	return &CloudantDoc{
-		ID:   doc["_id"].(string),
-		Rev:  doc["_rev"].(string),
-		Data: doc["data"],
-	}, nil
+	return doc, nil
 }
 
 func (p Persistence) ModifyDocumentByID(id string, data any, rev string) error {
@@ -124,7 +116,7 @@ func (p Persistence) ModifyDocumentByID(id string, data any, rev string) error {
 	body := make(map[string]interface{})
 	body["data"] = data
 
-	resp, err := sendRequest(SendRequestParams{
+	result, err := sendRequest[map[string]interface{}](SendRequestParams{
 		URL:                url,
 		Method:             http.MethodPut,
 		Body:               body,
@@ -137,9 +129,7 @@ func (p Persistence) ModifyDocumentByID(id string, data any, rev string) error {
 		return err
 	}
 
-	var result map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&result)
-	if !result["ok"].(bool) {
+	if !(*result)["ok"].(bool) {
 		return fmt.Errorf("failed to create document with ID %s", id)
 	}
 	return nil

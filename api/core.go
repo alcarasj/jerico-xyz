@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -99,7 +98,7 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 
 	fetchIPDetails := func() (interface{}, error) {
 		url := fmt.Sprintf("https://ipapi.co/%s/json/", ip)
-		resp, err := sendRequest(SendRequestParams{
+		result, err := sendRequest[map[string]string](SendRequestParams{
 			URL:                url,
 			Method:             http.MethodGet,
 			Body:               nil,
@@ -112,10 +111,7 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 			return nil, err
 		}
 
-		var result map[string]string
-		json.NewDecoder(resp.Body).Decode(&result)
-
-		if _, found := result["error"]; found {
+		if _, found := (*result)["error"]; found {
 			return nil, fmt.Errorf("failed to get client data: %v", result)
 		}
 		return result, nil
@@ -162,7 +158,7 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 
 func (c Core) GetImageClassifierClasses() (ImageClassifierClasses, error) {
 	url := fmt.Sprintf("%s/api/vision", c.SkynetHost)
-	resp, err := sendRequest(SendRequestParams{
+	result, err := sendRequest[ImageClassifierClasses](SendRequestParams{
 		URL:                url,
 		Method:             http.MethodGet,
 		Body:               nil,
@@ -175,13 +171,10 @@ func (c Core) GetImageClassifierClasses() (ImageClassifierClasses, error) {
 		return nil, err
 	}
 
-	var result ImageClassifierClasses
-	json.NewDecoder(resp.Body).Decode(&result)
-
-	if _, found := result["error"]; found {
+	if _, found := (*result)["error"]; found {
 		return nil, fmt.Errorf("failed to get image classifier classes: %v", result)
 	}
-	return result, nil
+	return *result, nil
 }
 
 func (c Core) ClassifyImage(imagePath string) (map[string]interface{}, error) {
@@ -198,7 +191,7 @@ func (c Core) ClassifyImage(imagePath string) (map[string]interface{}, error) {
 		"Content-Type": writer.FormDataContentType(),
 	}
 	url := fmt.Sprintf("%s/api/vision", c.SkynetHost)
-	resp, err := sendRequest(SendRequestParams{
+	result, err := sendRequest[map[string]interface{}](SendRequestParams{
 		URL:                url,
 		Method:             http.MethodPost,
 		Body:               body.Bytes(),
@@ -211,11 +204,8 @@ func (c Core) ClassifyImage(imagePath string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	var result map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&result)
-
-	if _, found := result["result"]; !found {
+	if _, found := (*result)["result"]; !found {
 		return nil, fmt.Errorf("failed to get image classifier prediction: %v", result)
 	}
-	return result, nil
+	return *result, nil
 }

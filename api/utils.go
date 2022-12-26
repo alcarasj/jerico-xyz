@@ -50,7 +50,7 @@ func getBundleURL(bucketURL string, mode string) string {
 	}
 }
 
-func sendRequest(params SendRequestParams) (*http.Response, error) {
+func sendRequest[T any](params SendRequestParams) (*T, error) {
 	if params.URL == "" || params.Method == "" {
 		return nil, errors.New("URL and method must be provided")
 	}
@@ -116,17 +116,20 @@ func sendRequest(params SendRequestParams) (*http.Response, error) {
 		return nil, fmt.Errorf("request to %s returned %d: %v", params.URL, resp.StatusCode, errorBody)
 	}
 
-	return resp, nil
+	var data T
+	json.NewDecoder(resp.Body).Decode(&data)
+
+	return &data, nil
 }
 
-func getIAMToken(apiKey string, iamTokenEndpoint string) (*IAMToken, error) {
+func getIAMToken(apiKey string, iamTokenEndpoint string) (*IBMCloudIAMToken, error) {
 	headers := make(map[string]string)
 	headers["Content-Type"] = binding.MIMEPOSTForm
 	data := url.Values{}
 	data.Set("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
 	data.Set("apikey", apiKey)
 	body := data.Encode()
-	resp, err := sendRequest(SendRequestParams{
+	iamToken, err := sendRequest[IBMCloudIAMToken](SendRequestParams{
 		URL:                iamTokenEndpoint,
 		Method:             http.MethodPost,
 		Body:               body,
@@ -138,22 +141,10 @@ func getIAMToken(apiKey string, iamTokenEndpoint string) (*IAMToken, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	var tokenData map[string]interface{}
-	if err := json.NewDecoder(resp.Body).Decode(&tokenData); err != nil {
-		return nil, err
-	}
-
-	return &IAMToken{
-		AccessToken:     tokenData["access_token"].(string),
-		RefreshToken:    tokenData["refresh_token"].(string),
-		ExpiresInSecs:   tokenData["expires_in"].(float64),
-		ExpirationEpoch: tokenData["expiration"].(float64),
-		Type:            tokenData["token_type"].(string),
-	}, nil
+	return iamToken, nil
 }
 
-func (t IAMToken) isExpired() bool {
+func (t IBMCloudIAMToken) isExpired() bool {
 	return time.Now().Unix() > int64(t.ExpirationEpoch)
 }
 

@@ -37,12 +37,12 @@ type ViewCounterDayEntry map[string]ViewCounterClientEntry
 
 type ViewCounterData map[string]ViewCounterDayEntry
 
-type IAMToken struct {
-	AccessToken     string
-	RefreshToken    string
-	Type            string
-	ExpiresInSecs   float64
-	ExpirationEpoch float64
+type IBMCloudIAMToken struct {
+	AccessToken     string  `json:"access_token"`
+	RefreshToken    string  `json:"refresh_token"`
+	Type            string  `json:"token_type"`
+	ExpiresInSecs   float64 `json:"expires_in"`
+	ExpirationEpoch float64 `json:"expiration"`
 }
 
 type SendRequestParams struct {
@@ -56,9 +56,9 @@ type SendRequestParams struct {
 }
 
 type CloudantDoc struct {
-	ID   string
-	Rev  string
-	Data interface{}
+	ID   string      `json:"_id"`
+	Rev  string      `json:"_rev"`
+	Data interface{} `json:"data"`
 }
 
 type MainConfig struct {
