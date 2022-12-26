@@ -25,12 +25,12 @@ func (c Core) RecordView(ip string) error {
 		return fmt.Errorf("cannot record view for %s", ip)
 	}
 
-	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID, false)
+	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID)
 	if err != nil {
 		return err
 	}
 
-	viewCounter := unmarshalViewCounterData(doc.Data)
+	viewCounter := unmarshalViewCounterData(doc.GetData())
 	shouldUpdatePersistence := false
 	now := time.Now().UTC()
 	currentDateStr := now.Format("2006-01-02")
@@ -64,7 +64,7 @@ func (c Core) RecordView(ip string) error {
 	}
 
 	if shouldUpdatePersistence {
-		return c.Persistence.ModifyDocumentByID(VIEW_COUNTER_DOC_ID, viewCounter, doc.Rev)
+		return c.Persistence.ModifyDocumentByID(VIEW_COUNTER_DOC_ID, viewCounter, doc.GetETag())
 	} else {
 		return nil
 	}
@@ -75,12 +75,12 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		return nil, fmt.Errorf("must be at least N >= 1 intervals but was %d", intervals)
 	}
 
-	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID, true)
+	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID)
 	if err != nil {
 		return nil, err
 	}
 
-	viewCounter := unmarshalViewCounterData(doc.Data)
+	viewCounter := unmarshalViewCounterData(doc.GetData())
 	// TO-DO Save calculated values (since when a day has ended the values will stay the same forever)
 	result := viewCounter.AggregateViews(timeInterval, intervals, callerIP)
 	return result, nil
@@ -117,12 +117,12 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 		return result, nil
 	}
 
-	doc, err := c.Persistence.GetDocumentByID(IP_DETAILS_DOC_ID, false)
+	doc, err := c.Persistence.GetDocumentByID(IP_DETAILS_DOC_ID)
 	if err != nil {
 		return nil, err
 	}
 
-	savedData, ok := doc.Data.(map[string]interface{})
+	savedData, ok := doc.GetData().(map[string]interface{})
 	if !ok {
 		return nil, fmt.Errorf("failed to parse client data: %v", savedData)
 	}
@@ -136,7 +136,7 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 		}, nil
 	}
 
-	val, err := c.Cache.Get(ip, fetchIPDetails)
+	cachedData, err := c.Cache.Get(ip, fetchIPDetails)
 	if err != nil {
 		return &ClientData{
 			IP:          ip,
@@ -145,8 +145,8 @@ func (c Core) GetClientData(ip string) (*ClientData, error) {
 			CountryName: "",
 		}, err
 	}
-	result := val.(map[string]string)
-	c.SaveClientData(ip, result, savedData, doc.Rev)
+	result := cachedData.(map[string]string)
+	c.SaveClientData(ip, result, savedData, doc.GetETag())
 
 	return &ClientData{
 		IP:          ip,

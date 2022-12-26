@@ -27,7 +27,7 @@ func main() {
 	router.LoadHTMLGlob("templates/*.tmpl.html")
 	router.Static("/static", "static")
 
-	persistence, err := InitPersistence(config)
+	persistence, err := InitCloudantPersistence(config)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

@@ -55,21 +55,14 @@ type SendRequestParams struct {
 	RetryIntervalSecs  int
 }
 
-type CloudantDoc struct {
-	ID   string      `json:"_id"`
-	Rev  string      `json:"_rev"`
-	Data interface{} `json:"data"`
-}
-
 type MainConfig struct {
-	Port                     string
-	Mode                     string
-	S3BucketURL              string
-	IBMCloudAPIKey           string
-	IBMCloudIAMTokenEndpoint string
-	CloudantHost             string
-	DatabaseName             string
-	SkynetHost               string
+	Port           string
+	Mode           string
+	S3BucketURL    string
+	IBMCloudAPIKey string
+	CloudantHost   string
+	DatabaseName   string
+	SkynetHost     string
 }
 
 type TrafficData map[string]TrafficDatapoint
@@ -91,4 +84,16 @@ type ImageClassifierClasses map[string][]string
 
 type ImageClassifierPrediction struct {
 	Prediction string `json:"prediction"`
+}
+
+type Persistence interface {
+	GetDatabaseInfo() error
+	ModifyDocumentByID(string, interface{}, string) error
+	GetDocumentByID(string) (Document, error)
+}
+
+type Document interface {
+	GetID() string
+	GetData() interface{}
+	GetETag() string
 }

@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -117,31 +116,12 @@ func sendRequest[T any](params SendRequestParams) (*T, error) {
 	}
 
 	var data T
-	json.NewDecoder(resp.Body).Decode(&data)
-
-	return &data, nil
-}
-
-func getIAMToken(apiKey string, iamTokenEndpoint string) (*IBMCloudIAMToken, error) {
-	headers := make(map[string]string)
-	headers["Content-Type"] = binding.MIMEPOSTForm
-	data := url.Values{}
-	data.Set("grant_type", "urn:ibm:params:oauth:grant-type:apikey")
-	data.Set("apikey", apiKey)
-	body := data.Encode()
-	iamToken, err := sendRequest[IBMCloudIAMToken](SendRequestParams{
-		URL:                iamTokenEndpoint,
-		Method:             http.MethodPost,
-		Body:               body,
-		Headers:            headers,
-		ExpectedRespStatus: http.StatusOK,
-		RetryAmount:        DEFAULT_RETRY_AMOUNT,
-		RetryIntervalSecs:  DEFAULT_RETRY_INTERVAL_SECS,
-	})
+	err := json.NewDecoder(resp.Body).Decode(&data)
 	if err != nil {
 		return nil, err
 	}
-	return iamToken, nil
+
+	return &data, nil
 }
 
 func (t IBMCloudIAMToken) isExpired() bool {
@@ -170,13 +150,12 @@ func buildMainConfigFromEnvVars() MainConfig {
 	}
 
 	return MainConfig{
-		Port:                     envVars["PORT"],
-		Mode:                     envVars["MODE"],
-		S3BucketURL:              fmt.Sprintf("%s/%s", envVars["S3_HOST"], envVars["BUCKET_NAME"]),
-		IBMCloudAPIKey:           envVars["IBM_CLOUD_API_KEY"],
-		IBMCloudIAMTokenEndpoint: IBM_CLOUD_IAM_TOKEN_ENDPOINT,
-		CloudantHost:             envVars["CLOUDANT_HOST"],
-		DatabaseName:             DB_NAME,
-		SkynetHost:               SKYNET_HOST,
+		Port:           envVars["PORT"],
+		Mode:           envVars["MODE"],
+		S3BucketURL:    fmt.Sprintf("%s/%s", envVars["S3_HOST"], envVars["BUCKET_NAME"]),
+		IBMCloudAPIKey: envVars["IBM_CLOUD_API_KEY"],
+		CloudantHost:   envVars["CLOUDANT_HOST"],
+		DatabaseName:   DB_NAME,
+		SkynetHost:     SKYNET_HOST,
 	}
 }
