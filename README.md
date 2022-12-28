@@ -2,7 +2,7 @@
 My personal website that I built from scratch (guess who loves to code?) :)
 
 ## Setup
-1. Install Go 1.18 and Node LTS 16 on your machine.
+1. Install Go 1.18 and Node LTS 18 on your machine.
 1. Create an `.xyzrc` in the repo root for setting the required env vars (see Configuration section)
 1. Install Node packages using `npm install`
 1. Set the required env vars using `source .xyzrc` 

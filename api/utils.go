@@ -163,3 +163,7 @@ func buildMainConfigFromEnvVars() MainConfig {
 func (f RoundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) {
 	return f(r)
 }
+
+func GetFullURL(req *http.Request) string {
+	return req.URL.Scheme + "://" + req.Host + req.URL.RequestURI()
+}

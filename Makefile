@@ -12,7 +12,7 @@ go-race:
 	PORT=8000 go -race run ./api/*.go
 
 go-test:
-	go test ./api
+	go test ./api -v
 
 go-prod:
 	rm -rf bin

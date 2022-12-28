@@ -13,19 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
+func setupRouter(config MainConfig) *gin.Engine {
 	UI_ROUTES := []string{"/", "/dev"}
-	config := buildMainConfigFromEnvVars()
-
-	if config.Mode == PRODUCTION {
-		log.Println("Production mode is enabled.")
-		gin.SetMode(gin.ReleaseMode)
-	}
-
-	router := gin.New()
-	router.Use(gin.Logger())
-	router.LoadHTMLGlob("templates/*.tmpl.html")
-	router.Static("/static", "static")
 
 	persistence, err := InitCloudantPersistence(config)
 	if err != nil {
@@ -41,6 +30,15 @@ func main() {
 		Cache:       NewCache(),
 		SkynetHost:  config.SkynetHost,
 	}
+
+	if config.Mode == PRODUCTION {
+		log.Println("Production mode is enabled.")
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	router := gin.Default()
+	router.LoadHTMLGlob("templates/*.tmpl.html")
+	router.Static("/static", "static")
 
 	for _, route := range UI_ROUTES {
 		router.GET(route, func(c *gin.Context) {
@@ -143,5 +141,11 @@ func main() {
 		c.JSON(http.StatusOK, result)
 	})
 
+	return router
+}
+
+func main() {
+	config := buildMainConfigFromEnvVars()
+	router := setupRouter(config)
 	router.Run(":" + config.Port)
 }

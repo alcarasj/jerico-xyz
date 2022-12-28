@@ -38,6 +38,8 @@ type ViewCounterDayEntry map[string]ViewCounterClientEntry
 
 type ViewCounterData map[string]ViewCounterDayEntry
 
+type ViewCounterDataSegments map[string]ViewCounterData
+
 type IBMCloudIAMToken struct {
 	AccessToken     string  `json:"access_token"`
 	RefreshToken    string  `json:"refresh_token"`

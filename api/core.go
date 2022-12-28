@@ -12,6 +12,7 @@ import (
 
 const VIEW_COUNTER_BUFFER_SECONDS = 60
 const VIEW_COUNTER_DOC_ID = "ViewCounter"
+const VIEW_COUNTER_DOC_ID_PREFIX = "ViewCounter-%s"
 const IP_DETAILS_DOC_ID = "IPDetails"
 
 type Core struct {
@@ -64,6 +65,12 @@ func (c Core) RecordView(ip string) error {
 	}
 
 	if shouldUpdatePersistence {
+		dataSegments := viewCounter.SegmentByYear()
+		for year, segment := range dataSegments {
+			docId := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, year)
+			go c.Persistence.ModifyDocumentByID(docId, segment, "")
+		}
+
 		return c.Persistence.ModifyDocumentByID(VIEW_COUNTER_DOC_ID, viewCounter, doc.GetETag())
 	} else {
 		return nil

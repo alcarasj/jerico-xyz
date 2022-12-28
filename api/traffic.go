@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -27,14 +28,7 @@ func (data ViewCounterData) AggregateViews(timeInterval TimeInterval, intervals 
 	intervalUniqueViews := 0
 	intervalSelfViews := 0
 	seenIPs := make(map[string]bool)
-
-	sortedDates := make([]string, len(data))
-	i := 0
-	for key := range data {
-		sortedDates[i] = key
-		i++
-	}
-	sort.Sort(sort.Reverse(sort.StringSlice(sortedDates)))
+	sortedDates := data.GetDatesDescendingOrder()
 
 	if timeInterval == Daily {
 		for _, date := range sortedDates {
@@ -70,6 +64,34 @@ func (data ViewCounterData) AggregateViews(timeInterval TimeInterval, intervals 
 		}
 	}
 	return result
+}
+
+func (data ViewCounterData) SegmentByYear() ViewCounterDataSegments {
+	sortedDates := data.GetDatesDescendingOrder()
+	dataSegments := make(map[string]ViewCounterData)
+	for _, date := range sortedDates {
+		timeObj, _ := time.Parse("2006-01-02", date)
+		year := strconv.Itoa(timeObj.Year())
+		yearEntry, yearEntryWasFound := dataSegments[year]
+		if !yearEntryWasFound {
+			dataSegments[year] = make(ViewCounterData)
+			yearEntry = dataSegments[year]
+		}
+		yearEntry[date] = data[date]
+		dataSegments[year] = yearEntry
+	}
+	return dataSegments
+}
+
+func (data ViewCounterData) GetDatesDescendingOrder() []string {
+	sortedDates := make([]string, len(data))
+	i := 0
+	for key := range data {
+		sortedDates[i] = key
+		i++
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(sortedDates)))
+	return sortedDates
 }
 
 func (dayEntry ViewCounterDayEntry) AggregateViews(callerIP string, seenIPs map[string]bool) TrafficDatapoint {
