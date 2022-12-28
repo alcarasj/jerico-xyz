@@ -75,7 +75,7 @@ workflows:
     main:
       jobs:
         - build-react-app
-        - build-gin-app
+        - build-and-test-gin-app
     daily:
       triggers:
         - schedule:
@@ -93,7 +93,7 @@ workflows:
               branches:
                 only:
                   - master
-        - build-gin-app:
+        - build-and-test-gin-app:
             filters:
               branches:
                 only:
@@ -101,7 +101,7 @@ workflows:
         - heroku/deploy-via-git:
             requires:
               - build-and-upload-react-app
-              - build-gin-app
+              - build-and-test-gin-app
             filters:
               branches:
                 only:
