@@ -75,10 +75,14 @@ func sendRequest[T any](params SendRequestParams) (*T, error) {
 	client := &http.Client{
 		Timeout: time.Duration(REQUEST_TIMEOUT_SECS) * time.Second,
 	}
-	var resp *http.Response
-	i := 1
+	if params.RoundTripFunc != nil {
+		client.Transport = params.RoundTripFunc
+	}
 
-	for shouldRetryOnFailure := true; shouldRetryOnFailure; shouldRetryOnFailure = i <= params.RetryAmount {
+	var resp *http.Response
+	nthAttempt := 1
+
+	for shouldRetryOnFailure := true; shouldRetryOnFailure; shouldRetryOnFailure = nthAttempt <= params.RetryAmount {
 		req, err := http.NewRequest(params.Method, params.URL, bytes.NewBuffer(dataBytes))
 		if err != nil {
 			return nil, err
@@ -94,14 +98,16 @@ func sendRequest[T any](params SendRequestParams) (*T, error) {
 		if resp != nil {
 			log.Printf("%s %d %s", params.Method, resp.StatusCode, params.URL)
 		}
+		defer resp.Body.Close()
+
 		if resp.StatusCode == params.ExpectedRespStatus {
 			break
 		}
-		if i <= params.RetryAmount {
-			log.Printf("%s %s failed on attempt #%d, retrying...", params.Method, params.URL, i)
+		if nthAttempt <= params.RetryAmount {
+			log.Printf("%s %s failed on attempt #%d, retrying...", params.Method, params.URL, nthAttempt)
 			time.Sleep(time.Duration(params.RetryIntervalSecs) * time.Second)
 		}
-		i++
+		nthAttempt++
 	}
 
 	if resp.StatusCode != params.ExpectedRespStatus {
@@ -120,10 +126,6 @@ func sendRequest[T any](params SendRequestParams) (*T, error) {
 	}
 
 	return &data, nil
-}
-
-func (t IBMCloudIAMToken) isExpired() bool {
-	return time.Now().Unix() > int64(t.ExpirationEpoch)
 }
 
 func isLocalhost(ip string) bool {
@@ -156,4 +158,8 @@ func buildMainConfigFromEnvVars() MainConfig {
 		DatabaseName:   DB_NAME,
 		SkynetHost:     SKYNET_HOST,
 	}
+}
+
+func (f RoundTripFunc) RoundTrip(r *http.Request) (*http.Response, error) {
+	return f(r)
 }

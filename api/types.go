@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"time"
 )
 
@@ -53,6 +54,7 @@ type SendRequestParams struct {
 	ExpectedRespStatus int
 	RetryAmount        int
 	RetryIntervalSecs  int
+	RoundTripFunc      RoundTripFunc
 }
 
 type MainConfig struct {
@@ -97,3 +99,5 @@ type Document interface {
 	GetData() interface{}
 	GetETag() string
 }
+
+type RoundTripFunc func(*http.Request) (*http.Response, error)

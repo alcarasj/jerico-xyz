@@ -5,7 +5,7 @@ orbs:
   heroku: circleci/heroku@1.2.6
   go: circleci/go@1.7.1
 jobs:
-  build-gin-app:
+  build-and-test-gin-app:
     executor:
       name: go/default
       tag: '1.18'
@@ -20,6 +20,9 @@ jobs:
       - run:
           name: Generate binaries
           command: make go-build
+      - run:
+          name: Run unit tests
+          command: make go-test
   build-react-app:
     executor:
       name: node/default

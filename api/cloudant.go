@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/gin-gonic/gin/binding"
 )
@@ -129,7 +130,7 @@ func (p CloudantPersistence) buildURLWithID(id string) string {
 	return fmt.Sprintf("%s/%s", p.URL, id)
 }
 
-func (p *CloudantPersistence) buildReqHeaders(rev string) (map[string]string, error) {
+func (p CloudantPersistence) buildReqHeaders(rev string) (map[string]string, error) {
 	headers := make(map[string]string)
 	if p.IBMCloudIAMToken == nil || p.IBMCloudIAMToken.isExpired() {
 		token, err := getIBMCloudIAMToken(p.IBMCloudAPIKey)
@@ -167,4 +168,8 @@ func getIBMCloudIAMToken(apiKey string) (*IBMCloudIAMToken, error) {
 		return nil, err
 	}
 	return iamToken, nil
+}
+
+func (t IBMCloudIAMToken) isExpired() bool {
+	return time.Now().Unix() > int64(t.ExpirationEpoch)
 }
