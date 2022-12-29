@@ -7,6 +7,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -26,15 +27,17 @@ func (c Core) RecordView(ip string) error {
 		return fmt.Errorf("cannot record view for %s", ip)
 	}
 
-	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID)
+	now := time.Now().UTC()
+	currentYear := strconv.Itoa(now.Year())
+	currentDateStr := now.Format("2006-01-02")
+	docID := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, currentYear)
+	doc, err := c.Persistence.GetDocumentByID(docID)
 	if err != nil {
 		return err
 	}
 
 	viewCounter := unmarshalViewCounterData(doc.GetData())
 	shouldUpdatePersistence := false
-	now := time.Now().UTC()
-	currentDateStr := now.Format("2006-01-02")
 
 	if dayEntry, dayEntryWasFound := viewCounter[currentDateStr]; dayEntryWasFound {
 		if clientEntry, clientEntryWasFound := dayEntry[ip]; clientEntryWasFound {
@@ -67,8 +70,8 @@ func (c Core) RecordView(ip string) error {
 	if shouldUpdatePersistence {
 		dataSegments := viewCounter.SegmentByYear()
 		for year, segment := range dataSegments {
-			docId := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, year)
-			go c.Persistence.ModifyDocumentByID(docId, segment, "")
+			docID := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, year)
+			go c.Persistence.ModifyDocumentByID(docID, segment, "")
 		}
 
 		return c.Persistence.ModifyDocumentByID(VIEW_COUNTER_DOC_ID, viewCounter, doc.GetETag())
@@ -82,12 +85,49 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		return nil, fmt.Errorf("must be at least N >= 1 intervals but was %d", intervals)
 	}
 
-	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID)
-	if err != nil {
-		return nil, err
+	// Get years required.
+	now := time.Now().UTC()
+	currentYear := strconv.Itoa(now.Year())
+	yearsRequired := map[string]bool{currentYear: true}
+
+	intervalsCounted := 0
+	for shouldKeepGoingBackInTime := true; shouldKeepGoingBackInTime; shouldKeepGoingBackInTime = intervalsCounted <= intervals {
+		daysToSubtract := 0
+		monthsToSubtract := 0
+		yearsToSubtract := 0
+		switch timeInterval {
+		case Daily:
+			daysToSubtract++
+		case Weekly:
+			daysToSubtract = 7
+		case Monthly:
+			monthsToSubtract++
+		case Yearly:
+			yearsToSubtract++
+		}
+		currentTime := now.AddDate(-yearsToSubtract, -monthsToSubtract, -daysToSubtract)
+		currentYear := strconv.Itoa(currentTime.Year())
+		if _, yearAlreadyRecorded := yearsRequired[currentYear]; !yearAlreadyRecorded {
+			yearsRequired[currentYear] = true
+		}
+		intervalsCounted++
 	}
 
-	viewCounter := unmarshalViewCounterData(doc.GetData())
+	// Get documents and merge view counters.
+	// TO-DO Parallel map-reduce with goroutines?
+	viewCounter := make(ViewCounterData)
+	for year, _ := range yearsRequired {
+		docID := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, year)
+		doc, err := c.Persistence.GetDocumentByID(docID)
+		if err != nil && err != ErrNotFound {
+			return nil, err
+		}
+		if err != ErrNotFound {
+			yearViewCounter := unmarshalViewCounterData(doc.GetData())
+			viewCounter.Merge(yearViewCounter)
+		}
+	}
+
 	// TO-DO Save calculated values (since when a day has ended the values will stay the same forever)
 	result := viewCounter.AggregateViews(timeInterval, intervals, callerIP)
 	return result, nil

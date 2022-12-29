@@ -94,6 +94,12 @@ func (data ViewCounterData) GetDatesDescendingOrder() []string {
 	return sortedDates
 }
 
+func (data ViewCounterData) Merge(input ViewCounterData) {
+	for date, dayEntry := range input {
+		data[date] = dayEntry
+	}
+}
+
 func (dayEntry ViewCounterDayEntry) AggregateViews(callerIP string, seenIPs map[string]bool) TrafficDatapoint {
 	dayTotalViews := 0
 	dayUniqueViews := 0
