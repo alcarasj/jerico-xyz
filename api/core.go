@@ -28,10 +28,10 @@ func (c Core) RecordView(ip string) error {
 	}
 
 	now := time.Now().UTC()
-	currentYear := strconv.Itoa(now.Year())
+	// currentYear := strconv.Itoa(now.Year())
 	currentDateStr := now.Format("2006-01-02")
-	docID := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, currentYear)
-	doc, err := c.Persistence.GetDocumentByID(docID)
+	// docID := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, currentYear)
+	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID)
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,7 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 	// Get documents and merge view counters.
 	// TO-DO Parallel map-reduce with goroutines?
 	viewCounter := make(ViewCounterData)
-	for year, _ := range yearsRequired {
+	for year := range yearsRequired {
 		docID := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, year)
 		doc, err := c.Persistence.GetDocumentByID(docID)
 		if err != nil && err != ErrNotFound {
