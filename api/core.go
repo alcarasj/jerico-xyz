@@ -71,7 +71,8 @@ func (c Core) RecordView(ip string) error {
 		dataSegments := viewCounter.SegmentByYear()
 		for year, segment := range dataSegments {
 			docID := fmt.Sprintf(VIEW_COUNTER_DOC_ID_PREFIX, year)
-			go c.Persistence.ModifyDocumentByID(docID, segment, "")
+			doc, _ := c.Persistence.GetDocumentByID(docID)
+			go c.Persistence.ModifyDocumentByID(docID, segment, doc.GetETag())
 		}
 
 		return c.Persistence.ModifyDocumentByID(VIEW_COUNTER_DOC_ID, viewCounter, doc.GetETag())
