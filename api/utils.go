@@ -116,7 +116,7 @@ func sendRequest[T any](params SendRequestParams) (*T, error) {
 		}
 		var errorBody map[string]string
 		json.NewDecoder(resp.Body).Decode(&errorBody)
-		return nil, fmt.Errorf("request to %s returned %d: %v", params.URL, resp.StatusCode, errorBody)
+		return nil, fmt.Errorf("%s request to %s returned %d: %v", params.Method, params.URL, resp.StatusCode, errorBody)
 	}
 
 	var data T
