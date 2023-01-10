@@ -41,11 +41,17 @@ type ViewCounterData map[string]ViewCounterDayEntry
 type ViewCounterDataSegments map[string]ViewCounterData
 
 type IBMCloudIAMToken struct {
-	AccessToken     string  `json:"access_token"`
-	RefreshToken    string  `json:"refresh_token"`
-	Type            string  `json:"token_type"`
-	ExpiresInSecs   float64 `json:"expires_in"`
-	ExpirationEpoch float64 `json:"expiration"`
+	AccessToken     string `json:"access_token"`
+	Type            string `json:"token_type"`
+	ExpiresInSecs   int    `json:"expires_in"`
+	ExpirationEpoch int    `json:"expiration"`
+}
+
+type AzureADToken struct {
+	AccessToken     string `json:"access_token"`
+	Type            string `json:"token_type"`
+	ExpiresInSecs   int    `json:"expires_in"`
+	ExpirationEpoch int    `json:"expires_on"`
 }
 
 type SendRequestParams struct {
