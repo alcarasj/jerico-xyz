@@ -43,7 +43,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-react": "^7.28.0",
-    "ibm-cos-sdk": "^1.11.0",
+    "ibm-cos-sdk": "^1.13.1",
     "mdi-material-ui": "^7.1.0",
     "notistack": "^2.0.3",
     "react": "^17.0.2",
