@@ -11,7 +11,7 @@ import (
 )
 
 const VIEW_COUNTER_BUFFER_SECONDS = 60
-const VIEW_COUNTER_DOC_ID = "ViewCounter"
+const VIEW_COUNTER_MIN_YEAR = 2022
 const VIEW_COUNTER_DOC_ID_PREFIX = "ViewCounter-"
 const IP_DETAILS_DOC_ID = "IPDetails"
 
@@ -77,13 +77,21 @@ func (c Core) GetTrafficData(callerIP string, timeInterval TimeInterval, interva
 		return nil, fmt.Errorf("must be at least N >= 1 intervals but was %d", intervals)
 	}
 
-	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID)
-	if err != nil {
-		return nil, err
+	currentYear := time.Now().UTC().Year()
+	viewCounter := make(ViewCounterData)
+	for year := currentYear; year >= VIEW_COUNTER_MIN_YEAR; year-- {
+		yearViewCounterDocID := fmt.Sprintf("%s%d", VIEW_COUNTER_DOC_ID_PREFIX, year)
+		doc, err := c.Persistence.GetDocumentByID(yearViewCounterDocID)
+		if err != nil {
+			return nil, err
+		}
+		// TO-DO Save calculated values (since when a day has ended the values will stay the same forever)
+		yearViewCounter := unmarshalViewCounterData(doc.GetData())
+		for date, viewCounterDayEntry := range yearViewCounter {
+			viewCounter[date] = viewCounterDayEntry
+		}
 	}
 
-	// TO-DO Save calculated values (since when a day has ended the values will stay the same forever)
-	viewCounter := unmarshalViewCounterData(doc.GetData())
 	result := viewCounter.AggregateViews(timeInterval, intervals, callerIP)
 	return result, nil
 }
