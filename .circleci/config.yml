@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  browser-tools: circleci/browser-tools@1.4.5
+  browser-tools: circleci/browser-tools@1.4.6
   node: circleci/node@5.0.3
   heroku: circleci/heroku@1.2.6
   go: circleci/go@1.7.1

@@ -12,6 +12,7 @@ import (
 
 const VIEW_COUNTER_BUFFER_SECONDS = 60
 const VIEW_COUNTER_DOC_ID = "ViewCounter"
+const VIEW_COUNTER_DOC_ID_PREFIX = "ViewCounter-"
 const IP_DETAILS_DOC_ID = "IPDetails"
 
 type Core struct {
@@ -26,8 +27,9 @@ func (c Core) RecordView(ip string) error {
 	}
 
 	now := time.Now().UTC()
+	currentYearViewCounterDocID := fmt.Sprintf("%s%d", VIEW_COUNTER_DOC_ID_PREFIX, now.Year())
 	currentDateStr := now.Format("2006-01-02")
-	doc, err := c.Persistence.GetDocumentByID(VIEW_COUNTER_DOC_ID)
+	doc, err := c.Persistence.GetDocumentByID(currentYearViewCounterDocID)
 	if err != nil {
 		return err
 	}
@@ -64,7 +66,7 @@ func (c Core) RecordView(ip string) error {
 	}
 
 	if shouldUpdatePersistence {
-		return c.Persistence.ModifyDocumentByID(VIEW_COUNTER_DOC_ID, viewCounter, doc.GetETag())
+		return c.Persistence.ModifyDocumentByID(currentYearViewCounterDocID, viewCounter, doc.GetETag())
 	} else {
 		return nil
 	}
