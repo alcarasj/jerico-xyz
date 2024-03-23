@@ -31,7 +31,7 @@ const Footer: FC = (): JSX.Element => {
       <Grid container alignItems="center" justifyContent="space-between" spacing={3}>
         <Grid item xs>
           <Typography align="left" variant="body1" gutterBottom>
-					{	`© JERICO ALCARAS ${new Date().getFullYear()}. All rights reserved.` }
+            {	`© JERICO ALCARAS ${new Date().getFullYear()}. All rights reserved.` }
           </Typography>
           <Typography align="left" variant="body1" gutterBottom>
             { "\"You miss 100% of the shots you don't take.\" -Albert Einstein" }

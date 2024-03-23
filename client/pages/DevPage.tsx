@@ -46,29 +46,29 @@ interface Experience {
 const DevPage: React.FC = (): JSX.Element => {
   const classes = useStyles();
 
-  const getExperienceTimeRange = (from: MonthYearDate, to: MonthYearDate) => `${new Date(from.year, from.month - 1).toLocaleString('default', { month: 'short' })} ${from.year} ` + 
+  const getExperienceTimeRange = (from: MonthYearDate, to: MonthYearDate) => `${new Date(from.year, from.month - 1).toLocaleString('default', { month: 'short' })} ${from.year} ` +
     `- ${to ? `${new Date(to.year, to.month - 1).toLocaleString('default', { month: 'short' })} ${to.year}` : "present"}`;
 
   const renderExperienceCards = (): JSX.Element => (
     <Grid item xs>
       <Grid container spacing={1} alignItems='flex-start' justifyContent='center' flexDirection="column">
-        { 
+        {
           DEV_XP_CARDS.map((xp: Experience, index: number) => (
             <Grow key={xp.employer} in timeout={1200 + (index * 250)}>
               <Grid item xs={12} className={classes.cardContainer}>
                 <Card className={classes.card}>
                   <CardContent>
                     <Typography variant="h5" component="h2">
-                      { xp.employer }
+                      {xp.employer}
                     </Typography>
                     <Typography gutterBottom>
-                      { getExperienceTimeRange(xp.from, xp.to) }
+                      {getExperienceTimeRange(xp.from, xp.to)}
                     </Typography>
                     <Typography variant="body2" color="textSecondary" component="p">
-                      { xp.description }
+                      {xp.description}
                     </Typography>
                     <Grid className={classes.tagsContainer} container justifyContent="flex-start" alignItems="center" spacing={1}>
-                      {xp.tags.map(tag => <Grid item  key={tag}><Chip color="primary" label={tag} /></Grid>)}
+                      {xp.tags.map(tag => <Grid item key={tag}><Chip color="primary" label={tag} /></Grid>)}
                     </Grid>
                   </CardContent>
                 </Card>
@@ -84,11 +84,11 @@ const DevPage: React.FC = (): JSX.Element => {
     <Grid container justifyContent="center" alignItems="center" direction="column" spacing={3}>
       <Grid item xs>
         <Grow in timeout={750}>
-          <Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2019-460x460.jpg"}/>
+          <Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2024-460x460.jpg"} />
         </Grow>
       </Grid>
       <Grid item xs>
-        <TypingText 
+        <TypingText
           align="center"
           variant="h3"
           component="h1"
@@ -97,7 +97,7 @@ const DevPage: React.FC = (): JSX.Element => {
             { getText: () => 'I\'m a software engineer at Microsoft.', color: 'primary' },
           ]}
         />
-        <TypingText 
+        <TypingText
           align="center"
           variant="subtitle1"
           component="h1"
@@ -109,7 +109,7 @@ const DevPage: React.FC = (): JSX.Element => {
           ]}
         />
       </Grid>
-      { renderExperienceCards() }
+      {renderExperienceCards()}
       <Grow in timeout={1000}>
         <Grid item xs className={classes.imageClassifier}>
           <ImageClassifier />

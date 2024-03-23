@@ -3,8 +3,10 @@ import Avatar from '@mui/material/Avatar';
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
-import { Typography, Button, CardActions, Grid, Grow, Card, CardActionArea, CardContent, ImageList, IconButton
-  , ImageListItem, ImageListItemBar } from '@mui/material';
+import {
+  Typography, Button, CardActions, Grid, Grow, Card, CardActionArea, CardContent, ImageList, IconButton
+  , ImageListItem, ImageListItemBar
+} from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import { HOME_CARDS, STATIC_DIR } from "../utils/Settings";
 import { atEasterEggCounterLimit, sendAPIRequest } from '../utils/Helpers';
@@ -61,7 +63,7 @@ const HomePage: FC<Props> = (props: Props): JSX.Element => {
   const renderCards = (): JSX.Element => (
     <Grid item xs>
       <Grid container spacing={1} alignItems='flex-start' justifyContent='center'>
-        { 
+        {
           HOME_CARDS.map((card: HomeCard, index: number) => (
             <Grow key={card.title} in timeout={1200 + (index * 250)}>
               <Grid item xs={12} className={classes.cardContainer}>
@@ -75,15 +77,15 @@ const HomePage: FC<Props> = (props: Props): JSX.Element => {
                   }}>
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="h2">
-                        { card.title }
+                        {card.title}
                       </Typography>
                       <Typography variant="body2" color="textSecondary" component="p">
-                        { card.description }
+                        {card.description}
                       </Typography>
                     </CardContent>
                   </CardActionArea>
                   <CardActions>
-                    <Button 
+                    <Button
                       size="small"
                       color="primary"
                       onClick={() => {
@@ -98,7 +100,7 @@ const HomePage: FC<Props> = (props: Props): JSX.Element => {
                         }
                       }}
                     >
-                      { card.linkTo ? "Learn more" : "Coming soon™" }
+                      {card.linkTo ? "Learn more" : "Coming soon™"}
                     </Button>
                   </CardActions>
                 </Card>
@@ -141,31 +143,31 @@ const HomePage: FC<Props> = (props: Props): JSX.Element => {
     <Grid container justifyContent="center" alignItems="center" direction="column" spacing={3}>
       <Grid item xs>
         <Grow in timeout={750}>
-          <Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2019-460x460.jpg"}/>
+          <Avatar className={classes.me} alt="Jerico Alcaras" src={STATIC_DIR + "img/jerico-2024-460x460.jpg"} />
         </Grow>
       </Grid>
       <Grid item xs>
-        <TypingText 
+        <TypingText
           align="center"
           variant="h3"
           component="h1"
           messages={[{ getText: () => 'Hi! My name is Jerico.' }]}
         />
-        <TypingText 
+        <TypingText
           align="center"
           variant="subtitle1"
           component="h1"
           gutterBottom
           messages={[
-            { 
-              getText: () => atEasterEggCounterLimit(counter) ? 
+            {
+              getText: () => atEasterEggCounterLimit(counter) ?
                 "Thanks for supporting my art!" :
                 "Thanks for visiting! Select an area of interest below to learn more about me."
             }
           ]}
         />
       </Grid>
-      { atEasterEggCounterLimit(counter) ? renderExhibits() : renderCards() }
+      {atEasterEggCounterLimit(counter) ? renderExhibits() : renderCards()}
       <Grid item xs className={classes.siteMetrics}>
         <SiteMetrics />
       </Grid>
