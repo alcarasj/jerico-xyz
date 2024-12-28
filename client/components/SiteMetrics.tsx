@@ -7,8 +7,11 @@ import { withSnackbar } from 'notistack';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 import { MONTHS } from '../utils/Settings';
-import { Card, CardContent, CardHeader, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, Grid, Input,
-  DialogActions, Button, SelectChangeEvent, FormControl, InputLabel, Select, MenuItem, Typography, Slider } from '@mui/material';
+import {
+  Card, CardContent, CardHeader, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, Grid, Input,
+  DialogActions, Button, SelectChangeEvent, FormControl, InputLabel, Select, MenuItem, Typography, Slider,
+  LinearProgress
+} from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const MIN_INTERVALS = 7;
@@ -40,21 +43,22 @@ enum TimeInterval {
 }
 
 interface TrafficDatapoint {
-    readonly uniqueViews: number;
-    readonly totalViews: number;
-    readonly selfViews: number;
+  readonly uniqueViews: number;
+  readonly totalViews: number;
+  readonly selfViews: number;
 }
 
 type TrafficDataRaw = Map<string, TrafficDatapoint>;
 
 interface Props {
-    readonly enqueueSnackbar: EnqueueSnackbar;
+  readonly enqueueSnackbar: EnqueueSnackbar;
 }
 
 const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
   const classes = useStyles();
   const { enqueueSnackbar } = props;
   const [trafficData, setTrafficData] = useState<Serie[]>([]);
+  const [trafficDataIsLoading, setTrafficDataIsLoading] = useState<boolean>(false);
   const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false);
   const [timeInterval, setTimeInterval] = useState<TimeInterval>(TimeInterval.DAILY);
   const [intervals, setIntervals] = useState<number>(MIN_INTERVALS);
@@ -98,30 +102,32 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
   };
 
   const getTrafficData = () => {
+    setTrafficDataIsLoading(true);
     sendAPIRequest<TrafficDataRaw>(`/api/traffic?timeInterval=${timeInterval}&intervals=${intervals}`)
       .then(data => {
         const keys = Object.keys(data).sort();
         const totalViews: Serie = {
           id: "Total Views",
-          data: keys.map((key: string, index: number) => 
+          data: keys.map((key: string, index: number) =>
             ({ x: formatXAxisKey(index, key, keys.length), y: data[key].totalViews })
           )
         };
         const uniqueViews: Serie = {
           id: "Unique Views",
-          data: keys.map((key: string, index: number) => 
+          data: keys.map((key: string, index: number) =>
             ({ x: formatXAxisKey(index, key, keys.length), y: data[key].uniqueViews })
           )
         };
         const selfViews: Serie = {
           id: "Your IP's Views",
-          data: keys.map((key: string, index: number) => 
+          data: keys.map((key: string, index: number) =>
             ({ x: formatXAxisKey(index, key, keys.length), y: data[key].selfViews })
           )
         };
         setTrafficData([totalViews, uniqueViews, selfViews]);
       })
-      .catch(error => enqueueSnackbar(error.toString(), { variant: 'error' }));
+      .catch(error => enqueueSnackbar(error.toString(), { variant: 'error' }))
+      .finally(() => setTrafficDataIsLoading(false));
   };
 
   const getTimeIntervalPlural = (t: TimeInterval): string => {
@@ -158,11 +164,11 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
                 setTimeInterval(event.target.value as TimeInterval);
               }}
             >
-              { Object.values(TimeInterval).map((t: TimeInterval) => <MenuItem key={t} value={t}>{t}</MenuItem>)  }
+              {Object.values(TimeInterval).map((t: TimeInterval) => <MenuItem key={t} value={t}>{t}</MenuItem>)}
             </Select>
           </FormControl>
           <Typography gutterBottom className={classes.intervalsSlider}>
-              Last {intervals} {getTimeIntervalPlural(timeInterval).toLowerCase()}
+            Last {intervals} {getTimeIntervalPlural(timeInterval).toLowerCase()}
           </Typography>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs>
@@ -217,79 +223,84 @@ const SiteMetrics: FC<Props> = (props: Props): JSX.Element => {
           subheader="Use the settings icon to the top-right of this card to configure the graph."
         />
         <CardContent className={classes.line}>
-          <ResponsiveLine
-            data={trafficData}
-            margin={{ top: 50, right: 120, bottom: 80, left: 60 }}
-            xScale={{ type: 'point' }}
-            yScale={{
-              type: 'linear',
-              min: 'auto',
-              max: 'auto',
-              reverse: false
-            }}
-            yFormat=" >-.2f"
-            axisTop={null}
-            axisRight={null}
-            axisBottom={{
-              tickSize: 5,
-              tickPadding: 5,
-              tickRotation: 30,
-              legendOffset: 36,
-              legendPosition: 'middle'
-            }}
-            axisLeft={{
-              tickSize: 5,
-              tickPadding: 5,
-              tickRotation: 0,
-              legend: 'Views',
-              legendOffset: -40,
-              legendPosition: 'middle'
-            }}
-            theme={{
-              textColor: 'white',
-              tooltip: {
-                container: {
-                  background: 'black'
-                }
-              }
-            }}
-            pointSize={10}
-            isInteractive
-            pointBorderWidth={2}
-            pointLabelYOffset={-12}
-            enableSlices='x'
-            useMesh
-            legends={[
-              {
-                anchor: 'bottom-right',
-                direction: 'column',
-                justify: false,
-                translateX: 100,
-                translateY: 0,
-                itemsSpacing: 0,
-                itemDirection: 'left-to-right',
-                itemWidth: 80,
-                itemHeight: 20,
-                itemOpacity: 0.75,
-                symbolSize: 12,
-                symbolShape: 'circle',
-                effects: [
-                  {
-                    on: 'hover',
-                    style: {
-                      itemBackground: 'rgba(0, 0, 0, .03)',
-                      itemOpacity: 1
+          {
+            trafficDataIsLoading ?
+              <LinearProgress />
+              :
+              <ResponsiveLine
+                data={trafficData}
+                margin={{ top: 50, right: 120, bottom: 80, left: 60 }}
+                xScale={{ type: 'point' }}
+                yScale={{
+                  type: 'linear',
+                  min: 'auto',
+                  max: 'auto',
+                  reverse: false
+                }}
+                yFormat=" >-.2f"
+                axisTop={null}
+                axisRight={null}
+                axisBottom={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: 30,
+                  legendOffset: 36,
+                  legendPosition: 'middle'
+                }}
+                axisLeft={{
+                  tickSize: 5,
+                  tickPadding: 5,
+                  tickRotation: 0,
+                  legend: 'Views',
+                  legendOffset: -40,
+                  legendPosition: 'middle'
+                }}
+                theme={{
+                  textColor: 'white',
+                  tooltip: {
+                    container: {
+                      background: 'black'
                     }
                   }
-                ]
-              }
-            ]}
-          />
+                }}
+                pointSize={10}
+                isInteractive
+                pointBorderWidth={2}
+                pointLabelYOffset={-12}
+                enableSlices='x'
+                useMesh
+                legends={[
+                  {
+                    anchor: 'bottom-right',
+                    direction: 'column',
+                    justify: false,
+                    translateX: 100,
+                    translateY: 0,
+                    itemsSpacing: 0,
+                    itemDirection: 'left-to-right',
+                    itemWidth: 80,
+                    itemHeight: 20,
+                    itemOpacity: 0.75,
+                    symbolSize: 12,
+                    symbolShape: 'circle',
+                    effects: [
+                      {
+                        on: 'hover',
+                        style: {
+                          itemBackground: 'rgba(0, 0, 0, .03)',
+                          itemOpacity: 1
+                        }
+                      }
+                    ]
+                  }
+                ]}
+              />
+          }
         </CardContent>
       </Card>
     </>
   );
-} ;
+};
 
 
 export default withSnackbar(SiteMetrics);
